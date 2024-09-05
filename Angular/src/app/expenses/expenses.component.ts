@@ -18,6 +18,13 @@ export class ExpensesComponent implements OnInit {
   minDate: string;
   maxDate: string;
 
+  // Pagination variables
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
+  paginatedExpenses: any[] = [];
+  totalPages: number = 0;
+  pages: number[] = [];
+
   constructor(private apiService: ApiService) {
     const today = new Date();
     const year = today.getFullYear();
@@ -35,6 +42,9 @@ export class ExpensesComponent implements OnInit {
     this.apiService.getExpenses().subscribe({
       next: (res) => {
         this.expenses = res.expenses || [];
+        this.totalPages = Math.ceil(this.expenses.length / this.itemsPerPage);
+        this.updatePaginatedExpenses();
+        this.updatePageNumbers();
       },
       error: (err) => {
         console.error('Error fetching expenses:', err);
@@ -46,11 +56,11 @@ export class ExpensesComponent implements OnInit {
   setLastDayOfMonth(month: number, year: number): string {
     let lastDay: number;
 
-    if (month === 1) {
+    if (month === 1) { // February
       lastDay = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) ? 29 : 28;
-    } else if ([3, 5, 8, 10].includes(month)) {
+    } else if ([3, 5, 8, 10].includes(month)) { // April, June, September, November
       lastDay = 30;
-    } else {
+    } else { // January, March, May, July, August, October, December
       lastDay = 31;
     }
 
@@ -96,6 +106,7 @@ export class ExpensesComponent implements OnInit {
       };
 
       this.expenses.unshift(tempExpense);
+      this.updatePaginatedExpenses();
 
       this.form = {};
       this.submitted = false;
@@ -108,6 +119,7 @@ export class ExpensesComponent implements OnInit {
         error: (err) => {
           console.error('Failed to add expense', err);
           this.expenses.shift();
+          this.updatePaginatedExpenses();
           this.message = { text: 'Error adding expense. Please try again.', type: 'error' };
         }
       });
@@ -120,6 +132,7 @@ export class ExpensesComponent implements OnInit {
     this.apiService.deleteExpense(expenseId).subscribe({
       next: () => {
         this.expenses = this.expenses.filter(expense => expense.id !== expenseId);
+        this.updatePaginatedExpenses();
         this.message = { text: 'Expense deleted successfully!', type: 'success' };
       },
       error: (err) => {
@@ -127,5 +140,36 @@ export class ExpensesComponent implements OnInit {
         this.message = { text: 'Error deleting expense. Please try again.', type: 'error' };
       }
     });
+  }
+
+  updatePaginatedExpenses() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    this.paginatedExpenses = this.expenses.slice(start, start + this.itemsPerPage);
+  }
+
+  // Update page numbers
+  updatePageNumbers() {
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  // Pagination controls
+  changePage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePaginatedExpenses();
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePaginatedExpenses();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePaginatedExpenses();
+    }
   }
 }
