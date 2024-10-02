@@ -2,7 +2,7 @@
   <h2 class="text-center">Register</h2>
   <div class="card">
     <div class="card-body">
-      <form (submit)="onSubmit()">
+      <form (ngSubmit)="onSubmit()" #registrationForm="ngForm">
         <div class="form-group">
           <label for="name">Name:</label>
           <input type="text" id="name" [(ngModel)]="form.name" name="name" class="form-control" required>
@@ -15,7 +15,14 @@
           <label for="password">Password:</label>
           <input type="password" id="password" [(ngModel)]="form.password" name="password" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-custom btn-block mt-3">Register</button>
+        <div class="form-group">
+          <label for="password_confirmation">Confirm Password:</label>
+          <input type="password" id="password_confirmation" [(ngModel)]="form.password_confirmation" name="password_confirmation" class="form-control" required>
+          <div *ngIf="form.password && form.password_confirmation && form.password !== form.password_confirmation" class="text-danger">
+            Passwords do not match.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-custom btn-block mt-3" [disabled]="!registrationForm.valid || form.password !== form.password_confirmation">Register</button>
       </form>
     </div>
   </div>

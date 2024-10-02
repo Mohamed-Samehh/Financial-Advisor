@@ -15,11 +15,11 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   // Register a new user
-  register(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, data);
+  register(data: any): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data);
   }
 
-  // Log in an existing user and store the token
+  // Log in an existing user
   login(data: any): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data).pipe(
       tap(response => {
@@ -30,7 +30,7 @@ export class AuthService {
     );
   }
 
-  // Log out the user and clear the token
+  // Log out the user
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
       tap(() => {
@@ -40,29 +40,25 @@ export class AuthService {
     );
   }
 
-  // Check if user is logged in (used for guards)
   isLoggedIn(): Observable<boolean> {
     return this.loggedIn.asObservable();
   }
 
-  // Store token in local storage and update logged-in status
+  // Store the token in local storage
   setToken(token: string) {
     localStorage.setItem('token', token);
     this.loggedIn.next(true);
   }
 
-  // Get token from local storage
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  // Clear token from local storage and update logged-in status
   clearToken() {
     localStorage.removeItem('token');
     this.loggedIn.next(false);
   }
 
-  // Handle any API errors
   handleError(error: any) {
     console.error('API Error:', error);
   }

@@ -19,7 +19,9 @@ export class LoginComponent {
     this.authService.login(this.form).subscribe(
       (res) => {
         this.authService.setToken(res.token);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard']).then(() => {
+          window.location.reload();
+        });
       },
       (err) => this.authService.handleError(err)
     );

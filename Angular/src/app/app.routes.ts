@@ -10,7 +10,7 @@ import { AnalyzeExpensesComponent } from './analyze-expenses/analyze-expenses.co
 // import { NotFoundComponent } from './not-found/not-found.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'budget', component: BudgetComponent, canActivate: [AuthGuard] },
   { path: 'goals', component: GoalsComponent, canActivate: [AuthGuard] },
