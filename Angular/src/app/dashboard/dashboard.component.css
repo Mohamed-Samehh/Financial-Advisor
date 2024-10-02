@@ -1,0 +1,16 @@
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+.card-text {
+  color: #6c757d;
+}
+.btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+}

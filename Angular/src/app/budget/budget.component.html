@@ -1,0 +1,15 @@
+<div class="container mt-5">
+  <h2 class="text-center">Manage Your Budget</h2>
+  <div class="card">
+    <div class="card-body">
+      <form (submit)="onSubmit()">
+        <div class="form-group">
+          <label for="monthlyBudget">Monthly Budget:</label>
+          <input type="number" id="monthlyBudget" [(ngModel)]="budget.monthly_budget" name="monthlyBudget" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-custom btn-block mt-3">Save Budget</button>
+      </form>
+      <div *ngIf="budgetSaved" class="alert alert-success mt-3">Budget saved successfully!</div>
+    </div>
+  </div>
+</div>

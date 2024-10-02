@@ -1,0 +1,27 @@
+<div class="container mt-5">
+  <h2 class="text-center">Set Your Financial Goals</h2>
+  <div class="card">
+    <div class="card-body">
+      <form (submit)="onSubmit()">
+        <div class="form-group">
+          <label for="goalName">Goal Name:</label>
+          <input type="text" id="goalName" [(ngModel)]="goal.name" name="goalName" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="targetAmount">Target Amount:</label>
+          <input type="number" id="targetAmount" [(ngModel)]="goal.target_amount" name="targetAmount" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="timeFrame">Time Frame (in months):</label>
+          <input type="number" id="timeFrame" [(ngModel)]="goal.time_frame" name="timeFrame" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-custom btn-block mt-3">Set Goal</button>
+      </form>
+      <div *ngIf="goalSaved" class="alert alert-success mt-3">Goal set successfully!</div>
+    </div>
+  </div>
+  <h4 class="mt-4">Your Goals:</h4>
+  <ul class="list-group">
+    <li *ngFor="let g of goals" class="list-group-item">{{ g.name }}: ${{ g.target_amount }} in {{ g.time_frame }} months</li>
+  </ul>
+</div>

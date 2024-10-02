@@ -1,0 +1,30 @@
+<div class="container mt-5">
+  <h2 class="text-center">Track Your Expenses</h2>
+  <div class="card">
+    <div class="card-body">
+      <form (submit)="onSubmit()">
+        <div class="form-group">
+          <label for="category">Category:</label>
+          <input type="text" id="category" [(ngModel)]="form.category" name="category" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount:</label>
+          <input type="number" id="amount" [(ngModel)]="form.amount" name="amount" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="date">Date:</label>
+          <input type="date" id="date" [(ngModel)]="form.date" name="date" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-custom btn-block mt-3">Add Expense</button>
+      </form>
+      <div *ngIf="expenseAdded" class="alert alert-success mt-3">Expense added successfully!</div>
+
+      <h4 class="mt-4">Your Expenses:</h4>
+      <ul class="list-group">
+        <li *ngFor="let expense of expenses" class="list-group-item">
+          {{ expense.category }}: ${{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="container mt-5">
+  <h2 class="text-center">Analyze Your Expenses</h2>
+  <div class="card">
+    <div class="card-body">
+      <h5>Total Spent: ${{ analysis.total_spent }}</h5>
+      <h5>Remaining Budget: ${{ analysis.remaining_budget }}</h5>
+
+      <h5>Advice:</h5>
+      <ul class="list-group">
+        <li *ngFor="let tip of analysis.advice" class="list-group-item">{{ tip }}</li>
+      </ul>
+    </div>
+  </div>
+</div>

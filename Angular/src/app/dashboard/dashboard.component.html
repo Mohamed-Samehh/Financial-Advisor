@@ -1,0 +1,23 @@
+<div class="container mt-5">
+  <h2 class="text-center">Dashboard</h2>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Welcome to your Financial Advisor!</h5>
+      <p class="card-text">Manage your finances efficiently and reach your goals.</p>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active">Manage Budget</a>
+        </li>
+        <li class="list-group-item">
+          <a class="nav-link" [routerLink]="['/goals']" routerLinkActive="active">Manage Goals</a>
+        </li>
+        <li class="list-group-item">
+          <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active">Track Expenses</a>
+        </li>
+        <li class="list-group-item">
+          <a class="nav-link" [routerLink]="['/analyze-expenses']" routerLinkActive="active">Analyze Expenses</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
