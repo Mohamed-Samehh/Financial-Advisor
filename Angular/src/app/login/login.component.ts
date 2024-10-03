@@ -16,7 +16,6 @@ export class LoginComponent {
     email: '',
     password: ''
   };
-  message: { text: string; type: 'success' | 'error' } | null = null;
   submitted = false;
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -28,15 +27,13 @@ export class LoginComponent {
       this.authService.login(this.form).subscribe(
         (res) => {
           this.authService.setToken(res.token);
-          this.message = { text: 'Login successful! Redirecting to dashboard...', type: 'success' };
           this.router.navigate(['/dashboard']).then(() => window.location.reload());
         },
         (err) => {
-          this.message = { text: 'Invalid login credentials. Please try again.', type: 'error' };
+          // Handle login error if necessary, e.g., display a toast or set an error message
+          console.error('Login error', err);
         }
       );
-    } else {
-      this.message = { text: 'Please fill out the form correctly.', type: 'error' };
     }
   }
 }

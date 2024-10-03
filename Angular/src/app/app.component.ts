@@ -25,8 +25,10 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.clearToken();
-    this.router.navigate(['/login']);
+    if (confirm('Are you sure you want to logout?')) {
+      this.clearToken();
+      this.router.navigate(['/login']);
+    }
   }
 
   // Token management

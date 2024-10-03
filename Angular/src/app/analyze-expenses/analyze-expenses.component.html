@@ -1,13 +1,18 @@
 <div class="container mt-5">
-  <h2 class="text-center">Analyze Your Expenses</h2>
-  <div class="card">
-    <div class="card-body">
-      <h5>Total Spent: ${{ analysis.total_spent }}</h5>
-      <h5>Remaining Budget: ${{ analysis.remaining_budget }}</h5>
+  <!-- Page Heading -->
+  <h2 class="text-center text-primary display-4 mb-4">Analyze Your Expenses</h2>
 
-      <h5>Advice:</h5>
-      <ul class="list-group">
-        <li *ngFor="let tip of analysis.advice" class="list-group-item">{{ tip }}</li>
+  <!-- Card for Analysis -->
+  <div class="card shadow-lg border-0">
+    <div class="card-body p-5">
+      <!-- Analysis Summary -->
+      <h5 class="text-muted">Total Spent: <span class="text-danger">${{ analysis.total_spent }}</span></h5>
+      <h5 class="text-muted">Remaining Budget: <span class="text-success">${{ analysis.remaining_budget }}</span></h5>
+
+      <!-- Advice Section -->
+      <h5 class="text-muted mt-4">Advice:</h5>
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let tip of analysis.advice" class="list-group-item border-0">{{ tip }}</li>
       </ul>
     </div>
   </div>

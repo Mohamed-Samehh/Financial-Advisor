@@ -1,23 +1,39 @@
 <div class="container mt-5">
-  <h2 class="text-center">Dashboard</h2>
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h5 class="card-title">Welcome to your Financial Advisor!</h5>
-      <p class="card-text">Manage your finances efficiently and reach your goals.</p>
-      <ul class="list-group">
-        <li class="list-group-item">
-          <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active">Manage Budget</a>
+  <!-- Dashboard Heading -->
+  <h2 class="text-center display-4 text-primary mb-4">Dashboard</h2>
+
+  <!-- Card Container -->
+  <div class="card shadow-lg border-0 mb-5">
+    <div class="card-body text-center p-5">
+
+      <!-- Welcome Section -->
+      <h5 class="card-title text-uppercase font-weight-bold">Welcome to Your Financial Advisor!</h5>
+      <p class="card-text text-muted mb-4">Manage your finances efficiently and reach your goals.</p>
+
+      <!-- Navigation Links -->
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item py-3">
+          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/budget']" routerLinkActive="active">
+            <i class="fas fa-wallet text-primary mr-2"></i> &nbsp; Manage Budget
+          </a>
         </li>
-        <li class="list-group-item">
-          <a class="nav-link" [routerLink]="['/goals']" routerLinkActive="active">Manage Goals</a>
+        <li class="list-group-item py-3">
+          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/goals']" routerLinkActive="active">
+            <i class="fas fa-bullseye text-success mr-2"></i> &nbsp; Manage Goals
+          </a>
         </li>
-        <li class="list-group-item">
-          <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active">Track Expenses</a>
+        <li class="list-group-item py-3">
+          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/expenses']" routerLinkActive="active">
+            <i class="fas fa-receipt text-warning mr-2"></i> &nbsp; Track Expenses
+          </a>
         </li>
-        <li class="list-group-item">
-          <a class="nav-link" [routerLink]="['/analyze']" routerLinkActive="active">Analyze Expenses</a>
+        <li class="list-group-item py-3">
+          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/analyze']" routerLinkActive="active">
+            <i class="fas fa-chart-pie text-info mr-2"></i> &nbsp; Analyze Expenses
+          </a>
         </li>
       </ul>
+
     </div>
   </div>
 </div>

@@ -1,0 +1,18 @@
+/* #ffc107 */
+
+.nav-link {
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.navbar-nav .nav-item.active .nav-link {
+  border-bottom: 2px solid #007bff;
+}

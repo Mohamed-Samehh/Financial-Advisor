@@ -1,7 +1,10 @@
 <div class="container mt-5">
-  <h2 class="text-center">Manage Your Budget</h2>
-  <div class="card">
-    <div class="card-body">
+  <!-- Page Heading -->
+  <h2 class="text-center text-primary display-4 mb-4">Manage Your Budget</h2>
+
+  <!-- Card for Form -->
+  <div class="card shadow-lg border-0">
+    <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
            [ngClass]="{
@@ -12,26 +15,33 @@
         <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
       </div>
 
+      <!-- Budget Form -->
       <form (ngSubmit)="onSubmit(budgetForm)" #budgetForm="ngForm">
-        <div class="form-group">
-          <label for="monthlyBudget">Monthly Budget:</label>
-          <input type="number" id="monthlyBudget" [(ngModel)]="budget.monthly_budget" name="monthlyBudget" class="form-control" required>
+        <div class="form-group mb-4">
+          <label for="monthlyBudget" class="font-weight-bold">Monthly Budget:</label>
+          <input type="number" id="monthlyBudget" [(ngModel)]="budget.monthly_budget" name="monthlyBudget"
+                 class="form-control form-control-lg" placeholder="Enter your budget for the month" required>
         </div>
-        <button type="submit" class="btn btn-custom btn-block mt-3">
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">
           {{ budget.id ? 'Update Budget' : 'Set Budget' }}
         </button>
       </form>
     </div>
   </div>
 
-  <h4 class="mt-4">Your Budget:</h4>
-  <div *ngIf="!budget.id" class="text-center">
+  <!-- Display Budget -->
+  <h4 class="mt-5 text-secondary">Your Budget:</h4>
+
+  <div *ngIf="!budget.id" class="text-center text-muted mt-3 mb-5">
     <p>No budget set for this month.</p>
   </div>
-  <div *ngIf="budget.id" class="list-group">
-    <div class="list-group-item d-flex justify-content-between align-items-center">
-      Monthly Budget: ${{ budget.monthly_budget }}
-      <button class="btn btn-link text-danger" (click)="deleteBudget(budget.id)">
+
+  <div *ngIf="budget.id" class="list-group mt-3 mb-5">
+    <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+      <span class="font-weight-bold text-dark">Monthly Budget: ${{ budget.monthly_budget }}</span>
+      <button class="btn btn-outline-danger btn-sm" (click)="deleteBudget(budget.id)">
         <i class="fas fa-trash-alt"></i>
       </button>
     </div>

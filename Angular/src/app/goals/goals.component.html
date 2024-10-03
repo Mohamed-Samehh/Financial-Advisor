@@ -1,7 +1,10 @@
 <div class="container mt-5">
-  <h2 class="text-center">Set Your Financial Goals</h2>
-  <div class="card">
-    <div class="card-body">
+  <!-- Page Heading -->
+  <h2 class="text-center text-primary display-4 mb-4">Set Your Financial Goals</h2>
+
+  <!-- Card for Form -->
+  <div class="card shadow-lg border-0">
+    <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
            [ngClass]="{
@@ -12,15 +15,18 @@
         <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
       </div>
 
+      <!-- Goal Form -->
       <form (ngSubmit)="onSubmit(goalForm)" #goalForm="ngForm">
-        <div class="form-group">
-          <label for="goalName">Goal Name:</label>
+        <!-- Goal Name Field -->
+        <div class="form-group mb-4">
+          <label for="goalName" class="font-weight-bold">Goal Name:</label>
           <input
             type="text"
             id="goalName"
             [(ngModel)]="goal.name"
             name="goalName"
-            class="form-control"
+            class="form-control form-control-lg"
+            placeholder="E.g., Save for a vacation"
             required
             #goalName="ngModel"
             [ngClass]="{
@@ -32,14 +38,17 @@
             <div *ngIf="goalName.errors?.['required']">Goal Name is required.</div>
           </div>
         </div>
-        <div class="form-group">
-          <label for="targetAmount">Target Amount:</label>
+
+        <!-- Target Amount Field -->
+        <div class="form-group mb-4">
+          <label for="targetAmount" class="font-weight-bold">Target Amount:</label>
           <input
             type="number"
             id="targetAmount"
             [(ngModel)]="goal.target_amount"
             name="targetAmount"
-            class="form-control"
+            class="form-control form-control-lg"
+            placeholder="Enter the target amount"
             required
             #targetAmount="ngModel"
             [ngClass]="{
@@ -51,21 +60,26 @@
             <div *ngIf="targetAmount.errors?.['required']">Target Amount is required.</div>
           </div>
         </div>
-        <button type="submit" class="btn btn-custom btn-block mt-3">
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">
           {{ goal.id ? 'Update Goal' : 'Set Goal' }}
         </button>
       </form>
     </div>
   </div>
 
-  <h4 class="mt-4">Your Goal:</h4>
-  <div *ngIf="!goal.id" class="text-center">
+  <!-- Display Goal -->
+  <h4 class="mt-5 text-secondary">Your Goal:</h4>
+
+  <div *ngIf="!goal.id" class="text-center text-muted mt-3 mb-5">
     <p>No goals set for this month.</p>
   </div>
-  <div *ngIf="goal.id" class="list-group">
-    <div class="list-group-item d-flex justify-content-between align-items-center">
-      {{ goal.name }}: save ${{ goal.target_amount }} by the end of this month
-      <button class="btn btn-link text-danger" (click)="deleteGoal(goal.id)">
+
+  <div *ngIf="goal.id" class="list-group mt-3 mb-5">
+    <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm">
+      <span class="font-weight-bold text-dark">{{ goal.name }}: save ${{ goal.target_amount }} by the end of this month</span>
+      <button class="btn btn-outline-danger btn-sm" (click)="deleteGoal(goal.id)">
         <i class="fas fa-trash-alt"></i>
       </button>
     </div>

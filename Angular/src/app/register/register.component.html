@@ -1,28 +1,19 @@
-<div class="container mt-5">
-  <!-- Title Section -->
-  <h2 class="text-center">Register</h2>
-
+<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center bg-light">
   <!-- Card Container -->
-  <div class="card">
-    <div class="card-body">
-      <!-- Success/Error Message -->
-      <div *ngIf="message" class="alert text-center alert-dismissible fade show"
-           [ngClass]="{
-             'alert-success': message.type === 'success',
-             'alert-danger': message.type === 'error'
-           }" role="alert">
-        <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
-        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
-      </div>
+  <div class="card shadow-xl border-0 rounded-lg" style="max-width: 600px; width: 100%; background-color: #f8f9fa;">
+    <div class="card-body p-5">
+      <!-- Title Section -->
+      <h1 class="text-center text-primary display-4 mb-4 font-weight-bold">Create an Account</h1>
+      <p class="text-center text-muted lead mb-4">Please fill in the details below</p>
 
       <!-- Registration Form -->
       <form #registrationForm="ngForm" (ngSubmit)="onSubmit(registrationForm)">
         <!-- Name Field -->
-        <div class="mb-3 position-relative">
-          <label for="name" class="form-label">Name</label>
+        <div class="mb-4 position-relative">
+          <label for="name" class="form-label text-secondary font-weight-bold">Name</label>
           <input
             type="text"
-            class="form-control shadow-sm"
+            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
             id="name"
             name="name"
             [(ngModel)]="form.name"
@@ -42,11 +33,11 @@
         </div>
 
         <!-- Email Field -->
-        <div class="mb-3 position-relative">
-          <label for="email" class="form-label">Email</label>
+        <div class="mb-4 position-relative">
+          <label for="email" class="form-label text-secondary font-weight-bold">Email</label>
           <input
             type="email"
-            class="form-control shadow-sm"
+            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
             id="email"
             name="email"
             [(ngModel)]="form.email"
@@ -65,11 +56,11 @@
         </div>
 
         <!-- Password Field -->
-        <div class="mb-3 position-relative">
-          <label for="password" class="form-label">Password</label>
+        <div class="mb-4 position-relative">
+          <label for="password" class="form-label text-secondary font-weight-bold">Password</label>
           <input
             type="password"
-            class="form-control shadow-sm"
+            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
             id="password"
             name="password"
             [(ngModel)]="form.password"
@@ -89,11 +80,11 @@
         </div>
 
         <!-- Confirm Password Field -->
-        <div class="mb-3 position-relative">
-          <label for="password_confirmation" class="form-label">Confirm Password</label>
+        <div class="mb-4 position-relative">
+          <label for="password_confirmation" class="form-label text-secondary font-weight-bold">Confirm Password</label>
           <input
             type="password"
-            class="form-control shadow-sm"
+            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
             id="password_confirmation"
             name="password_confirmation"
             [(ngModel)]="form.password_confirmation"
@@ -111,13 +102,21 @@
         </div>
 
         <!-- Submit Button -->
-        <button
-          type="submit"
-          class="btn btn-custom btn-block mt-3"
-        >
+        <div class="text-center mt-5">
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg rounded-pill shadow-lg py-2 w-50"
+          >
           Register
-        </button>
+          </button>
+        </div>
       </form>
+
+      <!-- Login Link -->
+      <p class="mt-4 text-center text-muted">
+        Already have an account?
+        <a [routerLink]="['/login']" class="text-decoration-none text-primary font-weight-bold">Login here</a>
+      </p>
     </div>
   </div>
 </div>

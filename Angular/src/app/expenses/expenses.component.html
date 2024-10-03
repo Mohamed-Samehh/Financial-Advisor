@@ -1,7 +1,10 @@
 <div class="container mt-5">
-  <h2 class="text-center">Track Your Expenses</h2>
-  <div class="card">
-    <div class="card-body">
+  <!-- Page Heading -->
+  <h2 class="text-center text-primary display-4 mb-4">Track Your Expenses</h2>
+
+  <!-- Expense Form Card -->
+  <div class="card shadow-lg border-0">
+    <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
            [ngClass]="{
@@ -12,41 +15,47 @@
         <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
       </div>
 
+      <!-- Expense Form -->
       <form (ngSubmit)="onSubmit(expenseForm)" #expenseForm="ngForm">
-        <div class="form-group">
-          <label for="category">Category:</label>
+        <!-- Category -->
+        <div class="form-group mb-4">
+          <label for="category" class="font-weight-bold">Category:</label>
           <input
             type="text"
             id="category"
             [(ngModel)]="form.category"
             name="category"
-            class="form-control"
+            class="form-control form-control-lg"
+            placeholder="E.g., Groceries, Entertainment"
             required
             #category="ngModel"
           />
         </div>
 
-        <div class="form-group">
-          <label for="amount">Amount:</label>
+        <!-- Amount -->
+        <div class="form-group mb-4">
+          <label for="amount" class="font-weight-bold">Amount:</label>
           <input
             type="number"
             id="amount"
             [(ngModel)]="form.amount"
             name="amount"
-            class="form-control"
+            class="form-control form-control-lg"
+            placeholder="Enter amount spent"
             required
             #amount="ngModel"
           />
         </div>
 
-        <div class="form-group">
-          <label for="date">Date:</label>
+        <!-- Date -->
+        <div class="form-group mb-4">
+          <label for="date" class="font-weight-bold">Date:</label>
           <input
             type="date"
             id="date"
             [(ngModel)]="form.date"
             name="date"
-            class="form-control"
+            class="form-control form-control-lg"
             required
             [min]="minDate"
             [max]="maxDate"
@@ -54,42 +63,42 @@
           />
         </div>
 
-        <div class="form-group">
-          <label for="description">Description:</label>
+        <!-- Description -->
+        <div class="form-group mb-4">
+          <label for="description" class="font-weight-bold">Description:</label>
           <textarea
             id="description"
             [(ngModel)]="form.description"
             name="description"
-            class="form-control"
+            class="form-control form-control-lg"
+            placeholder="Add a short description (optional)"
             maxlength="100"
             #description="ngModel"
           ></textarea>
         </div>
 
-        <button type="submit" class="btn btn-custom btn-block mt-3">
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">
           Add Expense
         </button>
-
-        <!-- General Error Message -->
-        <div *ngIf="!expenseForm.valid && submitted" class="text-danger mt-2">
-          Please fill out all required fields correctly.
-        </div>
       </form>
     </div>
   </div>
 
-  <h4 class="mt-4">Your Expenses:</h4>
-  <div *ngIf="expenses.length === 0" class="text-center">
+  <!-- Expenses List -->
+  <h4 class="mt-5 text-secondary">Your Expenses:</h4>
+
+  <div *ngIf="expenses.length === 0" class="text-center text-muted mt-3 mb-5">
     <p>No expenses found for this month.</p>
   </div>
-  <div *ngIf="expenses.length > 0" class="list-group">
-    <li *ngFor="let expense of expenses" class="list-group-item d-flex justify-content-between align-items-center">
+
+  <div *ngIf="expenses.length > 0" class="list-group mt-3 mb-5">
+    <li *ngFor="let expense of expenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div>
         <strong>{{ expense.category }}</strong>: ${{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
         <br>
         <small class="text-muted">{{ expense.description || 'No description' }}</small>
       </div>
-      <button class="btn btn-link text-danger" (click)="deleteExpense(expense.id)">
+      <button class="btn btn-outline-danger btn-sm" (click)="deleteExpense(expense.id)">
         <i class="fas fa-trash-alt"></i>
       </button>
     </li>
