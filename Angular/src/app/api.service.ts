@@ -60,6 +60,14 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/expenses`, data, { headers: this.getHeaders() });
   }
 
+  updateExpense(data: any, id: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/expenses/${id}`, data, { headers: this.getHeaders() });
+  }
+
+  deleteExpense(id: any): Observable<any> {
+      return this.http.delete(`${this.apiUrl}/expenses/${id}`, { headers: this.getHeaders() });
+  }
+
   analyzeExpenses(): Observable<any> {
     return this.http.get(`${this.apiUrl}/analyze-expenses`, { headers: this.getHeaders() });
   }

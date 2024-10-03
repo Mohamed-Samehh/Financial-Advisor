@@ -2,29 +2,96 @@
   <h2 class="text-center">Track Your Expenses</h2>
   <div class="card">
     <div class="card-body">
-      <form (submit)="onSubmit()">
+      <!-- Success/Error Message -->
+      <div *ngIf="message" class="alert text-center alert-dismissible fade show"
+           [ngClass]="{
+             'alert-success': message.type === 'success',
+             'alert-danger': message.type === 'error'
+           }" role="alert">
+        <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
+        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+      </div>
+
+      <form (ngSubmit)="onSubmit(expenseForm)" #expenseForm="ngForm">
         <div class="form-group">
           <label for="category">Category:</label>
-          <input type="text" id="category" [(ngModel)]="form.category" name="category" class="form-control" required>
+          <input
+            type="text"
+            id="category"
+            [(ngModel)]="form.category"
+            name="category"
+            class="form-control"
+            required
+            #category="ngModel"
+          />
         </div>
+
         <div class="form-group">
           <label for="amount">Amount:</label>
-          <input type="number" id="amount" [(ngModel)]="form.amount" name="amount" class="form-control" required>
+          <input
+            type="number"
+            id="amount"
+            [(ngModel)]="form.amount"
+            name="amount"
+            class="form-control"
+            required
+            #amount="ngModel"
+          />
         </div>
+
         <div class="form-group">
           <label for="date">Date:</label>
-          <input type="date" id="date" [(ngModel)]="form.date" name="date" class="form-control" required>
+          <input
+            type="date"
+            id="date"
+            [(ngModel)]="form.date"
+            name="date"
+            class="form-control"
+            required
+            [min]="minDate"
+            [max]="maxDate"
+            #date="ngModel"
+          />
         </div>
-        <button type="submit" class="btn btn-custom btn-block mt-3">Add Expense</button>
-      </form>
-      <div *ngIf="expenseAdded" class="alert alert-success mt-3">Expense added successfully!</div>
 
-      <h4 class="mt-4">Your Expenses:</h4>
-      <ul class="list-group">
-        <li *ngFor="let expense of expenses" class="list-group-item">
-          {{ expense.category }}: ${{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
-        </li>
-      </ul>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea
+            id="description"
+            [(ngModel)]="form.description"
+            name="description"
+            class="form-control"
+            maxlength="100"
+            #description="ngModel"
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-custom btn-block mt-3">
+          Add Expense
+        </button>
+
+        <!-- General Error Message -->
+        <div *ngIf="!expenseForm.valid && submitted" class="text-danger mt-2">
+          Please fill out all required fields correctly.
+        </div>
+      </form>
     </div>
+  </div>
+
+  <h4 class="mt-4">Your Expenses:</h4>
+  <div *ngIf="expenses.length === 0" class="text-center">
+    <p>No expenses found for this month.</p>
+  </div>
+  <div *ngIf="expenses.length > 0" class="list-group">
+    <li *ngFor="let expense of expenses" class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ expense.category }}</strong>: ${{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
+        <br>
+        <small class="text-muted">{{ expense.description || 'No description' }}</small>
+      </div>
+      <button class="btn btn-link text-danger" (click)="deleteExpense(expense.id)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </li>
   </div>
 </div>

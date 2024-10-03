@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./budget.component.css'],
 })
 export class BudgetComponent implements OnInit {
-  budget: any = { id: null, monthly_budget: null }; // Include ID in budget
+  budget: any = { id: null, monthly_budget: null };
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted: boolean = false;
 
@@ -40,7 +40,7 @@ export class BudgetComponent implements OnInit {
         // Update the existing budget
         this.apiService.updateBudget(this.budget, this.budget.id).subscribe(
           (res) => {
-            this.budget = { ...this.budget, ...res.budget }; // Update the budget with the response
+            this.budget = { ...this.budget, ...res.budget };
             this.message = { text: 'Budget updated successfully!', type: 'success' };
           },
           (err) => {
@@ -52,7 +52,7 @@ export class BudgetComponent implements OnInit {
         // Add a new budget
         this.apiService.addBudget(this.budget).subscribe(
           (res) => {
-            this.budget = res.budget; // Add the new budget
+            this.budget = res.budget;
             this.message = { text: 'Budget set successfully!', type: 'success' };
           },
           (err) => {
@@ -68,7 +68,7 @@ export class BudgetComponent implements OnInit {
     if (confirm('Are you sure you want to delete this budget?')) {
       this.apiService.deleteBudget(budgetId).subscribe(
         (res) => {
-          this.budget = { id: null, monthly_budget: null }; // Clear the current budget
+          this.budget = { id: null, monthly_budget: null };
           this.message = { text: 'Budget deleted successfully!', type: 'success' };
         },
         (err) => {

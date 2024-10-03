@@ -5,10 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Goal;
 use App\Models\Budget;
 use App\Models\Expense;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
+    // Retrieve all expenses for the user
+    public function index(Request $request)
+    {
+        $expenses = Expense::where('user_id', $request->user()->id)->get();
+        return response()->json($expenses, 200);
+    }
+
+    // Store a new expense for the user
     public function store(Request $request)
     {
         $request->validate([
@@ -31,12 +40,55 @@ class ExpenseController extends Controller
         ], 201);
     }
 
-    public function index(Request $request)
+    // Show the current month's expenses
+    public function show(Request $request)
     {
-        $expenses = Expense::where('user_id', $request->user()->id)->get();
-        return response()->json($expenses, 200);
+        $user = $request->user();
+        $currentMonth = Carbon::now()->format('Y-m');
+
+        $expenses = Expense::where('user_id', $user->id)
+        ->whereYear('date', Carbon::now()->year)
+        ->whereMonth('date', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
+        ->whereMonth('created_at', Carbon::now()->month)
+        ->orderBy('date', 'desc')
+        ->get();
+
+        if ($expenses->isEmpty()) {
+            return response()->json(['message' => 'No expenses found for this month'], 404);
+        }
+
+        return response()->json(['expenses' => $expenses], 200);
     }
 
+    // Update an existing expense for the user
+    public function update(Request $request, $id)
+    {
+        $userId = $request->user()->id;
+
+        $request->validate([
+            'category' => 'required|string',
+            'amount' => 'required|numeric',
+            'date' => 'required|date',
+        ]);
+
+        $expense = Expense::where('id', $id)->where('user_id', $userId)->first();
+
+        if (!$expense) {
+            return response()->json(['error' => 'Expense not found'], 404);
+        }
+
+        $expense->update([
+            'category' => $request->category,
+            'amount' => $request->amount,
+            'description' => $request->description,
+            'date' => $request->date,
+        ]);
+
+        return response()->json(['message' => 'Expense updated successfully', 'expense' => $expense], 200);
+    }
+
+    // Delete an expense for the user
     public function destroy(Request $request, $id)
     {
         $userId = $request->user()->id;
@@ -51,6 +103,7 @@ class ExpenseController extends Controller
         return response()->json(['error' => 'Expense not found'], 404);
     }
 
+    // Analyze the user's expenses against their budget
     public function analyzeExpenses(Request $request)
     {
         $user = $request->user();
