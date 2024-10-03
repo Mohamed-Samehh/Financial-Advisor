@@ -11,27 +11,71 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./budget.component.css'],
 })
 export class BudgetComponent implements OnInit {
-  budget: any = {};
-  form: any = {};
-  budgetSaved: boolean = false;
+  budget: any = { id: null, monthly_budget: null }; // Include ID in budget
+  message: { text: string; type: 'success' | 'error' } | null = null;
+  submitted: boolean = false;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    this.apiService.getBudget().subscribe((res) => (this.budget = res));
+    this.loadBudget();
   }
 
-  onSubmit() {
-    this.apiService.addBudget(this.form).subscribe(
+  loadBudget() {
+    this.apiService.getBudget().subscribe(
       (res) => {
-        this.budget = res;
-        this.budgetSaved = true;
-        this.form = {};
+        this.budget = res.budget ? { id: res.budget.id, monthly_budget: res.budget.monthly_budget } : { id: null, monthly_budget: null };
       },
-      (error) => {
-        console.error('Error saving budget', error);
-        this.budgetSaved = false;
+      (err) => {
+        console.error('Failed to load budget', err);
       }
     );
+  }
+
+  onSubmit(budgetForm: any) {
+    this.submitted = true;
+
+    if (budgetForm.valid) {
+      if (this.budget.id) {
+        // Update the existing budget
+        this.apiService.updateBudget(this.budget, this.budget.id).subscribe(
+          (res) => {
+            this.budget = { ...this.budget, ...res.budget }; // Update the budget with the response
+            this.message = { text: 'Budget updated successfully!', type: 'success' };
+          },
+          (err) => {
+            console.error('Failed to update budget', err);
+            this.message = { text: 'Error updating budget. Please try again.', type: 'error' };
+          }
+        );
+      } else {
+        // Add a new budget
+        this.apiService.addBudget(this.budget).subscribe(
+          (res) => {
+            this.budget = res.budget; // Add the new budget
+            this.message = { text: 'Budget set successfully!', type: 'success' };
+          },
+          (err) => {
+            console.error('Failed to add budget', err);
+            this.message = { text: 'Error adding budget. Please try again.', type: 'error' };
+          }
+        );
+      }
+    }
+  }
+
+  deleteBudget(budgetId: any) {
+    if (confirm('Are you sure you want to delete this budget?')) {
+      this.apiService.deleteBudget(budgetId).subscribe(
+        (res) => {
+          this.budget = { id: null, monthly_budget: null }; // Clear the current budget
+          this.message = { text: 'Budget deleted successfully!', type: 'success' };
+        },
+        (err) => {
+          console.error('Failed to delete budget', err);
+          this.message = { text: 'Error deleting budget. Please try again.', type: 'error' };
+        }
+      );
+    }
   }
 }

@@ -2,26 +2,72 @@
   <h2 class="text-center">Set Your Financial Goals</h2>
   <div class="card">
     <div class="card-body">
-      <form (submit)="onSubmit()">
+      <!-- Success/Error Message -->
+      <div *ngIf="message" class="alert text-center alert-dismissible fade show"
+           [ngClass]="{
+             'alert-success': message.type === 'success',
+             'alert-danger': message.type === 'error'
+           }" role="alert">
+        <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
+        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+      </div>
+
+      <form (ngSubmit)="onSubmit(goalForm)" #goalForm="ngForm">
         <div class="form-group">
           <label for="goalName">Goal Name:</label>
-          <input type="text" id="goalName" [(ngModel)]="goal.name" name="goalName" class="form-control" required>
+          <input
+            type="text"
+            id="goalName"
+            [(ngModel)]="goal.name"
+            name="goalName"
+            class="form-control"
+            required
+            #goalName="ngModel"
+            [ngClass]="{
+              'is-valid': goalName.valid && (goalName.dirty || goalName.touched || submitted),
+              'is-invalid': goalName.invalid && (goalName.dirty || goalName.touched || submitted)
+            }"
+          />
+          <div *ngIf="goalName.invalid && (goalName.dirty || goalName.touched || submitted)" class="text-danger">
+            <div *ngIf="goalName.errors?.['required']">Goal Name is required.</div>
+          </div>
         </div>
         <div class="form-group">
           <label for="targetAmount">Target Amount:</label>
-          <input type="number" id="targetAmount" [(ngModel)]="goal.target_amount" name="targetAmount" class="form-control" required>
+          <input
+            type="number"
+            id="targetAmount"
+            [(ngModel)]="goal.target_amount"
+            name="targetAmount"
+            class="form-control"
+            required
+            #targetAmount="ngModel"
+            [ngClass]="{
+              'is-valid': targetAmount.valid && (targetAmount.dirty || targetAmount.touched || submitted),
+              'is-invalid': targetAmount.invalid && (targetAmount.dirty || targetAmount.touched || submitted)
+            }"
+          />
+          <div *ngIf="targetAmount.invalid && (targetAmount.dirty || targetAmount.touched || submitted)" class="text-danger">
+            <div *ngIf="targetAmount.errors?.['required']">Target Amount is required.</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="timeFrame">Time Frame (in months):</label>
-          <input type="number" id="timeFrame" [(ngModel)]="goal.time_frame" name="timeFrame" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-custom btn-block mt-3">Set Goal</button>
+        <button type="submit" class="btn btn-custom btn-block mt-3">
+          {{ goal.id ? 'Update Goal' : 'Set Goal' }}
+        </button>
       </form>
-      <div *ngIf="goalSaved" class="alert alert-success mt-3">Goal set successfully!</div>
     </div>
   </div>
-  <h4 class="mt-4">Your Goals:</h4>
-  <ul class="list-group">
-    <li *ngFor="let g of goals" class="list-group-item">{{ g.name }}: ${{ g.target_amount }} in {{ g.time_frame }} months</li>
-  </ul>
+
+  <h4 class="mt-4">Your Goal:</h4>
+  <div *ngIf="!goal.id" class="text-center">
+    <p>No goals set for this month.</p>
+  </div>
+  <div *ngIf="goal.id" class="list-group">
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+      {{ goal.name }}: save ${{ goal.target_amount }} by the end of this month
+      <button class="btn btn-link text-danger" (click)="deleteGoal(goal.id)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
 </div>

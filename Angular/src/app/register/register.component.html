@@ -1,28 +1,122 @@
 <div class="container mt-5">
+  <!-- Title Section -->
   <h2 class="text-center">Register</h2>
+
+  <!-- Card Container -->
   <div class="card">
     <div class="card-body">
-      <form (ngSubmit)="onSubmit()" #registrationForm="ngForm">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input type="text" id="name" [(ngModel)]="form.name" name="name" class="form-control" required>
+      <!-- Success/Error Message -->
+      <div *ngIf="message" class="alert text-center alert-dismissible fade show"
+           [ngClass]="{
+             'alert-success': message.type === 'success',
+             'alert-danger': message.type === 'error'
+           }" role="alert">
+        <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
+        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+      </div>
+
+      <!-- Registration Form -->
+      <form #registrationForm="ngForm" (ngSubmit)="onSubmit(registrationForm)">
+        <!-- Name Field -->
+        <div class="mb-3 position-relative">
+          <label for="name" class="form-label">Name</label>
+          <input
+            type="text"
+            class="form-control shadow-sm"
+            id="name"
+            name="name"
+            [(ngModel)]="form.name"
+            #name="ngModel"
+            required
+            minlength="2"
+            [ngClass]="{
+              'is-valid': name.valid && (name.dirty || name.touched || submitted),
+              'is-invalid': name.invalid && (name.dirty || name.touched || submitted)
+            }"
+            placeholder="Enter your name"
+          />
+          <div *ngIf="name.invalid && (name.dirty || name.touched || submitted)" class="text-danger">
+            <div *ngIf="name.errors?.['required']">Name is required.</div>
+            <div *ngIf="name.errors?.['minlength']">Name must be at least 2 characters long.</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="email" [(ngModel)]="form.email" name="email" class="form-control" required>
+
+        <!-- Email Field -->
+        <div class="mb-3 position-relative">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control shadow-sm"
+            id="email"
+            name="email"
+            [(ngModel)]="form.email"
+            #email="ngModel"
+            required
+            [ngClass]="{
+              'is-valid': email.valid && (email.dirty || email.touched || submitted),
+              'is-invalid': email.invalid && (email.dirty || email.touched || submitted)
+            }"
+            placeholder="Enter your email"
+          />
+          <div *ngIf="email.invalid && (email.dirty || email.touched || submitted)" class="text-danger">
+            <div *ngIf="email.errors?.['required']">Email is required.</div>
+            <div *ngIf="email.errors?.['email']">Invalid email address.</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" id="password" [(ngModel)]="form.password" name="password" class="form-control" required>
+
+        <!-- Password Field -->
+        <div class="mb-3 position-relative">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control shadow-sm"
+            id="password"
+            name="password"
+            [(ngModel)]="form.password"
+            #password="ngModel"
+            required
+            minlength="8"
+            [ngClass]="{
+              'is-valid': password.valid && (password.dirty || password.touched || submitted),
+              'is-invalid': password.invalid && (password.dirty || password.touched || submitted)
+            }"
+            placeholder="Enter your password"
+          />
+          <div *ngIf="password.invalid && (password.dirty || password.touched || submitted)" class="text-danger">
+            <div *ngIf="password.errors?.['required']">Password is required.</div>
+            <div *ngIf="password.errors?.['minlength']">Password must be at least 8 characters long.</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="password_confirmation">Confirm Password:</label>
-          <input type="password" id="password_confirmation" [(ngModel)]="form.password_confirmation" name="password_confirmation" class="form-control" required>
-          <div *ngIf="form.password && form.password_confirmation && form.password !== form.password_confirmation" class="text-danger">
+
+        <!-- Confirm Password Field -->
+        <div class="mb-3 position-relative">
+          <label for="password_confirmation" class="form-label">Confirm Password</label>
+          <input
+            type="password"
+            class="form-control shadow-sm"
+            id="password_confirmation"
+            name="password_confirmation"
+            [(ngModel)]="form.password_confirmation"
+            #password_confirmation="ngModel"
+            required
+            [ngClass]="{
+              'is-valid': password_confirmation.valid && (password_confirmation.dirty || password_confirmation.touched || submitted) && form.password === form.password_confirmation,
+              'is-invalid': password_confirmation.invalid && (password_confirmation.dirty || password_confirmation.touched || submitted) || form.password !== form.password_confirmation
+            }"
+            placeholder="Re-enter your password"
+          />
+          <div *ngIf="form.password !== form.password_confirmation && (password_confirmation.dirty || password_confirmation.touched || submitted)" class="text-danger">
             Passwords do not match.
           </div>
         </div>
-        <button type="submit" class="btn btn-custom btn-block mt-3" [disabled]="!registrationForm.valid || form.password !== form.password_confirmation">Register</button>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-custom btn-block mt-3"
+        >
+          Register
+        </button>
       </form>
     </div>
   </div>

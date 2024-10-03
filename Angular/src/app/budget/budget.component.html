@@ -2,14 +2,38 @@
   <h2 class="text-center">Manage Your Budget</h2>
   <div class="card">
     <div class="card-body">
-      <form (submit)="onSubmit()">
+      <!-- Success/Error Message -->
+      <div *ngIf="message" class="alert text-center alert-dismissible fade show"
+           [ngClass]="{
+             'alert-success': message.type === 'success',
+             'alert-danger': message.type === 'error'
+           }" role="alert">
+        <strong>{{ message.type === 'success' ? 'Success!' : 'Error!' }}</strong> {{ message.text }}
+        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+      </div>
+
+      <form (ngSubmit)="onSubmit(budgetForm)" #budgetForm="ngForm">
         <div class="form-group">
           <label for="monthlyBudget">Monthly Budget:</label>
           <input type="number" id="monthlyBudget" [(ngModel)]="budget.monthly_budget" name="monthlyBudget" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-custom btn-block mt-3">Save Budget</button>
+        <button type="submit" class="btn btn-custom btn-block mt-3">
+          {{ budget.id ? 'Update Budget' : 'Set Budget' }}
+        </button>
       </form>
-      <div *ngIf="budgetSaved" class="alert alert-success mt-3">Budget saved successfully!</div>
+    </div>
+  </div>
+
+  <h4 class="mt-4">Your Budget:</h4>
+  <div *ngIf="!budget.id" class="text-center">
+    <p>No budget set for this month.</p>
+  </div>
+  <div *ngIf="budget.id" class="list-group">
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+      Monthly Budget: ${{ budget.monthly_budget }}
+      <button class="btn btn-link text-danger" (click)="deleteBudget(budget.id)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
   </div>
 </div>

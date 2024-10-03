@@ -12,23 +12,33 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-  form: any = {};
+  form: any = {
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+  };
+  message: { text: string; type: 'success' | 'error' } | null = null;
+  submitted = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onSubmit() {
-    if (this.form.password === this.form.password_confirmation) {
+  onSubmit(registrationForm: any): void {
+    this.submitted = true;
+
+    if (registrationForm.valid && this.form.password === this.form.password_confirmation) {
       this.authService.register(this.form).subscribe(
         (res) => {
           this.authService.setToken(res.token);
-          this.router.navigate(['/dashboard']).then(() => {
-            window.location.reload();
-          });
+          this.message = { text: 'Registration successful! Redirecting to dashboard...', type: 'success' };
+          this.router.navigate(['/dashboard']).then(() => window.location.reload());
         },
-        (err) => this.authService.handleError(err)
+        (err) => {
+          this.message = { text: 'Error occurred during registration. Please try again.', type: 'error' };
+        }
       );
     } else {
-      console.error('Passwords do not match.');
+      this.message = { text: 'Please fill out the form correctly.', type: 'error' };
     }
   }
 }

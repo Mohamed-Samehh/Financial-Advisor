@@ -13,12 +13,15 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/budget/all', [BudgetController::class, 'index']);
     Route::get('/budget', [BudgetController::class, 'show']);
     Route::post('/budget', [BudgetController::class, 'store']);
+    Route::put('/budget/{id}', [BudgetController::class, 'update']);
+    Route::delete('/budget/{id}', [BudgetController::class, 'destroy']);
 
-    Route::get('/goals', [GoalController::class, 'index']);
+    Route::get('/goals/all', [GoalController::class, 'index']);
+    Route::get('/goals', [GoalController::class, 'show']);
     Route::post('/goals', [GoalController::class, 'store']);
-    Route::get('/goals/{id}', [GoalController::class, 'show']);
     Route::put('/goals/{id}', [GoalController::class, 'update']);
     Route::delete('/goals/{id}', [GoalController::class, 'destroy']);
 
