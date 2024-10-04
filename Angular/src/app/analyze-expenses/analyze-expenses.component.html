@@ -1,11 +1,29 @@
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
   <h2 class="text-center text-primary display-4 mb-4">Analyze Your Expenses</h2>
 
   <div class="card shadow-lg border-0">
     <div class="card-body p-5">
-      <h5 class="text-muted">Total Spent: <span class="text-danger">${{ analysis.total_spent }}</span></h5>
-      <h5 class="text-muted">Remaining Budget: <span class="text-success">${{ analysis.remaining_budget }}</span></h5>
-
+      <h5 class="text-muted">Total Spent:
+        <span
+          [ngClass]="{'text-danger': analysis.total_spent > (analysis.monthly_budget * 0.5),
+                      'text-success': analysis.total_spent <= (analysis.monthly_budget * 0.5)}">
+          £{{ analysis.total_spent }}
+        </span>
+      </h5>
+      <h5 class="text-muted">Remaining Allowable Spending:
+        <span
+          [ngClass]="{'text-danger': analysis.maximum_spending_goal < (analysis.monthly_budget - analysis.goal) * 0.5,
+                      'text-success': analysis.maximum_spending_goal >= (analysis.monthly_budget - analysis.goal) * 0.5}">
+          £{{ analysis.maximum_spending_goal }}
+        </span>
+      </h5>
+      <h5 class="text-muted">Remaining Budget:
+        <span
+          [ngClass]="{'text-danger': analysis.remaining_budget < (analysis.monthly_budget * 0.5),
+                      'text-success': analysis.remaining_budget >= (analysis.monthly_budget * 0.5)}">
+          £{{ analysis.remaining_budget }}
+        </span>
+      </h5>
       <canvas id="expensesChart" width="400" height="200"></canvas>
 
       <h5 class="text-muted mt-4">Advice:</h5>

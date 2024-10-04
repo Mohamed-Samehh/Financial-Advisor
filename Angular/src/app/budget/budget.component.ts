@@ -65,17 +65,15 @@ export class BudgetComponent implements OnInit {
   }
 
   deleteBudget(budgetId: any) {
-    if (confirm('Are you sure you want to delete this budget?')) {
-      this.apiService.deleteBudget(budgetId).subscribe(
-        (res) => {
-          this.budget = { id: null, monthly_budget: null };
-          this.message = { text: 'Budget deleted successfully!', type: 'success' };
-        },
-        (err) => {
-          console.error('Failed to delete budget', err);
-          this.message = { text: 'Error deleting budget. Please try again.', type: 'error' };
-        }
-      );
-    }
+    this.apiService.deleteBudget(budgetId).subscribe(
+      (res) => {
+        this.budget = { id: null, monthly_budget: null };
+        this.message = { text: 'Budget deleted successfully!', type: 'success' };
+      },
+      (err) => {
+        console.error('Failed to delete budget', err);
+        this.message = { text: 'Error deleting budget. Please try again.', type: 'error' };
+      }
+    );
   }
 }

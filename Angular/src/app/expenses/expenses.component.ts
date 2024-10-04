@@ -107,17 +107,15 @@ export class ExpensesComponent implements OnInit {
   }
 
   deleteExpense(expenseId: any) {
-    if (confirm('Are you sure you want to delete this expense?')) {
-      this.apiService.deleteExpense(expenseId).subscribe({
-        next: () => {
-          this.expenses = this.expenses.filter(expense => expense.id !== expenseId);
-          this.message = { text: 'Expense deleted successfully!', type: 'success' };
-        },
-        error: (err) => {
-          console.error('Failed to delete expense', err);
-          this.message = { text: 'Error deleting expense. Please try again.', type: 'error' };
-        }
-      });
-    }
+    this.apiService.deleteExpense(expenseId).subscribe({
+      next: () => {
+        this.expenses = this.expenses.filter(expense => expense.id !== expenseId);
+        this.message = { text: 'Expense deleted successfully!', type: 'success' };
+      },
+      error: (err) => {
+        console.error('Failed to delete expense', err);
+        this.message = { text: 'Error deleting expense. Please try again.', type: 'error' };
+      }
+    });
   }
 }

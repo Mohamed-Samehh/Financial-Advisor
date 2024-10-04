@@ -78,7 +78,7 @@
 
   <div *ngIf="goal.id" class="list-group mt-3 mb-5">
     <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm">
-      <span class="font-weight-bold text-dark">{{ goal.name }}: save ${{ goal.target_amount }} by the end of this month</span>
+      <span class="font-weight-bold text-dark">{{ goal.name }}: save £{{ goal.target_amount }} by the end of this month</span>
       <button class="btn btn-outline-danger btn-sm" (click)="deleteGoal(goal.id)">
         <i class="fas fa-trash-alt"></i>
       </button>

@@ -12,6 +12,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/update-password', [AuthController::class, 'updatePassword']);
+    Route::put('/update-profile', [AuthController::class, 'updateProfile']);
+    Route::get('/profile', [AuthController::class, 'getProfile']);
 
     Route::get('/budget/all', [BudgetController::class, 'index']);
     Route::get('/budget', [BudgetController::class, 'show']);

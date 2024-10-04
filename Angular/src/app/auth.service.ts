@@ -40,6 +40,32 @@ export class AuthService {
     );
   }
 
+  // Update profile (name and email)
+  updateProfile(data: { name: string; email: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update-profile`, data, {
+        headers: {
+            Authorization: `Bearer ${this.getToken()}`
+        }
+    });
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profile`, {
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`
+      }
+    });
+  }
+
+  // Update password
+  updatePassword(data: { current_password: string; new_password: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update-password`, data, {
+        headers: {
+            Authorization: `Bearer ${this.getToken()}`
+        }
+    });
+  }
+
   isLoggedIn(): Observable<boolean> {
     return this.loggedIn.asObservable();
   }

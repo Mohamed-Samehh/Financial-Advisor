@@ -149,6 +149,8 @@ class ExpenseController extends Controller
 
         $goalAmount = $goal ? $goal->target_amount : 0;
 
+        $maximumSpendingGoal = $remainingBudget - $goalAmount;
+
         $dailyExpenses = $expenses->groupBy(function($date) {
             return Carbon::parse($date->date)->format('d');
         })->map(function ($row) {
@@ -162,6 +164,7 @@ class ExpenseController extends Controller
             'daily_expenses' => $dailyExpenses,
             'goal' => $goalAmount,
             'monthly_budget' => $monthlyBudget,
+            'maximum_spending_goal' => $maximumSpendingGoal,
         ], 200);
     }
 }

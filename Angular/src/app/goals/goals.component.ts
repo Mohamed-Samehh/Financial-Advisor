@@ -65,17 +65,15 @@ export class GoalsComponent implements OnInit {
   }
 
   deleteGoal(goalId: any) {
-    if (confirm('Are you sure you want to delete this goal?')) {
-      this.apiService.deleteGoal(goalId).subscribe(
-        (res) => {
-          this.goal = { id: null, name: '', target_amount: null };
-          this.message = { text: 'Goal deleted successfully!', type: 'success' };
-        },
-        (err) => {
-          console.error('Failed to delete goal', err);
-          this.message = { text: 'Error deleting goal. Please try again.', type: 'error' };
-        }
-      );
-    }
+    this.apiService.deleteGoal(goalId).subscribe(
+      (res) => {
+        this.goal = { id: null, name: '', target_amount: null };
+        this.message = { text: 'Goal deleted successfully!', type: 'success' };
+      },
+      (err) => {
+        console.error('Failed to delete goal', err);
+        this.message = { text: 'Error deleting goal. Please try again.', type: 'error' };
+      }
+    );
   }
 }
