@@ -34,6 +34,7 @@ export class GoalsComponent implements OnInit {
 
   onSubmit(goalForm: any) {
     this.submitted = true;
+    this.message = null;
 
     if (goalForm.valid) {
       if (this.goal.id) {
@@ -61,6 +62,8 @@ export class GoalsComponent implements OnInit {
           }
         );
       }
+    } else {
+      this.message = { text: 'Please fill in all required fields correctly.', type: 'error' };
     }
   }
 

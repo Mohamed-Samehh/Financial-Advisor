@@ -30,6 +30,9 @@
             required
             #category="ngModel"
           />
+          <div *ngIf="category.invalid && (category.dirty || category.touched || submitted)" class="text-danger">
+            <div *ngIf="category.errors?.['required']">Category is required.</div>
+          </div>
         </div>
 
         <!-- Amount -->
@@ -43,8 +46,13 @@
             class="form-control form-control-lg"
             placeholder="Enter amount spent"
             required
+            min="0"
             #amount="ngModel"
           />
+          <div *ngIf="amount.invalid && (amount.dirty || amount.touched || submitted)" class="text-danger">
+            <div *ngIf="amount.errors?.['required']">Amount is required.</div>
+            <div *ngIf="amount.errors?.['min']">Amount cannot be negative.</div>
+          </div>
         </div>
 
         <!-- Date -->
@@ -61,6 +69,9 @@
             [max]="maxDate"
             #date="ngModel"
           />
+          <div *ngIf="date.invalid && (date.dirty || date.touched || submitted)" class="text-danger">
+            <div *ngIf="date.errors?.['required']">Date is required.</div>
+          </div>
         </div>
 
         <!-- Description -->
@@ -75,6 +86,9 @@
             maxlength="100"
             #description="ngModel"
           ></textarea>
+          <div *ngIf="description.dirty || description.touched || submitted" class="text-danger">
+            <div *ngIf="form.description?.length === 100">Description cannot exceed 100 characters.</div>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">
@@ -94,7 +108,7 @@
   <div *ngIf="expenses.length > 0" class="list-group mt-3 mb-5">
     <li *ngFor="let expense of expenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div>
-        <strong>{{ expense.category }}</strong>: £{{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
+        <strong>{{ expense.category }}</strong>: E£{{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
         <br>
         <small class="text-muted">{{ expense.description || 'No description' }}</small>
       </div>

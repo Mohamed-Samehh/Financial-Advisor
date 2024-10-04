@@ -6,6 +6,11 @@
       <h1 class="text-center text-primary display-3 mb-4 font-weight-bold">Welcome Back</h1>
       <p class="text-center text-muted lead mb-5">Please login to your account</p>
 
+      <!-- Display Error Message if Login Fails -->
+      <div *ngIf="loginError" class="alert alert-danger text-center">
+        {{ loginError }}
+      </div>
+
       <!-- Login Form -->
       <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
         <!-- Email Field -->
@@ -13,7 +18,7 @@
           <label for="email" class="form-label text-secondary font-weight-bold">Email Address</label>
           <input
             type="email"
-            class="form-control form-control-lg shadow-sm p-4 rounded-pill"
+            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
             id="email"
             name="email"
             [(ngModel)]="form.email"
@@ -37,7 +42,7 @@
           <label for="password" class="form-label text-secondary font-weight-bold">Password</label>
           <input
             type="password"
-            class="form-control form-control-lg shadow-sm p-4 rounded-pill"
+            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
             id="password"
             name="password"
             [(ngModel)]="form.password"

@@ -34,6 +34,7 @@ export class BudgetComponent implements OnInit {
 
   onSubmit(budgetForm: any) {
     this.submitted = true;
+    this.message = null;
 
     if (budgetForm.valid) {
       if (this.budget.id) {
@@ -61,6 +62,8 @@ export class BudgetComponent implements OnInit {
           }
         );
       }
+    } else {
+      this.message = { text: 'Please fill in all required fields correctly.', type: 'error' };
     }
   }
 

@@ -88,17 +88,27 @@ export class ExpensesComponent implements OnInit {
         return;
       }
 
-      this.apiService.addExpense(this.form).subscribe({
+      const tempExpense = {
+        category: this.form.category || 'No category',
+        amount: this.form.amount || 0,
+        date: this.form.date || new Date().toISOString().split('T')[0],
+        description: this.form.description || 'No description'
+      };
+
+      this.expenses.unshift(tempExpense);
+
+      this.form = {};
+      this.submitted = false;
+
+      this.apiService.addExpense(tempExpense).subscribe({
         next: (res) => {
-          this.expenses.push(res);
-          this.form = {};
           this.message = { text: 'Expense added successfully!', type: 'success' };
-          this.submitted = false;
+          expenseForm.resetForm();
         },
         error: (err) => {
           console.error('Failed to add expense', err);
+          this.expenses.shift();
           this.message = { text: 'Error adding expense. Please try again.', type: 'error' };
-          this.submitted = false;
         }
       });
     } else {

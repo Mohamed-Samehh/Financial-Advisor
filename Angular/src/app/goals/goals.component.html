@@ -7,12 +7,12 @@
     <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
-           [ngClass]="{
-             'alert-success': message.type === 'success',
-             'alert-danger': message.type === 'error'
-           }" role="alert">
-        <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
-        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+      [ngClass]="{
+        'alert-success': message.type === 'success',
+        'alert-danger': message.type === 'error'
+      }" role="alert">
+      <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
+      <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
       </div>
 
       <!-- Goal Form -->
@@ -50,6 +50,7 @@
             class="form-control form-control-lg"
             placeholder="Enter the target amount"
             required
+            min="0"
             #targetAmount="ngModel"
             [ngClass]="{
               'is-valid': targetAmount.valid && (targetAmount.dirty || targetAmount.touched || submitted),
@@ -58,6 +59,7 @@
           />
           <div *ngIf="targetAmount.invalid && (targetAmount.dirty || targetAmount.touched || submitted)" class="text-danger">
             <div *ngIf="targetAmount.errors?.['required']">Target Amount is required.</div>
+            <div *ngIf="targetAmount.errors?.['min']">Target Amount cannot be negative.</div>
           </div>
         </div>
 
@@ -78,7 +80,7 @@
 
   <div *ngIf="goal.id" class="list-group mt-3 mb-5">
     <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm">
-      <span class="font-weight-bold text-dark">{{ goal.name }}: save £{{ goal.target_amount }} by the end of this month</span>
+      <span class="font-weight-bold text-dark">{{ goal.name }}: save E£{{ goal.target_amount }} by the end of this month</span>
       <button class="btn btn-outline-danger btn-sm" (click)="deleteGoal(goal.id)">
         <i class="fas fa-trash-alt"></i>
       </button>

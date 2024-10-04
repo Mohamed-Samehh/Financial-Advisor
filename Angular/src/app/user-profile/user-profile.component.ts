@@ -53,42 +53,53 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  // Password confirmation validator
   private passwordMatchValidator(form: FormGroup) {
     return form.get('new_password')?.value === form.get('password_confirmation')?.value ? null : { mismatch: true };
   }
 
   onUpdateProfile() {
     this.submittedInfo = true;
+    this.updateInfoSuccess = '';
+    this.updateInfoError = '';
+
     if (this.updateInfoForm.valid) {
       this.authService.updateProfile(this.updateInfoForm.value).subscribe({
         next: () => {
           this.updateInfoSuccess = 'Profile updated successfully!';
           this.updateInfoError = '';
           this.submittedInfo = false;
+          this.updateInfoForm.reset();
         },
         error: (err) => {
-          this.updateInfoError = 'Failed to update profile. Please try again.';
+          this.updateInfoError = err.error?.message || 'Failed to update profile. Please try again.';
           this.updateInfoSuccess = '';
         },
       });
+    } else {
+      this.updateInfoError = 'Please correct the errors in the form.';
     }
   }
 
   onUpdatePassword() {
     this.submittedPassword = true;
+    this.updatePasswordSuccess = '';
+    this.updatePasswordError = '';
+
     if (this.updatePasswordForm.valid) {
       this.authService.updatePassword(this.updatePasswordForm.value).subscribe({
         next: () => {
           this.updatePasswordSuccess = 'Password updated successfully!';
           this.updatePasswordError = '';
           this.submittedPassword = false;
+          this.updatePasswordForm.reset();
         },
         error: (err) => {
-          this.updatePasswordError = 'Current password is incorrect.';
+          this.updatePasswordError = err.error?.message || 'Current password is incorrect.';
           this.updatePasswordSuccess = '';
         },
       });
+    } else {
+      this.updatePasswordError = 'Please correct the errors in the form.';
     }
   }
 }

@@ -1,15 +1,14 @@
 <div class="container mt-5 mb-5">
-  <h2 class="text-primary display-5">User Profile</h2>
+  <!-- Profile Heading -->
+  <h2 class="text-center display-4 text-primary mb-4">User Profile</h2>
 
   <!-- Update Information -->
-  <div class="card mt-3">
-    <div class="card-header">
-      Update Profile Information
-    </div>
-    <div class="card-body">
+  <div class="card shadow-lg border-0 mb-5">
+    <div class="card-header text-uppercase font-weight-bold">Update Profile Information</div>
+    <div class="card-body p-5">
       <form [formGroup]="updateInfoForm" (ngSubmit)="onUpdateProfile()">
         <div class="form-group">
-          <label for="name">Name</label>
+          <label for="name" class="text-muted">Name</label>
           <input
             type="text"
             id="name"
@@ -28,7 +27,7 @@
         </div>
 
         <div class="form-group mt-2">
-          <label for="email">Email</label>
+          <label for="email" class="text-muted">Email</label>
           <input
             type="email"
             id="email"
@@ -56,60 +55,74 @@
   </div>
 
   <!-- Update Password -->
-  <div class="card mt-4">
-    <div class="card-header">
-        Update Password
-    </div>
-    <div class="card-body">
-        <form [formGroup]="updatePasswordForm" (ngSubmit)="onUpdatePassword()">
-          <div class="form-group">
-            <label for="current_password">Current Password</label>
-            <input
-                type="password"
-                id="current_password"
-                formControlName="current_password"
-                class="form-control"
-                placeholder="Enter current password"
-                [ngClass]="{
-                    'is-valid': updatePasswordForm.get('current_password')?.valid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword),
-                    'is-invalid': updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)
-                }"
-            />
-            <div *ngIf="updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)" class="text-danger">
-                <div *ngIf="updatePasswordForm.get('current_password')?.errors?.['required']">Current Password is required.</div>
-            </div>
+  <div class="card shadow-lg border-0 mb-5">
+    <div class="card-header text-uppercase font-weight-bold">Update Password</div>
+    <div class="card-body p-5">
+      <form [formGroup]="updatePasswordForm" (ngSubmit)="onUpdatePassword()">
+        <div class="form-group">
+          <label for="current_password" class="text-muted">Current Password</label>
+          <input
+            type="password"
+            id="current_password"
+            formControlName="current_password"
+            class="form-control"
+            placeholder="Enter current password"
+            [ngClass]="{
+              'is-valid': updatePasswordForm.get('current_password')?.valid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword),
+              'is-invalid': updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)
+            }"
+          />
+          <div *ngIf="updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)" class="text-danger">
+            <div *ngIf="updatePasswordForm.get('current_password')?.errors?.['required']">Current Password is required.</div>
           </div>
+        </div>
 
-            <div class="form-group mt-2">
-                <label for="new_password">New Password</label>
-                <input type="password" id="new_password" formControlName="new_password" class="form-control" placeholder="Enter new password" [ngClass]="{
-                  'is-valid': updatePasswordForm.get('new_password')?.valid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword),
-                  'is-invalid': updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)
-                }"/>
-                <div *ngIf="updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)" class="text-danger">
-                    <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['required']">New Password is required.</div>
-                    <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['minlength']">New Password must be at least 8 characters long.</div>
-                </div>
-            </div>
+        <div class="form-group mt-2">
+          <label for="new_password" class="text-muted">New Password</label>
+          <input
+            type="password"
+            id="new_password"
+            formControlName="new_password"
+            class="form-control"
+            placeholder="Enter new password"
+            [ngClass]="{
+              'is-valid': updatePasswordForm.get('new_password')?.valid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword),
+              'is-invalid': updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)
+            }"
+          />
+          <div *ngIf="updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)" class="text-danger">
+            <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['required']">New Password is required.</div>
+            <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['minlength']">New Password must be at least 8 characters long.</div>
+          </div>
+        </div>
 
-            <div class="form-group mt-2">
-                <label for="password_confirmation">Confirm New Password</label>
-                <input type="password" id="password_confirmation" formControlName="password_confirmation" class="form-control" placeholder="Confirm new password"
-                [ngClass]="{
-                  'is-valid': updatePasswordForm.get('password_confirmation')?.valid && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword),
-                  'is-invalid': updatePasswordForm.get('password_confirmation')?.invalid && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword)
-                }"/>
-                <div *ngIf="updatePasswordForm.errors?.['mismatch'] && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword)" class="text-danger">
-                    Passwords must match.
-                </div>
-            </div>
+        <div class="form-group mt-2">
+          <label for="password_confirmation" class="text-muted">Confirm New Password</label>
+          <input
+            type="password"
+            id="password_confirmation"
+            formControlName="password_confirmation"
+            class="form-control"
+            placeholder="Confirm new password"
+            [ngClass]="{
+              'is-valid': updatePasswordForm.get('password_confirmation')?.valid && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword),
+              'is-invalid': (updatePasswordForm.get('password_confirmation')?.invalid || updatePasswordForm.errors?.['mismatch']) && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword)
+            }"
+          />
+          <div
+            *ngIf="(updatePasswordForm.errors?.['mismatch'] && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword))"
+            class="text-danger"
+          >
+            Passwords must match.
+          </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary mt-3">Update Password</button>
-        </form>
+        <button type="submit" class="btn btn-primary mt-3">Update Password</button>
+      </form>
 
-        <!-- Success/Error Messages -->
-        <div *ngIf="updatePasswordSuccess" class="alert alert-success mt-3">{{ updatePasswordSuccess }}</div>
-        <div *ngIf="updatePasswordError" class="alert alert-danger mt-3">{{ updatePasswordError }}</div>
+      <!-- Success/Error Messages -->
+      <div *ngIf="updatePasswordSuccess" class="alert alert-success mt-3">{{ updatePasswordSuccess }}</div>
+      <div *ngIf="updatePasswordError" class="alert alert-danger mt-3">{{ updatePasswordError }}</div>
     </div>
-</div>
+  </div>
 </div>

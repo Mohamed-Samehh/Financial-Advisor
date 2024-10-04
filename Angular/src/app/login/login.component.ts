@@ -17,6 +17,7 @@ export class LoginComponent {
     password: ''
   };
   submitted = false;
+  loginError: string = '';  // Variable to store the error message
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -30,7 +31,8 @@ export class LoginComponent {
           this.router.navigate(['/dashboard']).then(() => window.location.reload());
         },
         (err) => {
-          // Handle login error if necessary, e.g., display a toast or set an error message
+          // Display a user-friendly error message
+          this.loginError = 'Invalid email or password. Please try again.';  // Customize as needed
           console.error('Login error', err);
         }
       );
