@@ -108,61 +108,60 @@ class ExpenseController extends Controller
     {
         $user = $request->user();
 
-        $budget = Budget::where('user_id', $user->id)->first();
+        $budget = Budget::where('user_id', $user->id)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->first();
 
         if (!$budget) {
-            return response()->json(['error' => 'No budget set for this user'], 404);
+            return response()->json(['error' => 'No budget set for this month'], 404);
         }
 
         $monthlyBudget = $budget->monthly_budget;
 
         $expenses = Expense::where('user_id', $user->id)
-                            ->whereMonth('date', now()->month)
-                            ->get();
+            ->whereYear('date', Carbon::now()->year)
+            ->whereMonth('date', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
+
+        $totalSpent = 0;
 
         if ($expenses->isEmpty()) {
-            return response()->json([
-                'error' => 'No expenses found for the current month',
-                'debug' => $expenses
-            ], 200);
+            $advice[] = 'Great job, no expenses found for the current month.';
+        } else {
+            $totalSpent = $expenses->sum('amount');
+            $advice = [];
+            if ($totalSpent > $monthlyBudget) {
+                $advice[] = 'You have exceeded your monthly budget!';
+            } else {
+                $advice[] = 'You are within your budget.';
+            }
         }
 
-        $totalSpent = $expenses->sum('amount');
         $remainingBudget = $monthlyBudget - $totalSpent;
 
-        $advice = [];
-        if ($totalSpent > $monthlyBudget) {
-            $advice[] = 'You have exceeded your monthly budget!';
-        } else {
-            $advice[] = 'You are within your budget.';
-        }
+        $goal = Goal::where('user_id', $user->id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->first();
 
-        $goals = Goal::where('user_id', $user->id)->get();
+        $goalAmount = $goal ? $goal->target_amount : 0;
 
-        foreach ($goals as $goal) {
-            $goalProgress = $goal->target_amount - $totalSpent;
-            if ($goalProgress <= 0) {
-                $advice[] = "Congratulations! You've reached your goal of '{$goal->name}'.";
-            } else {
-                $advice[] = "To reach your goal of '{$goal->name}', you need to save an additional \${$goalProgress}.";
-            }
-        }
-
-        $categoryTotals = $expenses->groupBy('category')->map(function ($row) {
+        $dailyExpenses = $expenses->groupBy(function($date) {
+            return Carbon::parse($date->date)->format('d');
+        })->map(function ($row) {
             return $row->sum('amount');
-        });
-
-        foreach ($categoryTotals as $category => $total) {
-            if ($total > ($monthlyBudget * 0.3)) {
-                $advice[] = "You're spending too much on {$category}. Consider cutting down.";
-            }
-        }
+        })->sortKeys();
 
         return response()->json([
             'total_spent' => $totalSpent,
             'remaining_budget' => $remainingBudget,
             'advice' => $advice,
-            'expenses_analyzed' => $expenses
+            'daily_expenses' => $dailyExpenses,
+            'goal' => $goalAmount,
+            'monthly_budget' => $monthlyBudget,
         ], 200);
     }
 }
