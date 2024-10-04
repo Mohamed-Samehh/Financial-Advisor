@@ -8,7 +8,7 @@ import { BudgetComponent } from './budget/budget.component';
 import { GoalsComponent } from './goals/goals.component';
 import { AnalyzeExpensesComponent } from './analyze-expenses/analyze-expenses.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
-// import { NotFoundComponent } from './not-found/not-found.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -19,6 +19,6 @@ export const routes: Routes = [
   { path: 'analyze', component: AnalyzeExpensesComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent }
-  // { path: '**', component: NotFoundComponent }
+  { path: 'register', component: RegisterComponent },
+  { path: '**', component: NotFoundComponent }
 ];
