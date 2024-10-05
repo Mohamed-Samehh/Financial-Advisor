@@ -2,8 +2,15 @@
   <!-- Page Heading -->
   <h2 class="text-center text-primary display-4 mb-4">Set Your Financial Goal</h2>
 
+  <!-- Loader while fetching goal -->
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary mt-5" role="status">
+    </div>
+    <p><b>Loading...</b></p>
+  </div>
+
   <!-- Card for Form -->
-  <div class="card shadow-lg border-0">
+  <div class="card shadow-lg border-0" *ngIf="!isLoading"> <!-- Hide card while loading -->
     <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
@@ -72,13 +79,13 @@
   </div>
 
   <!-- Display Goal -->
-  <h4 class="mt-5 text-secondary">Your Goal:</h4>
+  <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Goal:</h4> <!-- Hide while loading -->
 
-  <div *ngIf="!goal.id" class="text-center text-muted mt-3 mb-5">
+  <div *ngIf="!goal.id && !isLoading" class="text-center text-muted mt-3 mb-5"> <!-- Hide while loading -->
     <p>No goal set for this month.</p>
   </div>
 
-  <div *ngIf="goal.id" class="list-group mt-3 mb-5">
+  <div *ngIf="goal.id && !isLoading" class="list-group mt-3 mb-5"> <!-- Hide while loading -->
     <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm">
       <span class="font-weight-bold text-dark">{{ goal.name }}: save E£{{ goal.target_amount }} by the end of this month</span>
       <button class="btn btn-outline-danger btn-sm" (click)="deleteGoal(goal.id)">

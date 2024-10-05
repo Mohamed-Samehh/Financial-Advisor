@@ -17,6 +17,7 @@ export class ExpenseHistoryComponent implements OnInit {
   goalByMonth: { [key: string]: any } = {};
   sortedMonths: string[] = [];
   message: { text: string; type: 'success' | 'error' } | null = null;
+  isLoading = true;
 
   constructor(private apiService: ApiService) {}
 
@@ -25,6 +26,7 @@ export class ExpenseHistoryComponent implements OnInit {
   }
 
   loadExpenseHistory() {
+    this.isLoading = true;
     forkJoin({
       expenses: this.apiService.getAllExpenses(),
       budgets: this.apiService.getAllBudgets(),
@@ -38,10 +40,13 @@ export class ExpenseHistoryComponent implements OnInit {
 
         this.groupExpensesByMonth(expenses);
         this.assignBudgetsAndGoals(budgetsArray, goalsArray);
+
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error fetching data:', err);
         this.message = { text: 'Failed to load data. Please try again.', type: 'error' };
+        this.isLoading = false;
       }
     });
   }

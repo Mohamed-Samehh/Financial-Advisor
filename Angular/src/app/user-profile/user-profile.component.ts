@@ -20,6 +20,7 @@ export class UserProfileComponent implements OnInit {
   userData: any;
   submittedInfo = false;
   submittedPassword = false;
+  isLoading = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.updateInfoForm = this.fb.group({
@@ -39,6 +40,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   fetchUserProfile() {
+    this.isLoading = true;
     this.authService.getProfile().subscribe({
       next: (data) => {
         this.userData = data.user;
@@ -46,9 +48,11 @@ export class UserProfileComponent implements OnInit {
           name: this.userData.name,
           email: this.userData.email,
         });
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Failed to fetch user profile:', err);
+        this.isLoading = false;
       },
     });
   }

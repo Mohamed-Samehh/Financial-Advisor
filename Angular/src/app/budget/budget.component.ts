@@ -14,6 +14,7 @@ export class BudgetComponent implements OnInit {
   budget: any = { id: null, monthly_budget: null };
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted: boolean = false;
+  isLoading: boolean = true; // Variable to track loading state
 
   constructor(private apiService: ApiService) {}
 
@@ -25,9 +26,11 @@ export class BudgetComponent implements OnInit {
     this.apiService.getBudget().subscribe(
       (res) => {
         this.budget = res.budget ? { id: res.budget.id, monthly_budget: res.budget.monthly_budget } : { id: null, monthly_budget: null };
+        this.isLoading = false; // Stop loader after data is loaded
       },
       (err) => {
         console.error('Failed to load budget', err);
+        this.isLoading = false; // Stop loader even in case of error
       }
     );
   }

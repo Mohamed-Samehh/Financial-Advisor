@@ -2,8 +2,15 @@
   <!-- Profile Heading -->
   <h2 class="text-center display-4 text-primary mb-4">User Profile</h2>
 
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary mt-5" role="status">
+    </div>
+    <p><b>Loading...</b></p>
+  </div>
+
   <!-- Update Information -->
-  <div class="card shadow-lg border-0 mb-5">
+  <div class="card shadow-lg border-0 mb-5" *ngIf="!isLoading">
     <div class="card-header text-uppercase font-weight-bold">Update Profile Information</div>
     <div class="card-body p-5">
       <form [formGroup]="updateInfoForm" (ngSubmit)="onUpdateProfile()">
@@ -55,7 +62,7 @@
   </div>
 
   <!-- Update Password -->
-  <div class="card shadow-lg border-0 mb-5">
+  <div class="card shadow-lg border-0 mb-5" *ngIf="!isLoading">
     <div class="card-header text-uppercase font-weight-bold">Update Password</div>
     <div class="card-body p-5">
       <form [formGroup]="updatePasswordForm" (ngSubmit)="onUpdatePassword()">

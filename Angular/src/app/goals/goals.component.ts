@@ -14,6 +14,7 @@ export class GoalsComponent implements OnInit {
   goal: any = { id: null, name: '', target_amount: null };
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted: boolean = false;
+  isLoading: boolean = true;
 
   constructor(private apiService: ApiService) {}
 
@@ -25,9 +26,11 @@ export class GoalsComponent implements OnInit {
     this.apiService.getGoal().subscribe(
       (res) => {
         this.goal = res.goal ? { id: res.goal.id, name: res.goal.name, target_amount: res.goal.target_amount } : { id: null, name: '', target_amount: null };
+        this.isLoading = false;
       },
       (err) => {
         console.error('Failed to load goal', err);
+        this.isLoading = false;
       }
     );
   }
