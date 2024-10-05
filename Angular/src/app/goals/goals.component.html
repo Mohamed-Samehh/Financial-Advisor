@@ -10,7 +10,7 @@
   </div>
 
   <!-- Card for Form -->
-  <div class="card shadow-lg border-0" *ngIf="!isLoading"> <!-- Hide card while loading -->
+  <div class="card shadow-lg border-0" *ngIf="!isLoading">
     <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
@@ -79,13 +79,13 @@
   </div>
 
   <!-- Display Goal -->
-  <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Goal:</h4> <!-- Hide while loading -->
+  <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Goal:</h4>
 
-  <div *ngIf="!goal.id && !isLoading" class="text-center text-muted mt-3 mb-5"> <!-- Hide while loading -->
+  <div *ngIf="!goal.id && !isLoading" class="text-center text-muted mt-3 mb-5">
     <p>No goal set for this month.</p>
   </div>
 
-  <div *ngIf="goal.id && !isLoading" class="list-group mt-3 mb-5"> <!-- Hide while loading -->
+  <div *ngIf="goal.id && !isLoading" class="list-group mt-3 mb-5">
     <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm">
       <span class="font-weight-bold text-dark">{{ goal.name }}: save E£{{ goal.target_amount }} by the end of this month</span>
       <button class="btn btn-outline-danger btn-sm" (click)="deleteGoal(goal.id)">

@@ -2,8 +2,15 @@
   <!-- Page Heading -->
   <h2 class="text-center text-primary display-4 mb-4">Track Your Expenses</h2>
 
+  <!-- Loader while fetching expenses -->
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary mt-5" role="status">
+    </div>
+    <p><b>Loading...</b></p>
+  </div>
+
   <!-- Expense Form Card -->
-  <div class="card shadow-lg border-0">
+  <div class="card shadow-lg border-0" *ngIf="!isLoading">
     <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
@@ -107,13 +114,13 @@
   </div>
 
   <!-- Expenses List -->
-  <h4 class="mt-5 text-secondary">Your Expenses:</h4>
+  <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Expenses:</h4>
 
-  <div *ngIf="expenses.length === 0" class="text-center text-muted mt-3 mb-5">
+  <div *ngIf="!isLoading && expenses.length === 0" class="text-center text-muted mt-3 mb-5">
     <p>No expenses found for this month.</p>
   </div>
 
-  <div *ngIf="expenses.length > 0" class="list-group mt-3 mb-5">
+  <div *ngIf="!isLoading && expenses.length > 0" class="list-group mt-3 mb-5">
     <li *ngFor="let expense of paginatedExpenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div>
         <strong>{{ expense.category }}</strong>: E£{{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
@@ -127,7 +134,7 @@
   </div>
 
   <!-- Pagination Controls -->
-  <nav *ngIf="totalPages > 1">
+  <nav *ngIf="!isLoading && totalPages > 1">
     <ul class="pagination justify-content-center">
       <li class="page-item" [class.disabled]="currentPage === 1">
         <button class="page-link" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>

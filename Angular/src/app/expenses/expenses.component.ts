@@ -17,8 +17,7 @@ export class ExpensesComponent implements OnInit {
   submitted: boolean = false;
   minDate: string;
   maxDate: string;
-
-  // Pagination variables
+  isLoading: boolean = false;
   currentPage: number = 1;
   itemsPerPage: number = 5;
   paginatedExpenses: any[] = [];
@@ -39,16 +38,19 @@ export class ExpensesComponent implements OnInit {
   }
 
   loadExpenses() {
+    this.isLoading = true;
     this.apiService.getExpenses().subscribe({
       next: (res) => {
         this.expenses = res.expenses || [];
         this.totalPages = Math.ceil(this.expenses.length / this.itemsPerPage);
         this.updatePaginatedExpenses();
         this.updatePageNumbers();
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error fetching expenses:', err);
         this.expenses = [];
+        this.isLoading = false;
       }
     });
   }
@@ -147,12 +149,10 @@ export class ExpensesComponent implements OnInit {
     this.paginatedExpenses = this.expenses.slice(start, start + this.itemsPerPage);
   }
 
-  // Update page numbers
   updatePageNumbers() {
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  // Pagination controls
   changePage(page: number) {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
