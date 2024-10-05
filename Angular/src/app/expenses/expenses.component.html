@@ -114,7 +114,7 @@
   </div>
 
   <div *ngIf="expenses.length > 0" class="list-group mt-3 mb-5">
-    <li *ngFor="let expense of paginatedExpenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
+    <li *ngFor="let expense of expenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div>
         <strong>{{ expense.category }}</strong>: E£{{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
         <br>
@@ -125,19 +125,4 @@
       </button>
     </li>
   </div>
-
-  <!-- Pagination Controls -->
-  <nav *ngIf="totalPages > 1">
-    <ul class="pagination justify-content-center">
-      <li class="page-item" [class.disabled]="currentPage === 1">
-        <button class="page-link" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
-      </li>
-      <li *ngFor="let page of pages" class="page-item" [class.active]="page === currentPage">
-        <button class="page-link" (click)="changePage(page)">{{ page }}</button>
-      </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages">
-        <button class="page-link" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
-      </li>
-    </ul>
-  </nav>
 </div>
