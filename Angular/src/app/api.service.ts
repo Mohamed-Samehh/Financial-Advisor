@@ -18,6 +18,10 @@ export class ApiService {
   }
 
   // Budget
+  getAllBudgets(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/budget/all`, { headers: this.getHeaders() });
+  }
+
   getBudget(): Observable<any> {
     return this.http.get(`${this.apiUrl}/budget`, { headers: this.getHeaders() });
   }
@@ -35,29 +39,33 @@ export class ApiService {
   }
 
   // Goals
+  getAllGoals(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/goal/all`, { headers: this.getHeaders() });
+  }
+
   getGoal(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/goals`, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/goal`, { headers: this.getHeaders() });
   }
 
   addGoal(data: any): Observable<any> {
-      return this.http.post(`${this.apiUrl}/goals`, data, { headers: this.getHeaders() });
+      return this.http.post(`${this.apiUrl}/goal`, data, { headers: this.getHeaders() });
   }
 
   updateGoal(data: any, goalId: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/goals/${goalId}`, data, { headers: this.getHeaders() });
+    return this.http.put(`${this.apiUrl}/goal/${goalId}`, data, { headers: this.getHeaders() });
   }
 
   deleteGoal(goalId: any): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/goals/${goalId}`, { headers: this.getHeaders() });
+    return this.http.delete(`${this.apiUrl}/goal/${goalId}`, { headers: this.getHeaders() });
   }
 
   // Expenses
-  getExpenses(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/expenses`, { headers: this.getHeaders() });
-  }
-
   getAllExpenses(): Observable<any> {
     return this.http.get(`${this.apiUrl}/expenses/all`, { headers: this.getHeaders() });
+  }
+
+  getExpenses(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/expenses`, { headers: this.getHeaders() });
   }
 
   addExpense(data: any): Observable<any> {

@@ -22,11 +22,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/budget/{id}', [BudgetController::class, 'update']);
     Route::delete('/budget/{id}', [BudgetController::class, 'destroy']);
 
-    Route::get('/goals/all', [GoalController::class, 'index']);
-    Route::get('/goals', [GoalController::class, 'show']);
-    Route::post('/goals', [GoalController::class, 'store']);
-    Route::put('/goals/{id}', [GoalController::class, 'update']);
-    Route::delete('/goals/{id}', [GoalController::class, 'destroy']);
+    Route::get('/goal/all', [GoalController::class, 'index']);
+    Route::get('/goal', [GoalController::class, 'show']);
+    Route::post('/goal', [GoalController::class, 'store']);
+    Route::put('/goal/{id}', [GoalController::class, 'update']);
+    Route::delete('/goal/{id}', [GoalController::class, 'destroy']);
 
     Route::get('/expenses/all', [ExpenseController::class, 'index']);
     Route::get('/expenses', [ExpenseController::class, 'show']);
