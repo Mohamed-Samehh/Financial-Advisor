@@ -52,7 +52,7 @@ export class AnalyzeExpensesComponent implements OnInit {
         labels: days,
         datasets: [
           {
-            label: 'Remaining Budget (After Expenses)',
+            label: 'Remaining Budget',
             data: cumulativeExpenses,
             borderColor: '#FF6384',
             backgroundColor: 'rgba(255,99,132,0.2)',

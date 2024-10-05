@@ -1,0 +1,34 @@
+<div class="container mt-5 mb-4">
+  <h2 class="text-center display-4 text-primary mb-4">Expense History</h2>
+
+  <div *ngIf="message" class="alert" [ngClass]="{'alert-success': message.type === 'success', 'alert-danger': message.type === 'error'}" role="alert">
+    {{ message.text }}
+  </div>
+
+  <!-- Message when no expenses are found -->
+  <div *ngIf="sortedMonths.length === 0" class="alert alert-info" role="alert">
+    You haven't added any expenses yet.
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div *ngFor="let monthYear of sortedMonths" class="card mb-4 shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">{{ monthYear }}</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li *ngFor="let expense of expensesByMonth[monthYear]" class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Category:</strong> {{ expense.category }} <br>
+                <strong>Amount:</strong> E£{{ expense.amount }} <br>
+                <strong>Description:</strong> {{ expense.description }} <br>
+                <strong>Date:</strong> {{ expense.date }}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

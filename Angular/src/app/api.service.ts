@@ -56,6 +56,10 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/expenses`, { headers: this.getHeaders() });
   }
 
+  getAllExpenses(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/expenses/all`, { headers: this.getHeaders() });
+  }
+
   addExpense(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/expenses`, data, { headers: this.getHeaders() });
   }
