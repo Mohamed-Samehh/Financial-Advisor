@@ -8,11 +8,12 @@ import { Chart } from 'chart.js/auto';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './analyze-expenses.component.html',
-  styleUrl: './analyze-expenses.component.css'
+  styleUrls: ['./analyze-expenses.component.css']
 })
 export class AnalyzeExpensesComponent implements OnInit {
   analysis: any = {};
   chart: any;
+  categoryChart: any;
 
   constructor(private apiService: ApiService) {}
 
@@ -20,6 +21,12 @@ export class AnalyzeExpensesComponent implements OnInit {
     this.apiService.analyzeExpenses().subscribe((res) => {
       this.analysis = res;
       this.createChart();
+    });
+
+    this.apiService.getExpenses().subscribe((response) => {
+      if (Array.isArray(response.expenses)) {
+        this.createPieChart(response.expenses);
+      }
     });
   }
 
@@ -94,6 +101,43 @@ export class AnalyzeExpensesComponent implements OnInit {
               display: true,
               text: 'Amount ($)'
             }
+          }
+        }
+      }
+    });
+  }
+
+  createPieChart(expenses: any[]) {
+    const ctx = document.getElementById('categoryChart') as HTMLCanvasElement;
+
+    const categoryMap = new Map<string, number>();
+
+    expenses.forEach((expense: any) => {
+      if (categoryMap.has(expense.category)) {
+        categoryMap.set(expense.category, categoryMap.get(expense.category)! + expense.amount);
+      } else {
+        categoryMap.set(expense.category, expense.amount);
+      }
+    });
+
+    const categories = Array.from(categoryMap.keys());
+    const amounts = Array.from(categoryMap.values());
+
+    this.categoryChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: categories,
+        datasets: [{
+          data: amounts,
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
           }
         }
       }
