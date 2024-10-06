@@ -38,11 +38,11 @@
             <div class="card-body">
               <ng-container *ngIf="expensesByMonth[monthYear].length > 0; else noData">
                 <div *ngIf="budgetByMonth[monthYear] || goalByMonth[monthYear]" class="mb-3">
-                  <div *ngIf="goalByMonth[monthYear]"
+                  <div
                         class="alert"
                         [ngClass]="isGoalSuccessful(monthYear) ? 'alert-success' : 'alert-danger'"
                         role="alert">
-                    <strong>{{ isGoalSuccessful(monthYear) ? "You've successfully met your goal!" : "Unfortunately, you didn't reach your goal" }}</strong>
+                    <strong>{{ isGoalSuccessful(monthYear) ? "You've successfully achieved your financial target!" : "Unfortunately, you didn't meet your financial target this time." }}</strong>
                   </div>
                   <p *ngIf="budgetByMonth[monthYear]">
                     <strong>Budget:</strong> E£{{ formatNumber(budgetByMonth[monthYear].monthly_budget) }}

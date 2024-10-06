@@ -77,7 +77,7 @@ export class ExpenseHistoryComponent implements OnInit {
     const goalTarget = this.goalByMonth[monthYear]?.target_amount || 0;
     const totalExpenses = this.totalExpensesByMonth[monthYear] || 0;
 
-    return totalExpenses <= (budget - goalTarget);
+    return totalExpenses <= budget && totalExpenses <= (budget - goalTarget);
   }
 
 

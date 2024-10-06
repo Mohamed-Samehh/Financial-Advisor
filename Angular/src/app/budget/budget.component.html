@@ -34,7 +34,7 @@
             class="form-control form-control-lg"
             placeholder="Enter your budget for the month"
             required
-            min="0"
+            min="1"
             #monthlyBudget="ngModel"
             [ngClass]="{
               'is-valid': monthlyBudget.valid && (monthlyBudget.dirty || monthlyBudget.touched || submitted),
@@ -43,9 +43,10 @@
           />
           <div *ngIf="monthlyBudget.invalid && (monthlyBudget.dirty || monthlyBudget.touched || submitted)" class="text-danger">
             <div *ngIf="monthlyBudget.errors?.['required']">Monthly Budget is required.</div>
-            <div *ngIf="monthlyBudget.errors?.['min']">Monthly Budget cannot be negative.</div>
+            <div *ngIf="monthlyBudget.errors?.['min']">Monthly Budget must be greater than 0.</div>
           </div>
         </div>
+
 
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">
