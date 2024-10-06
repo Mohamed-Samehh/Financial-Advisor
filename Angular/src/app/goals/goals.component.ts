@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-goals',
   standalone: true,
   imports: [FormsModule, CommonModule],
+  providers: [DecimalPipe],
   templateUrl: './goals.component.html',
   styleUrls: ['./goals.component.css'],
 })
@@ -17,7 +18,7 @@ export class GoalsComponent implements OnInit {
   isLoading: boolean = true;
   budget: number | null = null;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {}
 
   ngOnInit() {
     this.loadBudgetAndGoal();
@@ -34,6 +35,11 @@ export class GoalsComponent implements OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  formatNumber(value: number): string {
+    const formattedValue = this.decimalPipe.transform(value, '1.0-0');
+    return formattedValue !== null ? formattedValue : '0';
   }
 
   loadGoal() {

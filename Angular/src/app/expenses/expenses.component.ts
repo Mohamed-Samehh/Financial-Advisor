@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  providers: [DecimalPipe],
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
 })
@@ -24,7 +25,7 @@ export class ExpensesComponent implements OnInit {
   totalPages: number = 0;
   pages: number[] = [];
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
@@ -53,6 +54,11 @@ export class ExpensesComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  formatNumber(value: number): string {
+    const formattedValue = this.decimalPipe.transform(value, '1.0-0');
+    return formattedValue !== null ? formattedValue : '0';
   }
 
   setLastDayOfMonth(month: number, year: number): string {

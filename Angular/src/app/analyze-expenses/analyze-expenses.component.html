@@ -1,43 +1,80 @@
 <div class="container mt-5 mb-5">
   <h2 class="text-center text-primary display-4 mb-4">Analyze Your Expenses</h2>
 
-  <!-- Expense summary and pie chart side by side -->
-  <div class="row">
+  <!-- Expense Summary and Insights Side by Side -->
+  <div class="row mb-4">
     <!-- Left Column: Expense Summary -->
     <div class="col-md-6">
+      <!-- Expense Summary Section -->
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
-          <h5 class="text-muted">Expense Summary</h5>
+          <h5 class="text-muted"><b>Expense Summary</b></h5>
 
-          <div *ngIf="!analysis.total_spent" class="text-center mt-5 mb-5">
+          <!-- Expense Summary Loader -->
+          <div *ngIf="isLoading" class="text-center mt-5 mb-5">
             <div class="spinner-border text-primary" role="status"></div>
             <p><b>Loading...</b></p>
           </div>
 
-          <div *ngIf="analysis.total_spent">
+          <!-- If there are no budget -->
+          <div *ngIf="!isLoading && !analysis.monthly_budget">
+            <h5 class="text-muted">Kindly set a budget to proceed!</h5>
+          </div>
+
+          <!-- If there are no expenses -->
+          <div *ngIf="!isLoading && !analysis.total_spent && analysis.monthly_budget">
+            <h5 class="text-muted">Total Spent: <span class="text-success">E£0</span></h5>
+
+            <h5 class="text-muted">Remaining Allowable Spending: <span class="text-success">E£{{ formatNumber(analysis.monthly_budget - analysis.goal) }}</span></h5>
+
+            <h5 class="text-muted">Remaining Budget: <span class="text-success">E£{{ formatNumber(analysis.monthly_budget) }}</span></h5>
+          </div>
+
+          <!-- If there are expenses -->
+          <div *ngIf="!isLoading && analysis.total_spent">
             <h5 class="text-muted">Total Spent:
               <span
                 [ngClass]="{'text-danger': analysis.total_spent > (analysis.monthly_budget * 0.5),
                             'text-success': analysis.total_spent <= (analysis.monthly_budget * 0.5)}">
-                E£{{ analysis.total_spent }}
+                E£{{ formatNumber(analysis.total_spent) }}
               </span>
             </h5>
             <h5 class="text-muted">Remaining Allowable Spending:
               <span
                 [ngClass]="{'text-danger': analysis.maximum_spending_goal < (analysis.monthly_budget - analysis.goal) * 0.5,
                             'text-success': analysis.maximum_spending_goal >= (analysis.monthly_budget - analysis.goal) * 0.5}">
-                E£{{ analysis.maximum_spending_goal }}
+                E£{{ formatNumber(analysis.maximum_spending_goal) }}
               </span>
             </h5>
             <h5 class="text-muted">Remaining Budget:
               <span
                 [ngClass]="{'text-danger': analysis.remaining_budget < (analysis.monthly_budget * 0.5),
                             'text-success': analysis.remaining_budget >= (analysis.monthly_budget * 0.5)}">
-                E£{{ analysis.remaining_budget }}
+                E£{{ formatNumber(analysis.remaining_budget) }}
               </span>
             </h5>
           </div>
 
+        </div>
+      </div>
+
+      <!-- Insights Section -->
+      <div class="card shadow-lg border-0 mb-4">
+        <div class="card-body p-4">
+          <h5 class="text-muted"><b>Insights:</b></h5>
+          <div *ngIf="isLoading && !analysis.advice" class="text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p><b>Loading...</b></p>
+          </div>
+
+          <!-- If there are no budget -->
+          <div *ngIf="!isLoading && !analysis.monthly_budget">
+            <h5 class="text-muted">Kindly set a budget to proceed!</h5>
+          </div>
+
+          <ul class="list-group list-group-flush">
+            <li *ngFor="let tip of analysis.advice" class="list-group-item border-0">{{ tip }}</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -46,15 +83,34 @@
     <div class="col-md-6">
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
-          <h5 class="text-center text-muted">Expense Categories</h5>
-          <div *ngIf="!categoryChart" class="text-center mt-5">
-            <div class="spinner-border text-primary mt-5" role="status"></div>
+          <h5 class="text-center text-muted"><b>Expense Categories</b></h5>
+
+          <div *ngIf="!categoryChart && isLoading" class="text-center mt-3">
+            <div class="spinner-border text-primary mt-3" role="status"></div>
             <p><b>Loading...</b></p>
           </div>
-          <canvas id="categoryChart" height="200"></canvas>
+
+          <div class="position-relative">
+            <canvas *ngIf="!isLoading && analysis.monthly_budget" id="categoryChart" height="200"></canvas>
+
+            <!-- If there are no budget -->
+            <div *ngIf="!isLoading && !analysis.monthly_budget">
+              <h5 class="text-muted text-center mt-4">Kindly set a budget to proceed!</h5>
+            </div>
+
+            <!-- If there are no expenses -->
+            <div *ngIf="errorMessage && !isLoading && analysis.monthly_budget" class="no-expenses-message text-muted text-center">
+              <p>No expenses to display</p> <!-- {{ errorMessage }} -->
+            </div>
+
+            <!-- <div *ngIf="!categoryChart && !isLoading && !errorMessage" class="no-expenses-message text-muted text-center">
+              <p>No expenses to display</p>
+            </div> -->
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- Full Width Line Chart: Remaining Budget Over Days -->
@@ -62,30 +118,22 @@
     <div class="col-md-12">
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
-          <h5 class="text-center text-muted">Remaining Budget Over Days</h5>
-          <div *ngIf="!chart" class="text-center mt-5">
+          <h5 class="text-center text-muted"><b>Remaining Budget Over Days</b></h5>
+          <div *ngIf="!chart && isLoading" class="text-center mt-5">
             <div class="spinner-border text-primary mt-5" role="status"></div>
             <p><b>Loading...</b></p>
           </div>
-          <canvas id="expensesChart" height="200"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Advice Section -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card shadow-lg border-0">
-        <div class="card-body p-4">
-          <h5 class="text-muted">Insights:</h5>
-          <div *ngIf="!analysis.advice" class="text-center">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p><b>Loading...</b></p>
+          <div class="position-relative">
+            <canvas id="expensesChart" height="200"></canvas>
+
+            <!-- If there are no budget -->
+            <div *ngIf="!isLoading && !analysis.monthly_budget" class="no-expenses-message" style="width: 100%;">
+              <h5 class="text-muted text-center mt-5 mb-5">Kindly set a budget to proceed!</h5>
+            </div>
+
           </div>
-          <ul class="list-group list-group-flush">
-            <li *ngFor="let tip of analysis.advice" class="list-group-item border-0">{{ tip }}</li>
-          </ul>
+
         </div>
       </div>
     </div>

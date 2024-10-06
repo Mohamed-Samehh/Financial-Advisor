@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-expense-history',
   standalone: true,
   imports: [CommonModule],
+  providers: [DecimalPipe],
   templateUrl: './expense-history.component.html',
   styleUrls: ['./expense-history.component.css']
 })
@@ -24,7 +25,7 @@ export class ExpenseHistoryComponent implements OnInit {
   pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
   currentYear = new Date().getFullYear();
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {}
 
   ngOnInit() {
     this.loadExpenseHistory();
@@ -64,6 +65,11 @@ export class ExpenseHistoryComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  formatNumber(value: number): string {
+    const formattedValue = this.decimalPipe.transform(value, '1.0-0');
+    return formattedValue !== null ? formattedValue : '0';
   }
 
   isGoalSuccessful(monthYear: string): boolean {

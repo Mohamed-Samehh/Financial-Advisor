@@ -23,11 +23,11 @@
             <div class="d-flex align-items-center">
               <span *ngIf="totalExpensesByMonth[monthYear]"
                     [ngStyle]="{'color': isGoalSuccessful(monthYear) ? 'green' : 'red'}">
-                Total: E£{{ totalExpensesByMonth[monthYear] }} &nbsp;
+                Total: E£{{ formatNumber(totalExpensesByMonth[monthYear]) }} &nbsp;
               </span>
               <!-- <i class="fa fa-exclamation-triangle text-warning"></i> -->
               <span *ngIf="!totalExpensesByMonth[monthYear]">
-                No expenses made this month &nbsp;
+                No expenses made &nbsp;
               </span>
               <i class="fa fa-sort text-dark"></i>
             </div>
@@ -45,10 +45,10 @@
                     <strong>{{ isGoalSuccessful(monthYear) ? "You've successfully met your goal!" : "Unfortunately, you didn't reach your goal" }}</strong>
                   </div>
                   <p *ngIf="budgetByMonth[monthYear]">
-                    <strong>Budget:</strong> E£{{ budgetByMonth[monthYear].monthly_budget }}
+                    <strong>Budget:</strong> E£{{ formatNumber(budgetByMonth[monthYear].monthly_budget) }}
                   </p>
                   <p *ngIf="goalByMonth[monthYear]">
-                    <strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ goalByMonth[monthYear].target_amount }}
+                    <strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ formatNumber(goalByMonth[monthYear].target_amount) }}
                   </p>
                 </div>
 
@@ -57,7 +57,7 @@
                   <li *ngFor="let expense of expensesByMonth[monthYear]" class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                       <strong>Category:</strong> {{ expense.category }} <br>
-                      <strong>Amount:</strong> E£{{ expense.amount }} <br>
+                      <strong>Amount:</strong> E£{{ formatNumber(expense.amount) }} <br>
                       <strong>Description:</strong> {{ expense.description }} <br>
                       <strong>Date:</strong> {{ expense.date }}
                     </div>

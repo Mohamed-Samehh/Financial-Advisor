@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { Chart } from 'chart.js/auto';
 
 @Component({
   selector: 'app-analyze-expenses',
   standalone: true,
   imports: [CommonModule],
+  providers: [DecimalPipe],
   templateUrl: './analyze-expenses.component.html',
   styleUrls: ['./analyze-expenses.component.css']
 })
@@ -14,20 +15,35 @@ export class AnalyzeExpensesComponent implements OnInit {
   analysis: any = {};
   chart: any;
   categoryChart: any;
+  isLoading: boolean = true;
+  errorMessage: string | null = null; // Added error message property
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {}
 
   ngOnInit() {
     this.apiService.analyzeExpenses().subscribe((res) => {
       this.analysis = res;
       this.createChart();
+      this.isLoading = false;
     });
 
-    this.apiService.getExpenses().subscribe((response) => {
-      if (Array.isArray(response.expenses)) {
-        this.createPieChart(response.expenses);
+    this.apiService.getExpenses().subscribe(
+      (response) => {
+        if (Array.isArray(response.expenses)) {
+          this.createPieChart(response.expenses);
+        }
+        this.isLoading = false; // Stop loading if response is received
+      },
+      (error) => {
+        this.errorMessage = 'Failed to load expenses.'; // Set error message
+        this.isLoading = false; // Stop loading
       }
-    });
+    );
+  }
+
+  formatNumber(value: number): string {
+    const formattedValue = this.decimalPipe.transform(value, '1.0-0');
+    return formattedValue !== null ? formattedValue : '0';
   }
 
   createChart() {

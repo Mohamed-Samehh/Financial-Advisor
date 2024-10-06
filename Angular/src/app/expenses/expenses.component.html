@@ -124,7 +124,7 @@
   <div *ngIf="!isLoading && expenses.length > 0" class="list-group mt-3 mb-5">
     <li *ngFor="let expense of paginatedExpenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div>
-        <strong>{{ expense.category }}</strong>: E£{{ expense.amount }} on {{ expense.date | date:'mediumDate' }}
+        <strong>{{ expense.category }}</strong>: E£{{ formatNumber(expense.amount) }} on {{ expense.date | date:'mediumDate' }}
         <br>
         <small class="text-muted">{{ expense.description || 'No description' }}</small>
       </div>
