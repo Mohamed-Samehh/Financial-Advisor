@@ -7,27 +7,37 @@
     <div class="col-md-6">
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
-          <h5 class="text-muted">Total Spent:
-            <span
-              [ngClass]="{'text-danger': analysis.total_spent > (analysis.monthly_budget * 0.5),
-                          'text-success': analysis.total_spent <= (analysis.monthly_budget * 0.5)}">
-              E£{{ analysis.total_spent }}
-            </span>
-          </h5>
-          <h5 class="text-muted">Remaining Allowable Spending:
-            <span
-              [ngClass]="{'text-danger': analysis.maximum_spending_goal < (analysis.monthly_budget - analysis.goal) * 0.5,
-                          'text-success': analysis.maximum_spending_goal >= (analysis.monthly_budget - analysis.goal) * 0.5}">
-              E£{{ analysis.maximum_spending_goal }}
-            </span>
-          </h5>
-          <h5 class="text-muted">Remaining Budget:
-            <span
-              [ngClass]="{'text-danger': analysis.remaining_budget < (analysis.monthly_budget * 0.5),
-                          'text-success': analysis.remaining_budget >= (analysis.monthly_budget * 0.5)}">
-              E£{{ analysis.remaining_budget }}
-            </span>
-          </h5>
+          <h5 class="text-muted">Expense Summary</h5>
+
+          <div *ngIf="!analysis.total_spent" class="text-center mt-5 mb-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p><b>Loading...</b></p>
+          </div>
+
+          <div *ngIf="analysis.total_spent">
+            <h5 class="text-muted">Total Spent:
+              <span
+                [ngClass]="{'text-danger': analysis.total_spent > (analysis.monthly_budget * 0.5),
+                            'text-success': analysis.total_spent <= (analysis.monthly_budget * 0.5)}">
+                E£{{ analysis.total_spent }}
+              </span>
+            </h5>
+            <h5 class="text-muted">Remaining Allowable Spending:
+              <span
+                [ngClass]="{'text-danger': analysis.maximum_spending_goal < (analysis.monthly_budget - analysis.goal) * 0.5,
+                            'text-success': analysis.maximum_spending_goal >= (analysis.monthly_budget - analysis.goal) * 0.5}">
+                E£{{ analysis.maximum_spending_goal }}
+              </span>
+            </h5>
+            <h5 class="text-muted">Remaining Budget:
+              <span
+                [ngClass]="{'text-danger': analysis.remaining_budget < (analysis.monthly_budget * 0.5),
+                            'text-success': analysis.remaining_budget >= (analysis.monthly_budget * 0.5)}">
+                E£{{ analysis.remaining_budget }}
+              </span>
+            </h5>
+          </div>
+
         </div>
       </div>
     </div>
@@ -37,6 +47,10 @@
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
           <h5 class="text-center text-muted">Expense Categories</h5>
+          <div *ngIf="!categoryChart" class="text-center mt-5">
+            <div class="spinner-border text-primary mt-5" role="status"></div>
+            <p><b>Loading...</b></p>
+          </div>
           <canvas id="categoryChart" height="200"></canvas>
         </div>
       </div>
@@ -49,6 +63,10 @@
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
           <h5 class="text-center text-muted">Remaining Budget Over Days</h5>
+          <div *ngIf="!chart" class="text-center mt-5">
+            <div class="spinner-border text-primary mt-5" role="status"></div>
+            <p><b>Loading...</b></p>
+          </div>
           <canvas id="expensesChart" height="200"></canvas>
         </div>
       </div>
@@ -61,6 +79,10 @@
       <div class="card shadow-lg border-0">
         <div class="card-body p-4">
           <h5 class="text-muted">Insights:</h5>
+          <div *ngIf="!analysis.advice" class="text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p><b>Loading...</b></p>
+          </div>
           <ul class="list-group list-group-flush">
             <li *ngFor="let tip of analysis.advice" class="list-group-item border-0">{{ tip }}</li>
           </ul>

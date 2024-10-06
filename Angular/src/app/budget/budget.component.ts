@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class BudgetComponent implements OnInit {
   budget: any = { id: null, monthly_budget: null };
+  goal: any = { id: null, name: '', target_amount: null };
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted: boolean = false;
   isLoading: boolean = true;
@@ -19,17 +20,34 @@ export class BudgetComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    this.loadBudget();
+    this.loadBudgetAndGoal();
   }
 
-  loadBudget() {
+  loadBudgetAndGoal() {
     this.apiService.getBudget().subscribe(
       (res) => {
         this.budget = res.budget ? { id: res.budget.id, monthly_budget: res.budget.monthly_budget } : { id: null, monthly_budget: null };
-        this.isLoading = false;
+        if (this.budget.id) {
+          this.loadGoal();
+        } else {
+          this.isLoading = false;
+        }
       },
       (err) => {
         console.error('Failed to load budget', err);
+        this.isLoading = false;
+      }
+    );
+  }
+
+  loadGoal() {
+    this.apiService.getGoal().subscribe(
+      (res) => {
+        this.goal = res.goal ? { id: res.goal.id, name: res.goal.name, target_amount: res.goal.target_amount } : { id: null, name: '', target_amount: null };
+        this.isLoading = false;
+      },
+      (err) => {
+        console.error('Failed to load goal', err);
         this.isLoading = false;
       }
     );
@@ -73,6 +91,9 @@ export class BudgetComponent implements OnInit {
   deleteBudget(budgetId: any) {
     this.apiService.deleteBudget(budgetId).subscribe(
       (res) => {
+        if (this.goal.id) {
+          this.deleteGoal(this.goal.id);
+        }
         this.budget = { id: null, monthly_budget: null };
         this.message = { text: 'Budget deleted successfully!', type: 'success' };
       },
@@ -82,4 +103,16 @@ export class BudgetComponent implements OnInit {
       }
     );
   }
+
+  deleteGoal(goalId: any) {
+    this.apiService.deleteGoal(goalId).subscribe(
+      (res) => {
+        this.goal = { id: null, name: '', target_amount: null };
+      },
+      (err) => {
+        console.error('Failed to delete goal', err);
+      }
+    );
+  }
+
 }

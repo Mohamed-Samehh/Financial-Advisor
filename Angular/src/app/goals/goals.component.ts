@@ -15,11 +15,25 @@ export class GoalsComponent implements OnInit {
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted: boolean = false;
   isLoading: boolean = true;
+  budget: number | null = null;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    this.loadGoal();
+    this.loadBudgetAndGoal();
+  }
+
+  loadBudgetAndGoal() {
+    this.apiService.getBudget().subscribe(
+      (res) => {
+        this.budget = res.budget ? res.budget.monthly_budget : null;
+        this.loadGoal();
+      },
+      (err) => {
+        console.error('Failed to load budget', err);
+        this.isLoading = false;
+      }
+    );
   }
 
   loadGoal() {
@@ -39,9 +53,19 @@ export class GoalsComponent implements OnInit {
     this.submitted = true;
     this.message = null;
 
+    if (!this.budget) {
+      this.message = { text: 'Please set a budget before setting a goal.', type: 'error' };
+      return;
+    }
+
+    // Check if the goal is less than 100% of the budget
+    if (this.goal.target_amount >= this.budget) {
+      this.message = { text: 'Goal cannot be equal to or more than the budget.', type: 'error' };
+      return;
+    }
+
     if (goalForm.valid) {
       if (this.goal.id) {
-        // Update the existing goal
         this.apiService.updateGoal(this.goal, this.goal.id).subscribe(
           (res) => {
             this.goal = { ...this.goal, ...res.goal };
@@ -53,7 +77,6 @@ export class GoalsComponent implements OnInit {
           }
         );
       } else {
-        // Add a new goal
         this.apiService.addGoal(this.goal).subscribe(
           (res) => {
             this.goal = res.goal;

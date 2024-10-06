@@ -21,9 +21,12 @@
           <div class="card-header font-weight-bold bg-light text-dark d-flex justify-content-between align-items-center" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" aria-controls="collapse">
             <h5 class="mb-0">{{ monthYear }}</h5>
             <div class="d-flex align-items-center">
-              <span *ngIf="totalExpensesByMonth[monthYear]">Total: E£{{ totalExpensesByMonth[monthYear] }} &nbsp; </span>
+              <span *ngIf="totalExpensesByMonth[monthYear]"
+                    [ngStyle]="{'color': isGoalSuccessful(monthYear) ? 'green' : 'red'}">
+                Total: E£{{ totalExpensesByMonth[monthYear] }} &nbsp;
+              </span>
+              <!-- <i class="fa fa-exclamation-triangle text-warning"></i> -->
               <span *ngIf="!totalExpensesByMonth[monthYear]">
-                <!-- <i class="fa fa-exclamation-triangle text-warning"></i> -->
                 No expenses made this month &nbsp;
               </span>
               <i class="fa fa-sort text-dark"></i>
@@ -35,6 +38,12 @@
             <div class="card-body">
               <ng-container *ngIf="expensesByMonth[monthYear].length > 0; else noData">
                 <div *ngIf="budgetByMonth[monthYear] || goalByMonth[monthYear]" class="mb-3">
+                  <div *ngIf="goalByMonth[monthYear]"
+                        class="alert"
+                        [ngClass]="isGoalSuccessful(monthYear) ? 'alert-success' : 'alert-danger'"
+                        role="alert">
+                    <strong>{{ isGoalSuccessful(monthYear) ? "You've successfully met your goal!" : "Unfortunately, you didn't reach your goal" }}</strong>
+                  </div>
                   <p *ngIf="budgetByMonth[monthYear]">
                     <strong>Budget:</strong> E£{{ budgetByMonth[monthYear].monthly_budget }}
                   </p>

@@ -45,11 +45,10 @@ export class ExpenseHistoryComponent implements OnInit {
 
         this.groupExpensesByMonth(expenses);
 
-        // Get the current month and year
-        const currentMonth = new Date().getMonth() + 1; // getMonth() is zero-based
+        // Get the month before the current month and and get the current year
+        const currentMonth = new Date().getMonth(); // getMonth() is zero-based
         const currentYear = new Date().getFullYear();
 
-        // Filter to include all months up to the current month of the current year
         this.sortedMonths = this.sortedMonths.filter(monthYear => {
           const [year, month] = monthYear.split('-').map(Number);
           return year < currentYear || (year === currentYear && month <= currentMonth);
@@ -67,7 +66,15 @@ export class ExpenseHistoryComponent implements OnInit {
     });
   }
 
-  // Grouping expenses by month
+  isGoalSuccessful(monthYear: string): boolean {
+    const budget = this.budgetByMonth[monthYear]?.monthly_budget || 0;
+    const goalTarget = this.goalByMonth[monthYear]?.target_amount || 0;
+    const totalExpenses = this.totalExpensesByMonth[monthYear] || 0;
+
+    return totalExpenses <= (budget - goalTarget);
+  }
+
+
   groupExpensesByMonth(expenses: any[]) {
     expenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -101,7 +108,6 @@ export class ExpenseHistoryComponent implements OnInit {
     });
   }
 
-  // Assign budgets and goals to each month
   assignBudgetsAndGoals(budgets: any[], goals: any[]) {
     budgets.forEach(budget => {
       const budgetDate = new Date(budget.created_at);
@@ -109,7 +115,6 @@ export class ExpenseHistoryComponent implements OnInit {
       this.budgetByMonth[monthYear] = budget;
     });
 
-    // Match goals based on their creation month
     goals.forEach(goal => {
       const goalDate = new Date(goal.created_at);
       const monthYear = `${goalDate.getFullYear()}-${String(goalDate.getMonth() + 1).padStart(2, '0')}`;
@@ -117,7 +122,6 @@ export class ExpenseHistoryComponent implements OnInit {
     });
   }
 
-  // Pagination controls
   getMonthsForCurrentPage(): string[] {
     const startIndex = (this.currentPage - 1) * this.monthsPerPage;
     return this.sortedMonths.slice(startIndex, startIndex + this.monthsPerPage);
