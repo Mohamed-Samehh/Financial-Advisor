@@ -3,8 +3,7 @@
 
   <!-- Loader while fetching data -->
   <div *ngIf="isLoading" class="text-center mt-5">
-    <div class="spinner-border text-primary mt-5" role="status">
-    </div>
+    <div class="spinner-border text-primary mt-5" role="status"></div>
     <p><b>Loading...</b></p>
   </div>
 
@@ -14,45 +13,73 @@
       {{ message.text }}
     </div>
 
-    <!-- Message when no expenses are found -->
-    <div *ngIf="sortedMonths.length === 0" class="alert alert-info" role="alert">
-      You haven't added any expenses yet.
-    </div>
+    <div class="row mt-5">
+      <div class="col-md-12 mt-4">
+        <div *ngFor="let monthYear of getMonthsForCurrentPage(); let i = index" class="card mb-4 shadow-lg border-0">
 
-    <div class="row">
-      <div class="col-md-12">
-        <div *ngFor="let monthYear of sortedMonths" class="card mb-4 shadow-lg border-0">
-          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <!-- Collapsible Card Header -->
+          <div class="card-header font-weight-bold bg-light text-dark d-flex justify-content-between align-items-center" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" aria-controls="collapse">
             <h5 class="mb-0">{{ monthYear }}</h5>
-            <div class="d-flex flex-column">
-              <span>Total: E£{{ totalExpensesByMonth[monthYear] }}</span>
+            <div class="d-flex align-items-center">
+              <span *ngIf="totalExpensesByMonth[monthYear]">Total: E£{{ totalExpensesByMonth[monthYear] }} &nbsp; </span>
+              <span *ngIf="!totalExpensesByMonth[monthYear]">
+                <!-- <i class="fa fa-exclamation-triangle text-warning"></i> -->
+                No expenses made this month &nbsp;
+              </span>
+              <i class="fa fa-sort text-dark"></i>
             </div>
           </div>
 
-          <div class="card-body">
-            <div *ngIf="budgetByMonth[monthYear] || goalByMonth[monthYear]" class="mb-3">
-              <p *ngIf="budgetByMonth[monthYear]">
-                <strong>Budget:</strong> E£{{ budgetByMonth[monthYear].monthly_budget }}
-              </p>
-              <p *ngIf="goalByMonth[monthYear]">
-                <strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ goalByMonth[monthYear].target_amount }}
-              </p>
-            </div>
-
-            <!-- Expense List -->
-            <ul class="list-group">
-              <li *ngFor="let expense of expensesByMonth[monthYear]" class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  <strong>Category:</strong> {{ expense.category }} <br>
-                  <strong>Amount:</strong> E£{{ expense.amount }} <br>
-                  <strong>Description:</strong> {{ expense.description }} <br>
-                  <strong>Date:</strong> {{ expense.date }}
+          <!-- Collapsible Content -->
+          <div [id]="'collapse' + i" class="collapse">
+            <div class="card-body">
+              <ng-container *ngIf="expensesByMonth[monthYear].length > 0; else noData">
+                <div *ngIf="budgetByMonth[monthYear] || goalByMonth[monthYear]" class="mb-3">
+                  <p *ngIf="budgetByMonth[monthYear]">
+                    <strong>Budget:</strong> E£{{ budgetByMonth[monthYear].monthly_budget }}
+                  </p>
+                  <p *ngIf="goalByMonth[monthYear]">
+                    <strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ goalByMonth[monthYear].target_amount }}
+                  </p>
                 </div>
-              </li>
-            </ul>
+
+                <!-- Expense List -->
+                <ul class="list-group">
+                  <li *ngFor="let expense of expensesByMonth[monthYear]" class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>Category:</strong> {{ expense.category }} <br>
+                      <strong>Amount:</strong> E£{{ expense.amount }} <br>
+                      <strong>Description:</strong> {{ expense.description }} <br>
+                      <strong>Date:</strong> {{ expense.date }}
+                    </div>
+                  </li>
+                </ul>
+              </ng-container>
+              <!-- No Data Template -->
+              <ng-template #noData>
+                <p class="text-muted">No expenses made this month.</p>
+              </ng-template>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
+
+    <!-- Pagination Controls -->
+    <nav *ngIf="sortedMonths.length > 0" aria-label="Page navigation example" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" href="javascript:void(0)" (click)="previousPage()">Previous</a>
+        </li>
+        <li *ngFor="let page of pages" class="page-item" [class.active]="page === currentPage">
+          <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" href="javascript:void(0)" (click)="nextPage()">Next</a>
+        </li>
+      </ul>
+    </nav>
+
   </div>
 </div>
