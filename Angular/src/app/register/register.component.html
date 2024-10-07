@@ -6,6 +6,11 @@
       <h1 class="text-center text-primary display-4 mb-4 font-weight-bold">Create an Account</h1>
       <p class="text-center text-muted lead mb-4">Please fill in the details below</p>
 
+      <!-- Display error or success messages -->
+      <div *ngIf="message" class="alert text-center" [ngClass]="{'alert-success': message.type === 'success', 'alert-danger': message.type === 'error'}">
+        {{ message.text }}
+      </div>
+
       <!-- Registration Form -->
       <form #registrationForm="ngForm" (ngSubmit)="onSubmit(registrationForm)">
         <!-- Name Field -->
@@ -101,13 +106,19 @@
           </div>
         </div>
 
-        <!-- Submit Button -->
+        <!-- Submit Button and Loader -->
         <div class="text-center mt-5">
           <button
             type="submit"
             class="btn btn-primary btn-lg rounded-pill shadow-lg py-2 w-50"
+            [disabled]="isLoading"
           >
-          Register
+            <span *ngIf="!isLoading">Register</span>
+            <span *ngIf="isLoading">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </span>
           </button>
         </div>
       </form>

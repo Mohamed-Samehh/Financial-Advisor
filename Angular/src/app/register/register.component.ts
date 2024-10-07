@@ -20,6 +20,7 @@ export class RegisterComponent {
   };
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted = false;
+  isLoading = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -27,13 +28,18 @@ export class RegisterComponent {
     this.submitted = true;
 
     if (registrationForm.valid && this.form.password === this.form.password_confirmation) {
+      this.isLoading = true;
       this.authService.register(this.form).subscribe(
         (res) => {
           this.authService.setToken(res.token);
           this.message = { text: 'Registration successful! Redirecting to dashboard...', type: 'success' };
-          this.router.navigate(['/dashboard']).then(() => window.location.reload());
+          this.router.navigate(['/dashboard']).then(() => {
+            this.isLoading = false;
+            window.location.reload();
+          });
         },
         (err) => {
+          this.isLoading = false;
           this.message = { text: 'Error occurred during registration. Please try again.', type: 'error' };
         }
       );

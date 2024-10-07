@@ -17,7 +17,8 @@ export class LoginComponent {
     password: ''
   };
   submitted = false;
-  loginError: string = '';  // Variable to store the error message
+  loginError: string = '';
+  loading = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -25,14 +26,16 @@ export class LoginComponent {
     this.submitted = true;
 
     if (loginForm.valid) {
+      this.loading = true;
       this.authService.login(this.form).subscribe(
         (res) => {
           this.authService.setToken(res.token);
+          this.loading = false;
           this.router.navigate(['/dashboard']).then(() => window.location.reload());
         },
         (err) => {
-          // Display a user-friendly error message
-          this.loginError = 'Invalid email or password. Please try again.';  // Customize as needed
+          this.loading = false;
+          this.loginError = 'Invalid email or password. Please try again.';
           console.error('Login error', err);
         }
       );
