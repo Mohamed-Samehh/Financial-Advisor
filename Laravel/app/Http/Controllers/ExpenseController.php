@@ -131,7 +131,7 @@ class ExpenseController extends Controller
         $totalSpent = 0;
 
         if ($expenses->isEmpty()) {
-            $advice[] = 'Great job, no expenses found for the current month.';
+            $advice[] = 'Great job, no expenses made for the current month so far. Keep saving!';
         } else {
             $totalSpent = $expenses->sum('amount');
             $advice = [];
@@ -152,6 +152,17 @@ class ExpenseController extends Controller
         $goalAmount = $goal ? $goal->target_amount : 0;
 
         $maximumSpendingGoal = $remainingBudget - $goalAmount;
+
+        if ($goalAmount == 0) {
+            $advice[] = 'No goal was set for this month.';
+        } else {
+            $advice = [];
+            if (($totalSpent > $goalAmount) && $goalAmount !== 0) {
+                $advice[] = 'You have exceeded your goal!';
+            } else {
+                $advice[] = 'You are within your goal.';
+            }
+        }
 
         $dailyExpenses = $expenses->groupBy(function($date) {
             return Carbon::parse($date->date)->format('d');
