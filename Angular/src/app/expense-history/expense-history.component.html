@@ -4,7 +4,7 @@
   <!-- Loader while fetching data -->
   <div *ngIf="isLoading" class="text-center mt-5">
     <div class="spinner-border text-primary mt-5" role="status"></div>
-    <p><b>Loading...</b></p>
+    <p><b>Processing...</b></p>
   </div>
 
   <!-- Content is shown only after loading is finished -->
@@ -22,10 +22,9 @@
             <h5 class="mb-0">{{ monthYear }}</h5>
             <div class="d-flex align-items-center">
               <span *ngIf="totalExpensesByMonth[monthYear]"
-                    [ngStyle]="{'color': isGoalSuccessful(monthYear) ? 'green' : 'red'}">
+                    [ngStyle]="{'color': Expense_summary(monthYear) === 'goal_met' ? 'green' : 'red'}">
                 Total: E£{{ formatNumber(totalExpensesByMonth[monthYear]) }} &nbsp;
               </span>
-              <!-- <i class="fa fa-exclamation-triangle text-warning"></i> -->
               <span *ngIf="!totalExpensesByMonth[monthYear]">
                 No expenses made &nbsp;
               </span>
@@ -37,19 +36,41 @@
           <div [id]="'collapse' + i" class="collapse">
             <div class="card-body">
               <ng-container *ngIf="expensesByMonth[monthYear].length > 0; else noData">
-                <div *ngIf="budgetByMonth[monthYear] || goalByMonth[monthYear]" class="mb-3">
-                  <div
-                        class="alert"
-                        [ngClass]="isGoalSuccessful(monthYear) ? 'alert-success' : 'alert-danger'"
-                        role="alert">
-                    <strong>{{ isGoalSuccessful(monthYear) ? "You've successfully achieved your financial target!" : "Unfortunately, you didn't meet your financial target this time." }}</strong>
+                <div class="mb-3">
+                  <!-- Budget Message -->
+                  <div *ngIf="budgetByMonth[monthYear]; else noBudgetMessage">
+                    <p>
+                      <strong>Budget:</strong> E£{{ formatNumber(budgetByMonth[monthYear].monthly_budget) }}
+                    </p>
                   </div>
-                  <p *ngIf="budgetByMonth[monthYear]">
-                    <strong>Budget:</strong> E£{{ formatNumber(budgetByMonth[monthYear].monthly_budget) }}
-                  </p>
-                  <p *ngIf="goalByMonth[monthYear]">
-                    <strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ formatNumber(goalByMonth[monthYear].target_amount) }}
-                  </p>
+                  <!-- No Budget Message -->
+                  <ng-template #noBudgetMessage>
+                    <p class="text-muted"><strong>No budget was set for this month.</strong></p>
+                  </ng-template>
+
+                  <!-- Goal Message -->
+                  <div *ngIf="goalByMonth[monthYear]; else noGoalMessage">
+                    <p>
+                      <strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ formatNumber(goalByMonth[monthYear].target_amount) }}
+                    </p>
+                  </div>
+                  <!-- No Goal Message -->
+                  <ng-template #noGoalMessage>
+                    <p class="text-muted"><strong>No goal was set for this month.</strong></p>
+                  </ng-template>
+                </div>
+
+                <!-- Display goal/budget messages -->
+                <div *ngIf="goalByMonth[monthYear] && Expense_summary(monthYear) === 'goal_met'" class="alert alert-success" role="alert">
+                  <strong>Goal Achieved!</strong> You've successfully reached your financial goal for this month. Keep up the great work! 🎉
+                </div>
+
+                <div *ngIf="goalByMonth[monthYear] && Expense_summary(monthYear) === 'goal_not_met'" class="alert alert-warning" role="alert">
+                  <strong>Goal Not Met!</strong> Unfortunately, the financial goal for this month wasn't reached.
+                </div>
+
+                <div *ngIf="budgetByMonth[monthYear] && Expense_summary(monthYear) === 'budget_surpassed'" class="alert alert-danger" role="alert">
+                  <strong>Budget Exceeded!</strong> You've gone over your budget for this month. ⚠️
                 </div>
 
                 <!-- Expense List -->
@@ -64,6 +85,7 @@
                   </li>
                 </ul>
               </ng-container>
+
               <!-- No Data Template -->
               <ng-template #noData>
                 <p class="text-muted">No expenses made this month.</p>

@@ -13,7 +13,7 @@
           <!-- Expense Summary Loader -->
           <div *ngIf="isLoading" class="text-center mt-5 mb-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p><b>Loading...</b></p>
+            <p><b>Processing...</b></p>
           </div>
 
           <!-- If there are no budget -->
@@ -64,7 +64,7 @@
           <h5 class="text-muted"><b>Insights:</b></h5>
           <div *ngIf="isLoading && !analysis.advice" class="text-center">
             <div class="spinner-border text-primary" role="status"></div>
-            <p><b>Loading...</b></p>
+            <p><b>Processing...</b></p>
           </div>
 
           <!-- If there are no budget -->
@@ -87,7 +87,7 @@
 
           <div *ngIf="!categoryChart && isLoading" class="text-center mt-3">
             <div class="spinner-border text-primary mt-3" role="status"></div>
-            <p><b>Loading...</b></p>
+            <p><b>Processing...</b></p>
           </div>
 
           <div class="position-relative">
@@ -121,7 +121,7 @@
           <h5 class="text-center text-muted"><b>Remaining Budget Over Days</b></h5>
           <div *ngIf="!chart && isLoading" class="text-center mt-5">
             <div class="spinner-border text-primary mt-5" role="status"></div>
-            <p><b>Loading...</b></p>
+            <p><b>Processing...</b></p>
           </div>
 
           <div class="position-relative">

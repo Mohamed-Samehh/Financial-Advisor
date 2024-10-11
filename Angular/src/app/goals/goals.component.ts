@@ -71,15 +71,18 @@ export class GoalsComponent implements OnInit {
     }
 
     if (goalForm.valid) {
+      this.isLoading = true;
       if (this.goal.id) {
         this.apiService.updateGoal(this.goal, this.goal.id).subscribe(
           (res) => {
             this.goal = { ...this.goal, ...res.goal };
             this.message = { text: 'Goal updated successfully!', type: 'success' };
+            this.isLoading = false;
           },
           (err) => {
             console.error('Failed to update goal', err);
             this.message = { text: 'Error updating goal. Please try again.', type: 'error' };
+            this.isLoading = false;
           }
         );
       } else {
@@ -87,10 +90,12 @@ export class GoalsComponent implements OnInit {
           (res) => {
             this.goal = res.goal;
             this.message = { text: 'Goal set successfully!', type: 'success' };
+            this.isLoading = false;
           },
           (err) => {
             console.error('Failed to add goal', err);
             this.message = { text: 'Error adding goal. Please try again.', type: 'error' };
+            this.isLoading = false;
           }
         );
       }
@@ -100,14 +105,17 @@ export class GoalsComponent implements OnInit {
   }
 
   deleteGoal(goalId: any) {
+    this.isLoading = true;
     this.apiService.deleteGoal(goalId).subscribe(
       (res) => {
         this.goal = { id: null, name: '', target_amount: null };
         this.message = { text: 'Goal deleted successfully!', type: 'success' };
+        this.isLoading = false;
       },
       (err) => {
         console.error('Failed to delete goal', err);
         this.message = { text: 'Error deleting goal. Please try again.', type: 'error' };
+        this.isLoading = false;
       }
     );
   }

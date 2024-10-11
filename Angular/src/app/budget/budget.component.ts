@@ -64,16 +64,20 @@ export class BudgetComponent implements OnInit {
     this.message = null;
 
     if (budgetForm.valid) {
+      this.isLoading = true;
+
       if (this.budget.id) {
         // Update the existing budget
         this.apiService.updateBudget(this.budget, this.budget.id).subscribe(
           (res) => {
             this.budget = { ...this.budget, ...res.budget };
             this.message = { text: 'Budget updated successfully!', type: 'success' };
+            this.isLoading = false;
           },
           (err) => {
             console.error('Failed to update budget', err);
             this.message = { text: 'Error updating budget. Please try again.', type: 'error' };
+            this.isLoading = false;
           }
         );
       } else {
@@ -82,10 +86,12 @@ export class BudgetComponent implements OnInit {
           (res) => {
             this.budget = res.budget;
             this.message = { text: 'Budget set successfully!', type: 'success' };
+            this.isLoading = false;
           },
           (err) => {
             console.error('Failed to add budget', err);
             this.message = { text: 'Error adding budget. Please try again.', type: 'error' };
+            this.isLoading = false;
           }
         );
       }
@@ -95,6 +101,8 @@ export class BudgetComponent implements OnInit {
   }
 
   deleteBudget(budgetId: any) {
+    this.isLoading = true;
+
     this.apiService.deleteBudget(budgetId).subscribe(
       (res) => {
         if (this.goal.id) {
@@ -102,10 +110,12 @@ export class BudgetComponent implements OnInit {
         }
         this.budget = { id: null, monthly_budget: null };
         this.message = { text: 'Budget deleted successfully!', type: 'success' };
+        this.isLoading = false;
       },
       (err) => {
         console.error('Failed to delete budget', err);
         this.message = { text: 'Error deleting budget. Please try again.', type: 'error' };
+        this.isLoading = false;
       }
     );
   }

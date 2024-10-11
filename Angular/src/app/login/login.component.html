@@ -1,10 +1,10 @@
 <div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center bg-light">
   <!-- Card Container -->
-  <div class="card shadow-xl border-0 rounded-lg" style="max-width: 600px; width: 100%; background-color: #f8f9fa;">
-    <div class="card-body p-5">
+  <div class="card shadow-sm border-0 rounded-lg mb-4 mt-4" style="max-width: 600px; width: 100%; height: 550px; background-color: #fff;"> <!-- Increase height here -->
+    <div class="card-body p-4 d-flex flex-column justify-content-between">
       <!-- Title Section -->
-      <h1 class="text-center text-primary display-3 mb-4 font-weight-bold">Welcome Back</h1>
-      <p class="text-center text-muted lead mb-5">Please login to your account</p>
+      <h1 class="text-center text-primary mb-4 font-weight-bold">Welcome Back</h1>
+      <p class="text-center text-muted mb-4">Please login to your account</p>
 
       <!-- Display Error Message if Login Fails -->
       <div *ngIf="loginError" class="alert alert-danger text-center">
@@ -14,11 +14,11 @@
       <!-- Login Form -->
       <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
         <!-- Email Field -->
-        <div class="mb-4 position-relative">
-          <label for="email" class="form-label text-secondary font-weight-bold">Email Address</label>
+        <div class="mb-4">
+          <label for="email" class="form-label text-secondary">Email Address</label>
           <input
             type="email"
-            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
+            class="form-control form-control-lg shadow-sm rounded-pill"
             id="email"
             name="email"
             [(ngModel)]="form.email"
@@ -29,7 +29,7 @@
               'is-valid': email.valid && (email.dirty || email.touched || submitted),
               'is-invalid': email.invalid && (email.dirty || email.touched || submitted)
             }"
-            placeholder="yourname@example.com"
+            placeholder="Enter your email"
           />
           <div *ngIf="email.invalid && (email.dirty || email.touched || submitted)" class="text-danger mt-2">
             <div *ngIf="email.errors?.['required']">Email is required.</div>
@@ -38,11 +38,11 @@
         </div>
 
         <!-- Password Field -->
-        <div class="mb-4 position-relative">
-          <label for="password" class="form-label text-secondary font-weight-bold">Password</label>
+        <div class="mb-4">
+          <label for="password" class="form-label text-secondary">Password</label>
           <input
             type="password"
-            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
+            class="form-control form-control-lg shadow-sm rounded-pill"
             id="password"
             name="password"
             [(ngModel)]="form.password"
@@ -60,17 +60,15 @@
         </div>
 
         <!-- Submit Button with Loader -->
-        <div class="text-center mt-5">
+        <div class="text-center mt-4">
           <button
             type="submit"
-            class="btn btn-primary btn-lg rounded-pill shadow-lg py-2 w-50"
+            class="btn btn-primary btn-lg rounded-pill shadow-lg w-100 py-2"
             [disabled]="loading"
           >
             <span *ngIf="!loading">Login</span>
             <span *ngIf="loading">
-              <div class="spinner-border spinner-border-sm" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
+              <div class="spinner-border spinner-border-sm" role="status"></div>
             </span>
           </button>
         </div>
@@ -78,8 +76,7 @@
 
       <!-- Register Link -->
       <p class="mt-4 text-center text-muted">
-        Don't have an account?
-        <a [routerLink]="['/register']" class="text-decoration-none text-primary font-weight-bold">Register here</a>
+        Don't have an account? <a [routerLink]="['/register']" class="text-primary font-weight-bold">Register here</a>
       </p>
     </div>
   </div>

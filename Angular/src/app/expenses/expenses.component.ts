@@ -100,9 +100,12 @@ export class ExpensesComponent implements OnInit {
     this.submitted = true;
 
     if (expenseForm.valid) {
+      this.isLoading = true;
+
       const dateValidationError = this.validateDate(this.form.date);
       if (dateValidationError) {
         this.message = { text: 'Date must be within the current month.', type: 'error' };
+        this.isLoading = false;
         return;
       }
 
@@ -116,19 +119,20 @@ export class ExpensesComponent implements OnInit {
       this.expenses.unshift(tempExpense);
       this.updatePaginatedExpenses();
 
-      this.form = {};
-      this.submitted = false;
-
       this.apiService.addExpense(tempExpense).subscribe({
         next: (res) => {
           this.message = { text: 'Expense added successfully!', type: 'success' };
           expenseForm.resetForm();
+          this.form = {};
+          this.submitted = false;
+          this.isLoading = false;
         },
         error: (err) => {
           console.error('Failed to add expense', err);
           this.expenses.shift();
           this.updatePaginatedExpenses();
           this.message = { text: 'Error adding expense. Please try again.', type: 'error' };
+          this.isLoading = false;
         }
       });
     } else {
@@ -137,15 +141,18 @@ export class ExpensesComponent implements OnInit {
   }
 
   deleteExpense(expenseId: any) {
+    this.isLoading = true;
     this.apiService.deleteExpense(expenseId).subscribe({
       next: () => {
         this.expenses = this.expenses.filter(expense => expense.id !== expenseId);
         this.updatePaginatedExpenses();
         this.message = { text: 'Expense deleted successfully!', type: 'success' };
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Failed to delete expense', err);
         this.message = { text: 'Error deleting expense. Please try again.', type: 'error' };
+        this.isLoading = false;
       }
     });
   }

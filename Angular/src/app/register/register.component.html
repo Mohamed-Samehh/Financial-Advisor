@@ -1,10 +1,10 @@
 <div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center bg-light">
   <!-- Card Container -->
-  <div class="card shadow-xl border-0 rounded-lg" style="max-width: 600px; width: 100%; background-color: #f8f9fa;">
-    <div class="card-body p-5">
+  <div class="card shadow-sm border-0 rounded-lg mb-4 mt-4" style="max-width: 600px; width: 100%; background-color: #fff;">
+    <div class="card-body p-4">
       <!-- Title Section -->
-      <h1 class="text-center text-primary display-4 mb-4 font-weight-bold">Create an Account</h1>
-      <p class="text-center text-muted lead mb-4">Please fill in the details below</p>
+      <h1 class="text-center text-primary mb-4 font-weight-bold">Create an Account</h1>
+      <p class="text-center text-muted mb-4">Please fill in the details below</p>
 
       <!-- Display error or success messages -->
       <div *ngIf="message" class="alert text-center" [ngClass]="{'alert-success': message.type === 'success', 'alert-danger': message.type === 'error'}">
@@ -14,11 +14,11 @@
       <!-- Registration Form -->
       <form #registrationForm="ngForm" (ngSubmit)="onSubmit(registrationForm)">
         <!-- Name Field -->
-        <div class="mb-4 position-relative">
-          <label for="name" class="form-label text-secondary font-weight-bold">Name</label>
+        <div class="mb-4">
+          <label for="name" class="form-label text-secondary">Name</label>
           <input
             type="text"
-            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
+            class="form-control form-control-lg shadow-sm rounded-pill"
             id="name"
             name="name"
             [(ngModel)]="form.name"
@@ -38,11 +38,11 @@
         </div>
 
         <!-- Email Field -->
-        <div class="mb-4 position-relative">
-          <label for="email" class="form-label text-secondary font-weight-bold">Email</label>
+        <div class="mb-4">
+          <label for="email" class="form-label text-secondary">Email</label>
           <input
             type="email"
-            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
+            class="form-control form-control-lg shadow-sm rounded-pill"
             id="email"
             name="email"
             [(ngModel)]="form.email"
@@ -52,7 +52,7 @@
               'is-valid': email.valid && (email.dirty || email.touched || submitted),
               'is-invalid': email.invalid && (email.dirty || email.touched || submitted)
             }"
-            placeholder="Enter your email"
+            placeholder="yourname@example.com"
           />
           <div *ngIf="email.invalid && (email.dirty || email.touched || submitted)" class="text-danger">
             <div *ngIf="email.errors?.['required']">Email is required.</div>
@@ -61,11 +61,11 @@
         </div>
 
         <!-- Password Field -->
-        <div class="mb-4 position-relative">
-          <label for="password" class="form-label text-secondary font-weight-bold">Password</label>
+        <div class="mb-4">
+          <label for="password" class="form-label text-secondary">Password</label>
           <input
             type="password"
-            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
+            class="form-control form-control-lg shadow-sm rounded-pill"
             id="password"
             name="password"
             [(ngModel)]="form.password"
@@ -85,11 +85,11 @@
         </div>
 
         <!-- Confirm Password Field -->
-        <div class="mb-4 position-relative">
-          <label for="password_confirmation" class="form-label text-secondary font-weight-bold">Confirm Password</label>
+        <div class="mb-4">
+          <label for="password_confirmation" class="form-label text-secondary">Confirm Password</label>
           <input
             type="password"
-            class="form-control form-control-lg shadow-sm p-3 rounded-pill"
+            class="form-control form-control-lg shadow-sm rounded-pill"
             id="password_confirmation"
             name="password_confirmation"
             [(ngModel)]="form.password_confirmation"
@@ -107,17 +107,15 @@
         </div>
 
         <!-- Submit Button and Loader -->
-        <div class="text-center mt-5">
+        <div class="text-center mt-4">
           <button
             type="submit"
-            class="btn btn-primary btn-lg rounded-pill shadow-lg py-2 w-50"
+            class="btn btn-primary btn-lg rounded-pill shadow-lg w-100 py-2"
             [disabled]="isLoading"
           >
             <span *ngIf="!isLoading">Register</span>
             <span *ngIf="isLoading">
-              <div class="spinner-border spinner-border-sm" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
+              <div class="spinner-border spinner-border-sm" role="status"></div>
             </span>
           </button>
         </div>
@@ -125,8 +123,7 @@
 
       <!-- Login Link -->
       <p class="mt-4 text-center text-muted">
-        Already have an account?
-        <a [routerLink]="['/login']" class="text-decoration-none text-primary font-weight-bold">Login here</a>
+        Already have an account? <a [routerLink]="['/login']" class="text-primary font-weight-bold">Login here</a>
       </p>
     </div>
   </div>

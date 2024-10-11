@@ -2,11 +2,11 @@
   <!-- Page Heading -->
   <h2 class="text-center text-primary display-4 mb-4">Manage Your Budget</h2>
 
-  <!-- Loader while fetching budget -->
+  <!-- Loader while fetching, updating, or deleting budget -->
   <div *ngIf="isLoading" class="text-center mt-5">
     <div class="spinner-border text-primary mt-5" role="status">
     </div>
-    <p><b>Loading...</b></p>
+    <p><b>Processing...</b></p>
   </div>
 
   <!-- Card for Form -->
@@ -14,12 +14,12 @@
     <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"
-      [ngClass]="{
-        'alert-success': message.type === 'success',
-        'alert-danger': message.type === 'error'
-      }" role="alert">
-      <strong>{{ message.type === 'success' ? 'Success!' : 'Error!' }}</strong> {{ message.text }}
-      <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+        [ngClass]="{
+          'alert-success': message.type === 'success',
+          'alert-danger': message.type === 'error'
+        }" role="alert">
+        <strong>{{ message.type === 'success' ? 'Success!' : 'Error!' }}</strong> {{ message.text }}
+        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
       </div>
 
       <!-- Budget Form -->
@@ -46,7 +46,6 @@
             <div *ngIf="monthlyBudget.errors?.['min']">Monthly Budget must be greater than 0.</div>
           </div>
         </div>
-
 
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">

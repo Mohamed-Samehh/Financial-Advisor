@@ -21,6 +21,8 @@ export class UserProfileComponent implements OnInit {
   submittedInfo = false;
   submittedPassword = false;
   isLoading = false;
+  loadingUpdateInfo = false;
+  loadingUpdatePassword = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.updateInfoForm = this.fb.group({
@@ -65,6 +67,7 @@ export class UserProfileComponent implements OnInit {
     this.submittedInfo = true;
     this.updateInfoSuccess = '';
     this.updateInfoError = '';
+    this.loadingUpdateInfo = true;
 
     if (this.updateInfoForm.valid) {
       this.authService.updateProfile(this.updateInfoForm.value).subscribe({
@@ -73,14 +76,17 @@ export class UserProfileComponent implements OnInit {
           this.updateInfoError = '';
           this.submittedInfo = false;
           this.updateInfoForm.reset();
+          this.loadingUpdateInfo = false;
         },
         error: (err) => {
           this.updateInfoError = err.error?.message || 'Failed to update profile. Please try again.';
           this.updateInfoSuccess = '';
+          this.loadingUpdateInfo = false;
         },
       });
     } else {
       this.updateInfoError = 'Please correct the errors in the form.';
+      this.loadingUpdateInfo = false;
     }
   }
 
@@ -88,6 +94,7 @@ export class UserProfileComponent implements OnInit {
     this.submittedPassword = true;
     this.updatePasswordSuccess = '';
     this.updatePasswordError = '';
+    this.loadingUpdatePassword = true;
 
     if (this.updatePasswordForm.valid) {
       this.authService.updatePassword(this.updatePasswordForm.value).subscribe({
@@ -96,14 +103,17 @@ export class UserProfileComponent implements OnInit {
           this.updatePasswordError = '';
           this.submittedPassword = false;
           this.updatePasswordForm.reset();
+          this.loadingUpdatePassword = false;
         },
         error: (err) => {
           this.updatePasswordError = err.error?.message || 'Current password is incorrect.';
           this.updatePasswordSuccess = '';
+          this.loadingUpdatePassword = false;
         },
       });
     } else {
       this.updatePasswordError = 'Please correct the errors in the form.';
+      this.loadingUpdatePassword = false;
     }
   }
 }

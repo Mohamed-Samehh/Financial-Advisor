@@ -72,14 +72,21 @@ export class ExpenseHistoryComponent implements OnInit {
     return formattedValue !== null ? formattedValue : '0';
   }
 
-  isGoalSuccessful(monthYear: string): boolean {
+  Expense_summary(monthYear: string): string {
     const budget = this.budgetByMonth[monthYear]?.monthly_budget || 0;
     const goalTarget = this.goalByMonth[monthYear]?.target_amount || 0;
     const totalExpenses = this.totalExpensesByMonth[monthYear] || 0;
 
-    return totalExpenses <= budget && totalExpenses <= (budget - goalTarget);
-  }
+    if (totalExpenses > budget) {
+      return 'budget_surpassed';
+    }
 
+    if (!goalTarget || totalExpenses > (budget - goalTarget)) {
+      return 'goal_not_met';
+    }
+
+    return 'goal_met';
+  }
 
   groupExpensesByMonth(expenses: any[]) {
     expenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

@@ -2,11 +2,10 @@
   <!-- Profile Heading -->
   <h2 class="text-center display-4 text-primary mb-4">User Profile</h2>
 
-  <!-- Loader -->
+  <!-- Loader for Fetching Profile Data -->
   <div *ngIf="isLoading" class="text-center mt-5">
-    <div class="spinner-border text-primary mt-5" role="status">
-    </div>
-    <p><b>Loading...</b></p>
+    <div class="spinner-border text-primary mt-5" role="status"></div>
+    <p><b>Processing...</b></p>
   </div>
 
   <!-- Update Information -->
@@ -52,7 +51,11 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Update Info</button>
+        <!-- Loader for Updating Info -->
+        <button type="submit" class="btn btn-primary mt-3" [disabled]="loadingUpdateInfo">
+          <span *ngIf="loadingUpdateInfo" class="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true"></span>
+          <span *ngIf="!loadingUpdateInfo">Update Info</span>
+        </button>
       </form>
 
       <!-- Success/Error Messages -->
@@ -124,7 +127,11 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Update Password</button>
+        <!-- Loader for Updating Password -->
+        <button type="submit" class="btn btn-primary mt-3" [disabled]="loadingUpdatePassword">
+          <span *ngIf="loadingUpdatePassword" class="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true"></span>
+          <span *ngIf="!loadingUpdatePassword">Update Password</span>
+        </button>
       </form>
 
       <!-- Success/Error Messages -->
