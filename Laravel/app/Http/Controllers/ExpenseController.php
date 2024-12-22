@@ -14,8 +14,7 @@ class ExpenseController extends Controller
     // Retrieve all expenses for the user
     public function index(Request $request)
     {
-        $expenses = Expense::with('category')
-            ->where('user_id', $request->user()->id)
+        $expenses = Expense::where('user_id', $request->user()->id)
             ->orderBy('date', 'desc')
             ->get();
 
@@ -26,15 +25,17 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
+            'category' => 'required|exists:categories,name',
             'amount' => 'required|numeric',
             'date' => 'required|date',
             'description' => 'nullable|string',
         ]);
 
+        $category = Category::where('name', $request->category)->first();
+
         $expense = Expense::create([
             'user_id' => $request->user()->id,
-            'category_id' => $request->category_id,
+            'category' => $category->name,
             'amount' => $request->amount,
             'description' => $request->description,
             'date' => $request->date,
@@ -51,8 +52,7 @@ class ExpenseController extends Controller
     {
         $user = $request->user();
 
-        $expenses = Expense::with('category')
-            ->where('user_id', $user->id)
+        $expenses = Expense::where('user_id', $user->id)
             ->whereYear('date', Carbon::now()->year)
             ->whereMonth('date', Carbon::now()->month)
             ->orderBy('date', 'desc')
@@ -77,13 +77,19 @@ class ExpenseController extends Controller
         }
 
         $request->validate([
-            'category_id' => 'sometimes|exists:categories,id',
+            'category' => 'sometimes|exists:categories,name', // Use category name instead of id
             'amount' => 'sometimes|numeric',
             'date' => 'sometimes|date',
             'description' => 'nullable|string',
         ]);
 
-        $expense->update($request->only(['category_id', 'amount', 'description', 'date']));
+        if ($request->has('category')) {
+            // Find the category by name
+            $category = Category::where('name', $request->category)->first();
+            $expense->category = $category->name; // Update category name
+        }
+
+        $expense->update($request->only(['category', 'amount', 'description', 'date']));
 
         return response()->json([
             'message' => 'Expense updated successfully',

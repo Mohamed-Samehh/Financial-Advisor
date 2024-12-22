@@ -16,7 +16,7 @@ export class AnalyzeExpensesComponent implements OnInit {
   chart: any;
   categoryChart: any;
   isLoading: boolean = true;
-  errorMessage: string | null = null; // Added error message property
+  errorMessage: string | null = null;
 
   constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {}
 
@@ -32,11 +32,11 @@ export class AnalyzeExpensesComponent implements OnInit {
         if (Array.isArray(response.expenses)) {
           this.createPieChart(response.expenses);
         }
-        this.isLoading = false; // Stop loading if response is received
+        this.isLoading = false;
       },
       (error) => {
-        this.errorMessage = 'Failed to load expenses.'; // Set error message
-        this.isLoading = false; // Stop loading
+        this.errorMessage = 'Failed to load expenses.';
+        this.isLoading = false;
       }
     );
   }

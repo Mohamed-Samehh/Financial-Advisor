@@ -83,4 +83,21 @@ export class ApiService {
   analyzeExpenses(): Observable<any> {
     return this.http.get(`${this.apiUrl}/analyze-expenses`, { headers: this.getHeaders() });
   }
+
+  // Categories
+  getCategories(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/categories`, { headers: this.getHeaders() });
+  }
+
+  addCategory(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/categories`, data, { headers: this.getHeaders() });
+  }
+
+  updateCategory(data: any, id: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/categories/${id}`, data, { headers: this.getHeaders() });
+  }
+
+  deleteCategory(id: any): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/categories/${id}`, { headers: this.getHeaders() });
+  }
 }

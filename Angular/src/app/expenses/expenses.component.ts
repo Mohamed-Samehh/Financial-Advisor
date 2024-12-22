@@ -24,6 +24,9 @@ export class ExpensesComponent implements OnInit {
   paginatedExpenses: any[] = [];
   totalPages: number = 0;
   pages: number[] = [];
+  categories: string[] = [];
+  editingExpenseId: number | null = null;
+  isEditing: boolean = false;  // Added isEditing property to track edit mode
 
   constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {
     const today = new Date();
@@ -36,6 +39,7 @@ export class ExpensesComponent implements OnInit {
 
   ngOnInit() {
     this.loadExpenses();
+    this.loadCategories();
   }
 
   loadExpenses() {
@@ -51,6 +55,21 @@ export class ExpensesComponent implements OnInit {
       error: (err) => {
         console.error('Error fetching expenses:', err);
         this.expenses = [];
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadCategories() {
+    this.isLoading = true;
+    this.apiService.getCategories().subscribe({
+      next: (res) => {
+        this.categories = res.map((category: any) => category.name);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching categories:', err);
+        this.categories = [];
         this.isLoading = false;
       }
     });
@@ -116,28 +135,61 @@ export class ExpensesComponent implements OnInit {
         description: this.form.description || 'No description'
       };
 
-      this.expenses.unshift(tempExpense);
-      this.updatePaginatedExpenses();
+      if (this.editingExpenseId) {
+        // If editing an existing expense, update it
+        this.apiService.updateExpense(tempExpense, this.editingExpenseId).subscribe({
+          next: (res) => {
+            this.message = { text: 'Expense updated successfully!', type: 'success' };
+            expenseForm.resetForm();
+            this.form = {};
+            this.submitted = false;
+            this.editingExpenseId = null;
+            this.isEditing = false; // Reset the editing flag
+            this.loadExpenses();
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to update expense', err);
+            this.message = { text: 'Error updating expense. Please try again.', type: 'error' };
+            this.isLoading = false;
+          }
+        });
+      } else {
+        // Add new expense if not editing
+        this.expenses.unshift(tempExpense);
+        this.updatePaginatedExpenses();
 
-      this.apiService.addExpense(tempExpense).subscribe({
-        next: (res) => {
-          this.message = { text: 'Expense added successfully!', type: 'success' };
-          expenseForm.resetForm();
-          this.form = {};
-          this.submitted = false;
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Failed to add expense', err);
-          this.expenses.shift();
-          this.updatePaginatedExpenses();
-          this.message = { text: 'Error adding expense. Please try again.', type: 'error' };
-          this.isLoading = false;
-        }
-      });
+        this.apiService.addExpense(tempExpense).subscribe({
+          next: (res) => {
+            this.message = { text: 'Expense added successfully!', type: 'success' };
+            expenseForm.resetForm();
+            this.form = {};
+            this.submitted = false;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to add expense', err);
+            this.expenses.shift();
+            this.updatePaginatedExpenses();
+            this.message = { text: 'Error adding expense. Please try again.', type: 'error' };
+            this.isLoading = false;
+          }
+        });
+      }
     } else {
       this.message = { text: 'Please fill out all required fields correctly.', type: 'error' };
     }
+  }
+
+  editExpense(expense: any) {
+    this.editingExpenseId = expense.id;
+    this.form = {
+      category: expense.category,
+      amount: expense.amount,
+      date: expense.date,
+      description: expense.description
+    };
+    this.isEditing = true; // Set isEditing to true when editing
   }
 
   deleteExpense(expenseId: any) {

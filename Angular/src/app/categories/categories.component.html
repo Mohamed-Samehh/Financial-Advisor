@@ -1,0 +1,89 @@
+<div class="container mt-5">
+  <h2 class="text-center text-primary display-4 mb-4">Manage Categories</h2>
+
+  <!-- Loader while fetching categories -->
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary mt-5" role="status"></div>
+    <p><b>Processing...</b></p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- Category Form -->
+    <div class="card shadow-lg border-0 mb-4">
+      <div class="card-body p-5">
+        <!-- Success/Error Message -->
+        <div *ngIf="message" class="alert text-center alert-dismissible fade show"
+             [ngClass]="{
+               'alert-success': message.type === 'success',
+               'alert-danger': message.type === 'error'
+             }" role="alert">
+          <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
+          <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+        </div>
+
+        <form (ngSubmit)="onSubmit(categoryForm)" #categoryForm="ngForm">
+          <!-- Category Name -->
+          <div class="form-group mb-4">
+            <label for="name" class="font-weight-bold">Category Name:</label>
+            <input
+              type="text"
+              id="name"
+              class="form-control form-control-lg"
+              [(ngModel)]="form.name"
+              name="name"
+              required
+              #name="ngModel"
+            />
+            <div *ngIf="name.invalid && (name.dirty || name.touched || submitted)" class="text-danger">
+              <div *ngIf="name.errors?.['required']">Category name is required.</div>
+            </div>
+            <div *ngIf="errorMessages.name" class="text-danger">
+              {{ errorMessages.name }}
+            </div>
+          </div>
+
+          <!-- Priority -->
+          <div class="form-group mb-4">
+            <label for="priority" class="font-weight-bold">Priority:</label>
+            <input
+              type="number"
+              id="priority"
+              class="form-control form-control-lg"
+              [(ngModel)]="form.priority"
+              name="priority"
+              required
+              min="1"
+              #priority="ngModel"
+            />
+            <div *ngIf="priority.invalid && (priority.dirty || priority.touched || submitted)" class="text-danger">
+              <div *ngIf="priority.errors?.['required']">Priority is required.</div>
+              <div *ngIf="priority.errors?.['min']">Priority must be greater than 0.</div>
+            </div>
+            <div *ngIf="errorMessages.priority" class="text-danger">
+              {{ errorMessages.priority }}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            {{ isUpdating ? 'Update Category' : 'Add Category' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Categories List -->
+    <h4 class="mt-5 text-secondary">Existing Categories:</h4>
+    <div *ngIf="categories.length === 0" class="text-center text-muted mt-3 mb-5">No categories available.</div>
+    <ul class="list-group mt-3 mb-5">
+      <li *ngFor="let category of categories" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
+        <div>
+          <strong>{{ category.name }}</strong> (Priority: {{ category.priority }})
+        </div>
+        <div>
+          <button class="btn btn-outline-primary btn-sm me-2" (click)="editCategory(category)"><i class="fas fa-pencil-alt"></i></button>
+          <button class="btn btn-outline-danger btn-sm" (click)="deleteCategory(category.id)"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

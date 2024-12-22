@@ -19,6 +19,8 @@ class CreateCategoriesTable extends Migration
             $table->string('name');
             $table->integer('priority')->default(0);
             $table->timestamps();
+            $table->unique(['user_id', 'name']);
+            $table->unique(['user_id', 'priority']);
         });
     }
 

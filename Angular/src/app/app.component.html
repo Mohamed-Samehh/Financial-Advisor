@@ -19,6 +19,9 @@
           <a class="nav-link" [routerLink]="['/goal']" routerLinkActive="active">Goal</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
+          <a class="nav-link" [routerLink]="['/categories']" routerLinkActive="active">Categories</a>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active">Expenses</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">

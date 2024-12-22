@@ -48,6 +48,7 @@
             [(ngModel)]="form.email"
             #email="ngModel"
             required
+            email
             [ngClass]="{
               'is-valid': email.valid && (email.dirty || email.touched || submitted),
               'is-invalid': email.invalid && (email.dirty || email.touched || submitted)
