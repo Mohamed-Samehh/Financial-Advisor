@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Goal;
 use App\Models\Budget;
 use App\Models\Expense;
+use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -13,9 +14,11 @@ class ExpenseController extends Controller
     // Retrieve all expenses for the user
     public function index(Request $request)
     {
-        $expenses = Expense::where('user_id', $request->user()->id)
-        ->orderBy('date', 'desc')
-        ->get();
+        $expenses = Expense::with('category')
+            ->where('user_id', $request->user()->id)
+            ->orderBy('date', 'desc')
+            ->get();
+
         return response()->json($expenses, 200);
     }
 
@@ -23,14 +26,15 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
             'amount' => 'required|numeric',
             'date' => 'required|date',
+            'description' => 'nullable|string',
         ]);
 
         $expense = Expense::create([
             'user_id' => $request->user()->id,
-            'category' => $request->category,
+            'category_id' => $request->category_id,
             'amount' => $request->amount,
             'description' => $request->description,
             'date' => $request->date,
@@ -46,15 +50,13 @@ class ExpenseController extends Controller
     public function show(Request $request)
     {
         $user = $request->user();
-        $currentMonth = Carbon::now()->format('Y-m');
 
-        $expenses = Expense::where('user_id', $user->id)
-        ->whereYear('date', Carbon::now()->year)
-        ->whereMonth('date', Carbon::now()->month)
-        ->whereYear('created_at', Carbon::now()->year)
-        ->whereMonth('created_at', Carbon::now()->month)
-        ->orderBy('date', 'desc')
-        ->get();
+        $expenses = Expense::with('category')
+            ->where('user_id', $user->id)
+            ->whereYear('date', Carbon::now()->year)
+            ->whereMonth('date', Carbon::now()->month)
+            ->orderBy('date', 'desc')
+            ->get();
 
         if ($expenses->isEmpty()) {
             return response()->json(['message' => 'No expenses found for this month'], 404);
@@ -68,26 +70,25 @@ class ExpenseController extends Controller
     {
         $userId = $request->user()->id;
 
-        $request->validate([
-            'category' => 'required|string',
-            'amount' => 'required|numeric',
-            'date' => 'required|date',
-        ]);
-
         $expense = Expense::where('id', $id)->where('user_id', $userId)->first();
 
         if (!$expense) {
             return response()->json(['error' => 'Expense not found'], 404);
         }
 
-        $expense->update([
-            'category' => $request->category,
-            'amount' => $request->amount,
-            'description' => $request->description,
-            'date' => $request->date,
+        $request->validate([
+            'category_id' => 'sometimes|exists:categories,id',
+            'amount' => 'sometimes|numeric',
+            'date' => 'sometimes|date',
+            'description' => 'nullable|string',
         ]);
 
-        return response()->json(['message' => 'Expense updated successfully', 'expense' => $expense], 200);
+        $expense->update($request->only(['category_id', 'amount', 'description', 'date']));
+
+        return response()->json([
+            'message' => 'Expense updated successfully',
+            'expense' => $expense
+        ], 200);
     }
 
     // Delete an expense for the user
@@ -121,26 +122,16 @@ class ExpenseController extends Controller
 
         $monthlyBudget = $budget->monthly_budget;
 
-        $expenses = Expense::where('user_id', $user->id)
+        $expenses = Expense::with('category')
+            ->where('user_id', $user->id)
             ->whereYear('date', Carbon::now()->year)
             ->whereMonth('date', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->whereMonth('created_at', Carbon::now()->month)
             ->get();
 
-        $totalSpent = 0;
-
-        if ($expenses->isEmpty()) {
-            $advice[] = 'Great job, no expenses made for the current month so far. Keep saving!';
-        } else {
-            $totalSpent = $expenses->sum('amount');
-            $advice = [];
-            if ($totalSpent > $monthlyBudget) {
-                $advice[] = 'You have exceeded your monthly budget!';
-            } else {
-                $advice[] = 'You are within your budget.';
-            }
-        }
+        $totalSpent = $expenses->sum('amount');
+        $advice = $totalSpent > $monthlyBudget
+            ? ['You have exceeded your monthly budget!']
+            : ['You are within your budget.'];
 
         $remainingBudget = $monthlyBudget - $totalSpent;
 
@@ -150,24 +141,20 @@ class ExpenseController extends Controller
             ->first();
 
         $goalAmount = $goal ? $goal->target_amount : 0;
-
         $maximumSpendingGoal = $remainingBudget - $goalAmount;
 
-        if ($goalAmount == 0) {
-            $advice[] = 'No goal was set for this month.';
+        if ($goalAmount) {
+            $advice[] = $totalSpent > $goalAmount
+                ? 'You have exceeded your goal!'
+                : 'You are within your goal.';
         } else {
-            $advice = [];
-            if (($totalSpent > $goalAmount) && $goalAmount !== 0) {
-                $advice[] = 'You have exceeded your goal!';
-            } else {
-                $advice[] = 'You are within your goal.';
-            }
+            $advice[] = 'No goal was set for this month.';
         }
 
-        $dailyExpenses = $expenses->groupBy(function($date) {
-            return Carbon::parse($date->date)->format('d');
-        })->map(function ($row) {
-            return $row->sum('amount');
+        $dailyExpenses = $expenses->groupBy(function ($expense) {
+            return Carbon::parse($expense->date)->format('d');
+        })->map(function ($dayExpenses) {
+            return $dayExpenses->sum('amount');
         })->sortKeys();
 
         return response()->json([

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Expense extends Model
+class Category extends Model
 {
     use HasFactory;
 
@@ -16,10 +16,8 @@ class Expense extends Model
      */
     protected $fillable = [
         'user_id',
-        'category_id',
-        'amount',
-        'description',
-        'date',
+        'name',
+        'priority',
     ];
 
     public function user()
@@ -27,8 +25,8 @@ class Expense extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function category()
+    public function expenses()
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(Expense::class);
     }
 }
