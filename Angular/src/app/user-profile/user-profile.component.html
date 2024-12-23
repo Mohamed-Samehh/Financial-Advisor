@@ -139,4 +139,14 @@
       <div *ngIf="updatePasswordError" class="alert alert-danger mt-3">{{ updatePasswordError }}</div>
     </div>
   </div>
+
+  <!-- Delete Account Button -->
+  <div class="text-center mt-4" *ngIf="!isLoading">
+    <button
+      type="button"
+      class="btn btn-danger"
+      (click)="onDeleteAccount()">
+      Delete Account
+    </button>
+  </div>
 </div>

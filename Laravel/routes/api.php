@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/update-password', [AuthController::class, 'updatePassword']);
     Route::put('/update-profile', [AuthController::class, 'updateProfile']);
     Route::get('/profile', [AuthController::class, 'getProfile']);
+    Route::delete('/delete-account', [AuthController::class, 'deleteAccount']);
 
     Route::get('/budget/all', [BudgetController::class, 'index']);
     Route::get('/budget', [BudgetController::class, 'show']);

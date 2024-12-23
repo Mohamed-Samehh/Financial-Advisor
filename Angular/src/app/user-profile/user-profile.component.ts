@@ -79,7 +79,18 @@ export class UserProfileComponent implements OnInit {
           this.loadingUpdateInfo = false;
         },
         error: (err) => {
-          this.updateInfoError = err.error?.message || 'Failed to update profile. Please try again.';
+          if (err.status === 400) {
+            const errors = err.error;
+            if (errors.email) {
+              this.updateInfoError = errors.email[0];
+            } else if (errors.name) {
+              this.updateInfoError = errors.name[0];
+            } else {
+              this.updateInfoError = 'Validation failed. Please check your input.';
+            }
+          } else {
+            this.updateInfoError = 'Failed to update profile. Please try again.';
+          }
           this.updateInfoSuccess = '';
           this.loadingUpdateInfo = false;
         },
@@ -114,6 +125,20 @@ export class UserProfileComponent implements OnInit {
     } else {
       this.updatePasswordError = 'Please correct the errors in the form.';
       this.loadingUpdatePassword = false;
+    }
+  }
+
+  onDeleteAccount() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      this.authService.deleteAccount().subscribe({
+        next: () => {
+          alert('Account deleted successfully. You will now be logged out.');
+          window.location.reload();
+        },
+        error: (err) => {
+          alert(err.error?.message || 'Failed to delete account. Please try again.');
+        },
+      });
     }
   }
 }

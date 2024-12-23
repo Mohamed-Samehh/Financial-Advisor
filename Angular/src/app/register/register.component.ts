@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
-import { Router, RouterOutlet, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterOutlet, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -40,7 +40,11 @@ export class RegisterComponent {
         },
         (err) => {
           this.isLoading = false;
-          this.message = { text: 'Error occurred during registration. Please try again.', type: 'error' };
+          if (err.error?.error === 'The email is already registered.') {
+            this.message = { text: 'This email is already registered. Please use a different one.', type: 'error' };
+          } else {
+            this.message = { text: 'Error occurred during registration. Please try again.', type: 'error' };
+          }
         }
       );
     } else {

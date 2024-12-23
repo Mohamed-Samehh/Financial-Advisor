@@ -30,12 +30,16 @@ export class AuthService {
     );
   }
 
-  // Log out the user
-  logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
+  // Delete user account
+  deleteAccount(): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/delete-account`, {
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`
+      }
+    }).pipe(
       tap(() => {
         this.clearToken();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/register']);
       })
     );
   }

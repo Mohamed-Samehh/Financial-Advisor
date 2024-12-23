@@ -18,7 +18,11 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            $errors = $validator->errors();
+            if ($errors->has('email')) {
+                return response()->json(['error' => 'The email is already registered.'], 400);
+            }
+            return response()->json($errors, 400);
         }
 
         $user = User::create([
@@ -27,50 +31,20 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $user->categories()->create([
-            'name' => 'Rent',
-            'priority' => 1,
-        ]);
+        // Adding default categories
+        $categories = [
+            ['name' => 'Rent', 'priority' => 1],
+            ['name' => 'Groceries', 'priority' => 2],
+            ['name' => 'Health', 'priority' => 3],
+            ['name' => 'Utilities', 'priority' => 4],
+            ['name' => 'Transportation', 'priority' => 5],
+            ['name' => 'Shopping', 'priority' => 6],
+            ['name' => 'Social Activities', 'priority' => 7],
+            ['name' => 'Entertainment', 'priority' => 8],
+            ['name' => 'Other', 'priority' => 9],
+        ];
 
-        $user->categories()->create([
-            'name' => 'Groceries',
-            'priority' => 2,
-        ]);
-
-        $user->categories()->create([
-            'name' => 'Health',
-            'priority' => 3,
-        ]);
-
-        $user->categories()->create([
-            'name' => 'Utilities',
-            'priority' => 4,
-        ]);
-
-        $user->categories()->create([
-            'name' => 'Transportation',
-            'priority' => 5,
-        ]);
-
-        $user->categories()->create([
-            'name' => 'Shopping',
-            'priority' => 6,
-        ]);
-
-        $user->categories()->create([
-            'name' => 'Social Activities',
-            'priority' => 7,
-        ]);
-
-        $user->categories()->create([
-            'name' => 'Entertainment',
-            'priority' => 8,
-        ]);
-
-        $user->categories()->create([
-            'name' => 'Other',
-            'priority' => 9,
-        ]);
+        $user->categories()->createMany($categories);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -152,5 +126,18 @@ class AuthController extends Controller
 
     public function getProfile(Request $request) {
         return response()->json(['user' => $request->user()], 200);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->user();
+
+        try {
+            $user->delete();
+
+            return response()->json(['message' => 'Account deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete account. Please try again.'], 500);
+        }
     }
 }
