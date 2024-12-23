@@ -27,6 +27,51 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $user->categories()->create([
+            'name' => 'Rent',
+            'priority' => 1,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Groceries',
+            'priority' => 2,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Health',
+            'priority' => 3,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Utilities',
+            'priority' => 4,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Transportation',
+            'priority' => 5,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Shopping',
+            'priority' => 6,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Social Activities',
+            'priority' => 7,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Entertainment',
+            'priority' => 8,
+        ]);
+
+        $user->categories()->create([
+            'name' => 'Other',
+            'priority' => 9,
+        ]);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json(['token' => $token, 'user' => $user], 201);

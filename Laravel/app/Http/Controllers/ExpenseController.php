@@ -77,16 +77,15 @@ class ExpenseController extends Controller
         }
 
         $request->validate([
-            'category' => 'sometimes|exists:categories,name', // Use category name instead of id
+            'category' => 'sometimes|exists:categories,name',
             'amount' => 'sometimes|numeric',
             'date' => 'sometimes|date',
             'description' => 'nullable|string',
         ]);
 
         if ($request->has('category')) {
-            // Find the category by name
             $category = Category::where('name', $request->category)->first();
-            $expense->category = $category->name; // Update category name
+            $expense->category = $category->name;
         }
 
         $expense->update($request->only(['category', 'amount', 'description', 'date']));

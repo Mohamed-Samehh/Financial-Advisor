@@ -26,7 +26,7 @@ export class ExpensesComponent implements OnInit {
   pages: number[] = [];
   categories: string[] = [];
   editingExpenseId: number | null = null;
-  isEditing: boolean = false;  // Added isEditing property to track edit mode
+  isEditing: boolean = false;
 
   constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {
     const today = new Date();
@@ -129,6 +129,7 @@ export class ExpensesComponent implements OnInit {
       }
 
       const tempExpense = {
+        id: this.editingExpenseId,
         category: this.form.category || 'No category',
         amount: this.form.amount || 0,
         date: this.form.date || new Date().toISOString().split('T')[0],
@@ -144,7 +145,7 @@ export class ExpensesComponent implements OnInit {
             this.form = {};
             this.submitted = false;
             this.editingExpenseId = null;
-            this.isEditing = false; // Reset the editing flag
+            this.isEditing = false;
             this.loadExpenses();
             this.isLoading = false;
           },
@@ -182,14 +183,20 @@ export class ExpensesComponent implements OnInit {
   }
 
   editExpense(expense: any) {
-    this.editingExpenseId = expense.id;
-    this.form = {
-      category: expense.category,
-      amount: expense.amount,
-      date: expense.date,
-      description: expense.description
-    };
-    this.isEditing = true; // Set isEditing to true when editing
+    if (this.isEditing && this.editingExpenseId === expense.id) {
+      this.isEditing = false;
+      this.editingExpenseId = null;
+      this.form = {};
+    } else {
+      this.isEditing = true;
+      this.editingExpenseId = expense.id;
+      this.form = {
+        category: expense.category,
+        amount: expense.amount,
+        date: expense.date,
+        description: expense.description
+      };
+    }
   }
 
   deleteExpense(expenseId: any) {

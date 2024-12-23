@@ -107,22 +107,42 @@
   </div>
 
   <!-- Expense List -->
+  <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Expenses:</h4>
   <div *ngIf="!isLoading && expenses.length > 0" class="list-group mt-3 mb-5">
     <li *ngFor="let expense of paginatedExpenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div>
         <strong>{{ expense.category }}</strong>: E£{{ formatNumber(expense.amount) }} on {{ expense.date | date:'mediumDate' }}
         <br>
         <small class="text-muted">{{ expense.description || 'No description' }}</small>
+        <span *ngIf="isEditing && editingExpenseId === expense.id" class="badge bg-warning text-dark ms-2">
+          Editing...
+        </span>
       </div>
       <div class="d-flex">
-        <button class="btn btn-outline-primary btn-sm mr-2 me-2" (click)="editExpense(expense)"><i class="fas fa-pencil-alt"></i></button>
-        <button class="btn btn-outline-danger btn-sm" (click)="deleteExpense(expense.id)"><i class="fas fa-trash-alt"></i></button>
+        <button
+          class="btn btn-sm"
+          [ngClass]="{
+            'btn-outline-primary': !(isEditing && editingExpenseId === expense.id),
+            'btn-warning text-dark': isEditing && editingExpenseId === expense.id
+          }"
+          (click)="editExpense(expense)"
+        >
+          <i class="fas fa-pencil-alt"></i>
+        </button>
+        <button class="btn btn-outline-danger btn-sm ms-2" (click)="deleteExpense(expense.id)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
       </div>
     </li>
   </div>
 
+  <!-- No Expenses Found -->
+  <div *ngIf="!isLoading && expenses.length === 0" class="text-center text-muted mt-3 mb-5">
+    <p>No expenses found for this month.</p>
+  </div>
+
   <!-- Pagination Controls -->
-  <nav *ngIf="!isLoading && totalPages > 1">
+  <nav *ngIf="!isLoading && totalPages > 1 && expenses.length > 0">
     <ul class="pagination justify-content-center">
       <li class="page-item" [class.disabled]="currentPage === 1">
         <button class="page-link" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
