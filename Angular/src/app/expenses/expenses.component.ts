@@ -133,7 +133,8 @@ export class ExpensesComponent implements OnInit {
         category: this.form.category || 'No category',
         amount: this.form.amount || 0,
         date: this.form.date || new Date().toISOString().split('T')[0],
-        description: this.form.description || 'No description'
+        description: this.form.description || 'No description',
+        isRecentlyAdded: true
       };
 
       if (this.editingExpenseId) {
@@ -183,6 +184,8 @@ export class ExpensesComponent implements OnInit {
   }
 
   editExpense(expense: any) {
+    if (expense.isRecentlyAdded) return;
+
     if (this.isEditing && this.editingExpenseId === expense.id) {
       this.isEditing = false;
       this.editingExpenseId = null;
@@ -200,6 +203,9 @@ export class ExpensesComponent implements OnInit {
   }
 
   deleteExpense(expenseId: any) {
+    const expense = this.expenses.find(exp => exp.id === expenseId);
+    if (expense?.isRecentlyAdded) return;
+
     this.isLoading = true;
     this.apiService.deleteExpense(expenseId).subscribe({
       next: () => {

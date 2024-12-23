@@ -114,6 +114,11 @@
         <strong>{{ expense.category }}</strong>: E£{{ formatNumber(expense.amount) }} on {{ expense.date | date:'mediumDate' }}
         <br>
         <small class="text-muted">{{ expense.description || 'No description' }}</small>
+
+        <span *ngIf="expense.isRecentlyAdded" class="badge bg-success text-light ms-2">
+          Recently Added
+        </span>
+
         <span *ngIf="isEditing && editingExpenseId === expense.id" class="badge bg-warning text-dark ms-2">
           Editing...
         </span>
@@ -126,10 +131,15 @@
             'btn-warning text-dark': isEditing && editingExpenseId === expense.id
           }"
           (click)="editExpense(expense)"
+          [disabled]="expense.isRecentlyAdded"
         >
           <i class="fas fa-pencil-alt"></i>
         </button>
-        <button class="btn btn-outline-danger btn-sm ms-2" (click)="deleteExpense(expense.id)">
+        <button
+          class="btn btn-outline-danger btn-sm ms-2"
+          (click)="deleteExpense(expense.id)"
+          [disabled]="expense.isRecentlyAdded"
+        >
           <i class="fas fa-trash-alt"></i>
         </button>
       </div>
