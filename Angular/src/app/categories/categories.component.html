@@ -3,7 +3,7 @@
 
   <!-- Advisory Message -->
   <div class="alert alert-info text-center mb-4" role="alert">
-    <strong>Tip:</strong> To achieve the most accurate results, ensure that each category is assigned a unique priority. This helps in effective financial analysis and categorization.
+    <strong>Tip:</strong> Assign priorities based on the importance of each category to your financial goals. Higher priority should be given to the most essential categories.
   </div>
 
   <!-- Loader while fetching categories -->
@@ -62,13 +62,13 @@
               name="priority"
               required
               min="1"
-              max="8"
+              max="9"
               #priority="ngModel"
             />
             <div *ngIf="priority.invalid && (priority.dirty || priority.touched || submitted)" class="text-danger">
               <div *ngIf="priority.errors?.['required']">Priority is required.</div>
               <div *ngIf="priority.errors?.['min']">Priority must be greater than 0.</div>
-              <div *ngIf="priority.errors?.['max']">Priority cannot be greater than 8.</div>
+              <div *ngIf="priority.errors?.['max']">Priority cannot be greater than 9.</div>
             </div>
             <div *ngIf="errorMessages.priority" class="text-danger">
               {{ errorMessages.priority }}

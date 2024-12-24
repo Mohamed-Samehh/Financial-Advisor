@@ -18,7 +18,7 @@
 
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">Kindly set a budget to proceed!</h5>
+            <h5 class="text-muted">Not enough data to analyse</h5>
           </div>
 
           <!-- If there are no expenses -->
@@ -54,14 +54,13 @@
               </span>
             </h5>
           </div>
-
         </div>
       </div>
 
-      <!-- Insights Section -->
+      <!-- Warning Section -->
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
-          <h5 class="text-muted"><b>Insights:</b></h5>
+          <h5 class="text-muted"><b>Warning:</b></h5>
           <div *ngIf="isLoading && !analysis.advice" class="text-center">
             <div class="spinner-border text-primary" role="status"></div>
             <p><b>Processing...</b></p>
@@ -69,11 +68,41 @@
 
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">Kindly set a budget to proceed!</h5>
+            <h5 class="text-muted">Not enough data to analyse</h5>
+          </div>
+
+          <!-- If warning is empty -->
+          <div *ngIf="!isLoading && analysis.monthly_budget && analysis.advice.length === 0">
+            <h5 class="text-muted">Everything looking good so far!</h5>
           </div>
 
           <ul class="list-group list-group-flush">
-            <li *ngFor="let tip of analysis.advice" class="list-group-item border-0">{{ tip }}</li>
+            <li *ngFor="let tip of analysis.advice" class="list-group-item border-0 text-muted fs-5">{{ tip }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Insights Section -->
+      <div class="card shadow-lg border-0 mb-4">
+        <div class="card-body p-4">
+          <h5 class="text-muted"><b>Insights:</b></h5>
+          <div *ngIf="isLoading && !analysis.smart_insights" class="text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p><b>Processing...</b></p>
+          </div>
+
+          <!-- If there are no budget -->
+          <div *ngIf="!isLoading && !analysis.monthly_budget">
+            <h5 class="text-muted">Not enough data to analyse</h5>
+          </div>
+
+          <!-- If insights are empty -->
+          <div *ngIf="!isLoading && analysis.monthly_budget && analysis.smart_insights.length === 0">
+            <h5 class="text-muted">No insights to show</h5>
+          </div>
+
+          <ul class="list-group list-group-flush">
+            <li *ngFor="let insight of analysis.smart_insights" class="list-group-item border-0 text-muted fs-5">{{ insight }}</li>
           </ul>
         </div>
       </div>
@@ -95,22 +124,17 @@
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget">
-              <h5 class="text-muted text-center mt-4">Kindly set a budget to proceed!</h5>
+              <h5 class="text-muted text-center mt-4">Not enough data to analyse</h5>
             </div>
 
             <!-- If there are no expenses -->
             <div *ngIf="errorMessage && !isLoading && analysis.monthly_budget" class="no-expenses-message text-muted text-center">
-              <p>No expenses to display</p> <!-- {{ errorMessage }} -->
-            </div>
-
-            <!-- <div *ngIf="!categoryChart && !isLoading && !errorMessage" class="no-expenses-message text-muted text-center">
               <p>No expenses to display</p>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- Full Width Line Chart: Remaining Budget Over Days -->
@@ -129,11 +153,9 @@
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget" class="no-expenses-message" style="width: 100%;">
-              <h5 class="text-muted text-center mt-5 mb-5">Kindly set a budget to proceed!</h5>
+              <h5 class="text-muted text-center mt-5 mb-5">Not enough data to analyse</h5>
             </div>
-
           </div>
-
         </div>
       </div>
     </div>

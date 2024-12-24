@@ -8,6 +8,7 @@ use App\Models\Expense;
 use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class ExpenseController extends Controller
 {
@@ -127,16 +128,21 @@ class ExpenseController extends Controller
 
         $monthlyBudget = $budget->monthly_budget;
 
-        $expenses = Expense::with('category')
-            ->where('user_id', $user->id)
+        $categories = Category::where('user_id', $user->id)->get();
+
+        $expenses = Expense::where('user_id', $user->id)
+            ->with('category')
             ->whereYear('date', Carbon::now()->year)
             ->whereMonth('date', Carbon::now()->month)
             ->get();
 
         $totalSpent = $expenses->sum('amount');
-        $advice = $totalSpent > $monthlyBudget
-            ? ['You have exceeded your monthly budget!']
-            : ['You are within your budget.'];
+
+        $advice = [];
+
+        if ($totalSpent > $monthlyBudget) {
+            $advice[] = 'You have exceeded your monthly budget!';
+        }
 
         $remainingBudget = $monthlyBudget - $totalSpent;
 
@@ -149,9 +155,9 @@ class ExpenseController extends Controller
         $maximumSpendingGoal = $remainingBudget - $goalAmount;
 
         if ($goalAmount) {
-            $advice[] = $totalSpent > ($monthlyBudget - $goalAmount)
-                ? 'You have exceeded your goal!'
-                : 'You are within your goal.';
+            if ($totalSpent > ($monthlyBudget - $goalAmount)) {
+                $advice[] = 'You have exceeded your goal!';
+            }
         } else {
             $advice[] = 'No goal was set for this month.';
         }
@@ -162,14 +168,49 @@ class ExpenseController extends Controller
             return $dayExpenses->sum('amount');
         })->sortKeys();
 
+        $categoriesArray = $categories->map(function ($category) {
+            return [
+                'name' => $category->name,
+                'priority' => $category->priority,
+            ];
+        })->toArray();
+
+        $expensesArray = $expenses->map(function ($expense) {
+            return [
+                'amount' => $expense->amount,
+                'date' => $expense->date,
+                'category' => $expense->category,
+            ];
+        })->toArray();
+
+        $data = [
+            'expenses' => $expensesArray,
+            'categories' => $categoriesArray,
+            'monthly_budget' => $monthlyBudget,
+        ];
+
+        // Send data using Flask for analysis
+        $pythonAnalysisUrl = 'http://127.0.0.1:5000/analysis';
+        $response = Http::post($pythonAnalysisUrl, $data);
+
+        if ($response->failed()) {
+            return response()->json(['error' => 'Failed to analyze expenses'], 500);
+        }
+
+        $result = $response->json();
+
+        $mergedAdvice = array_merge($advice, $result['advice']);
+
         return response()->json([
             'total_spent' => $totalSpent,
             'remaining_budget' => $remainingBudget,
-            'advice' => $advice,
+            'advice' => $mergedAdvice,
             'daily_expenses' => $dailyExpenses,
             'goal' => $goalAmount,
             'monthly_budget' => $monthlyBudget,
             'maximum_spending_goal' => $maximumSpendingGoal,
+            'category_limits' => $result['category_limits'],
+            'smart_insights' => $result['smart_insights'],
         ], 200);
     }
 }

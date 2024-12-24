@@ -21,13 +21,9 @@ class CategoryController extends Controller
     // Create a new category
     public function store(Request $request)
     {
-        if ($request->user()->categories()->count() >= 9) {
-            return response()->json(['message' => 'You can only have a maximum of 9 categories.'], 403);
-        }
-
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,NULL,id,user_id,' . $request->user()->id,
-            'priority' => 'required|integer|min:1|max:8',
+            'priority' => 'required|integer|min:1|max:9',
         ]);
 
         $category = Category::create([
@@ -52,7 +48,7 @@ class CategoryController extends Controller
 
         $request->validate([
             'name' => 'sometimes|string|max:255|unique:categories,name,' . $id . ',id,user_id,' . $request->user()->id,
-            'priority' => 'sometimes|integer|min:1|max:8',
+            'priority' => 'sometimes|integer|min:1|max:9',
         ]);
 
         if ($request->has('name') && $category->name !== $request->name) {
