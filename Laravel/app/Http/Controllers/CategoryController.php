@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -41,7 +42,9 @@ class CategoryController extends Controller
     // Update an existing category
     public function update(Request $request, $id)
     {
-        $category = Category::where('id', $id)->where('user_id', $request->user()->id)->first();
+        $category = Category::where('id', $id)
+                            ->where('user_id', $request->user()->id)
+                            ->first();
 
         if (!$category) {
             return response()->json(['error' => 'Category not found'], 404);
@@ -52,9 +55,18 @@ class CategoryController extends Controller
             'priority' => 'sometimes|integer|min:1|max:8',
         ]);
 
+        if ($request->has('name') && $category->name !== $request->name) {
+            Expense::where('user_id', $request->user()->id)
+                ->where('category', $category->name)
+                ->update(['category' => $request->name]);
+        }
+
         $category->update($request->only(['name', 'priority']));
 
-        return response()->json(['message' => 'Category updated successfully', 'category' => $category], 200);
+        return response()->json([
+            'message' => 'Category updated successfully',
+            'category' => $category
+        ], 200);
     }
 
     // Delete a category

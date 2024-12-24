@@ -149,7 +149,7 @@ class ExpenseController extends Controller
         $maximumSpendingGoal = $remainingBudget - $goalAmount;
 
         if ($goalAmount) {
-            $advice[] = $totalSpent > $goalAmount
+            $advice[] = $totalSpent > ($monthlyBudget - $goalAmount)
                 ? 'You have exceeded your goal!'
                 : 'You are within your goal.';
         } else {
