@@ -138,13 +138,9 @@ class ExpenseController extends Controller
 
         $totalSpent = $expenses->sum('amount');
 
-        $advice = [];
-
-        if ($totalSpent > $monthlyBudget) {
-            $advice[] = 'You have exceeded your monthly budget!';
-        }
-
-        $remainingBudget = $monthlyBudget - $totalSpent;
+        $all_expenses = Expense::where('user_id', $user->id)
+            ->with('category')
+            ->get();
 
         $goal = Goal::where('user_id', $user->id)
             ->whereMonth('created_at', Carbon::now()->month)
@@ -152,15 +148,8 @@ class ExpenseController extends Controller
             ->first();
 
         $goalAmount = $goal ? $goal->target_amount : 0;
-        $maximumSpendingGoal = $remainingBudget - $goalAmount;
 
-        if ($goalAmount) {
-            if ($totalSpent > ($monthlyBudget - $goalAmount)) {
-                $advice[] = 'You have exceeded your goal!';
-            }
-        } else {
-            $advice[] = 'No goal was set for this month.';
-        }
+        $remainingBudget = $monthlyBudget - $totalSpent;
 
         $dailyExpenses = $expenses->groupBy(function ($expense) {
             return Carbon::parse($expense->date)->format('d');
@@ -183,13 +172,24 @@ class ExpenseController extends Controller
             ];
         })->toArray();
 
+        $allExpensesArray = $all_expenses->map(function ($all_expenses) {
+            return [
+                'amount' => $all_expenses->amount,
+                'date' => $all_expenses->date,
+                'category' => $all_expenses->category,
+            ];
+        })->toArray();
+
         $data = [
             'expenses' => $expensesArray,
+            'all_expenses' => $allExpensesArray,
             'categories' => $categoriesArray,
             'monthly_budget' => $monthlyBudget,
+            'goal_amount' => $goalAmount,
+            'total_spent' => $totalSpent,
         ];
 
-        // Send data using Flask for analysis
+        // Use Flask for analysis
         $pythonAnalysisUrl = 'http://127.0.0.1:5000/analysis';
         $response = Http::post($pythonAnalysisUrl, $data);
 
@@ -199,18 +199,15 @@ class ExpenseController extends Controller
 
         $result = $response->json();
 
-        $mergedAdvice = array_merge($advice, $result['advice']);
-
         return response()->json([
-            'total_spent' => $totalSpent,
-            'remaining_budget' => $remainingBudget,
-            'advice' => $mergedAdvice,
-            'daily_expenses' => $dailyExpenses,
             'goal' => $goalAmount,
             'monthly_budget' => $monthlyBudget,
-            'maximum_spending_goal' => $maximumSpendingGoal,
+            'total_spent' => $totalSpent,
+            'remaining_budget' => $remainingBudget,
             'category_limits' => $result['category_limits'],
+            'advice' => $result['advice'],
             'smart_insights' => $result['smart_insights'],
+            'daily_expenses' => $dailyExpenses,
         ], 200);
     }
 }

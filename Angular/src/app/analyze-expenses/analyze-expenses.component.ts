@@ -115,7 +115,7 @@ export class AnalyzeExpensesComponent implements OnInit {
           y: {
             title: {
               display: true,
-              text: 'Amount ($)'
+              text: 'Amount (EGP)'
             }
           }
         }

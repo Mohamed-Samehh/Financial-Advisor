@@ -41,9 +41,9 @@
             </h5>
             <h5 class="text-muted">Remaining Allowable Spending:
               <span
-                [ngClass]="{'text-danger': analysis.maximum_spending_goal < (analysis.monthly_budget - analysis.goal) * 0.5,
-                            'text-success': analysis.maximum_spending_goal >= (analysis.monthly_budget - analysis.goal) * 0.5}">
-                E£{{ formatNumber(analysis.maximum_spending_goal) }}
+                [ngClass]="{'text-danger': (analysis.remaining_budget - analysis.goal) < (analysis.monthly_budget - analysis.goal) * 0.5,
+                            'text-success': (analysis.remaining_budget - analysis.goal) >= (analysis.monthly_budget - analysis.goal) * 0.5}">
+                E£{{ formatNumber(analysis.remaining_budget - analysis.goal) }}
               </span>
             </h5>
             <h5 class="text-muted">Remaining Budget:
