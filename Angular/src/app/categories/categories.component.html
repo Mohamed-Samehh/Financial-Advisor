@@ -127,8 +127,9 @@
         </div>
 
         <div>
+
+          <!-- *ngIf="category.name !== 'Other'" -->
           <button
-            *ngIf="category.name !== 'Other'"
             [ngClass]="{
               'btn-outline-primary': !(isUpdating && form.id === category.id),
               'btn-warning text-dark': isUpdating && form.id === category.id
