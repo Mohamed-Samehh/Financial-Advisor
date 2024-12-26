@@ -87,7 +87,7 @@
       </div>
 
       <!-- Insights Section -->
-      <div *ngIf="analysis.smart_insights && analysis.smart_insights.length > 0" class="card shadow-lg border-0 mb-4">
+      <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
           <h5 class="text-muted"><b>Insights:</b></h5>
           <div *ngIf="isLoading && !analysis.smart_insights" class="text-center">
@@ -98,6 +98,11 @@
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
             <h5 class="text-muted">Not enough data to analyse</h5>
+          </div>
+
+          <!-- If insights are empty -->
+          <div *ngIf="!isLoading && analysis.monthly_budget && analysis.smart_insights.length === 0">
+            <h5 class="text-muted">Looks like there are no insights available yet. Check back later after adding more expenses!</h5>
           </div>
 
           <ul class="list-group list-group-flush">
