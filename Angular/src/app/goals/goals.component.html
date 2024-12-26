@@ -5,7 +5,7 @@
   <!-- Loader while fetching goal -->
   <div *ngIf="isLoading" class="text-center mt-5">
     <div class="spinner-border text-primary mt-5" role="status"></div>
-    <p><b>Processing...</b></p>
+    <p><b>Loading...</b></p>
   </div>
 
   <!-- If no budget is set, show a warning message -->
@@ -14,7 +14,7 @@
   </div>
 
   <!-- Card for Form -->
-  <div class="card shadow-lg border-0" *ngIf="!isLoading && budget">
+  <div class="card shadow-lg border-0 bg-light" *ngIf="!isLoading && budget">
     <div class="card-body p-5">
       <!-- Success/Error Message -->
       <div *ngIf="message" class="alert text-center alert-dismissible fade show"

@@ -23,7 +23,7 @@
   <!-- Loader while fetching categories -->
   <div *ngIf="isLoading" class="text-center mt-5">
     <div class="spinner-border text-primary mt-5" role="status"></div>
-    <p><b>Processing...</b></p>
+    <p><b>Loading...</b></p>
   </div>
 
   <div *ngIf="!isLoading">
@@ -50,8 +50,8 @@
       </div>
     </div>
 
-    <!-- Category Form (Shown only for updates) -->
-    <div *ngIf="isUpdating" class="card shadow-lg border-0 mb-4">
+    <!-- Category Form -->
+    <div *ngIf="isUpdating" class="card shadow-lg border-0 mb-4 bg-light">
       <div class="card-body p-5">
         <form (ngSubmit)="onSubmit(categoryForm)" #categoryForm="ngForm">
           <!-- Category Name -->
@@ -109,16 +109,23 @@
     <ul class="list-group mt-3 mb-5">
       <li
         *ngFor="let category of categories"
-        class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2"
+        class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2 rounded-3"
       >
-        <div>
-          <strong>{{ category.name }}</strong>
-          <span *ngIf="category.priority"> (Priority: {{ category.priority }})</span>
-          <span *ngIf="!category.priority" class="text-danger"> (Priority not set)</span>
+        <div class="d-flex align-items-center w-100">
+          <span *ngIf="category.priority" class="badge bg-primary text-white me-2 p-2">
+            <i class="fas fa-star"></i> {{ category.priority }}
+          </span>
+          <span *ngIf="!category.priority" class="text-muted me-2 p-2">Priority not set</span>
+
+          <div class="me-3 text-truncate" style="max-width: 60%; font-weight: bold;">
+            {{ category.name }}
+          </div>
+
           <span *ngIf="isUpdating && form.id === category.id" class="badge bg-warning text-dark ms-2">
             Editing...
           </span>
         </div>
+
         <div>
           <button
             *ngIf="category.name !== 'Other'"
@@ -126,7 +133,7 @@
               'btn-outline-primary': !(isUpdating && form.id === category.id),
               'btn-warning text-dark': isUpdating && form.id === category.id
             }"
-            class="btn btn-sm me-2"
+            class="btn btn-sm"
             (click)="editCategory(category)"
           >
             <i class="fas fa-pencil-alt"></i>

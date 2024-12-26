@@ -1,10 +1,12 @@
-<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center bg-light">
+<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center" style="background: linear-gradient(135deg, #f8f9fa 0%, #e2e8f0 100%);">
   <!-- Card Container -->
-  <div class="card shadow-sm border-0 rounded-lg mb-4 mt-4" style="max-width: 600px; width: 100%; background-color: #fff;">
-    <div class="card-body p-4">
+  <div class="card shadow-lg border-0 rounded-3 mb-4 mt-4" style="max-width: 600px; width: 100%; height: auto;">
+    <div class="card-body p-5 d-flex flex-column justify-content-between">
       <!-- Title Section -->
-      <h1 class="text-center text-primary mb-4 font-weight-bold">Create an Account</h1>
-      <p class="text-center text-muted mb-4">Please fill in the details below</p>
+      <div class="text-center mb-4">
+        <h1 class="text-primary display-4 mb-2">Create an Account</h1>
+        <p class="text-muted mb-4">Please fill in the details below</p>
+      </div>
 
       <!-- Display error or success messages -->
       <div *ngIf="message" class="alert text-center" [ngClass]="{'alert-success': message.type === 'success', 'alert-danger': message.type === 'error'}">
@@ -14,23 +16,28 @@
       <!-- Registration Form -->
       <form #registrationForm="ngForm" (ngSubmit)="onSubmit(registrationForm)">
         <!-- Name Field -->
-        <div class="mb-4">
-          <label for="name" class="form-label text-secondary">Name</label>
-          <input
-            type="text"
-            class="form-control form-control-lg shadow-sm rounded-pill"
-            id="name"
-            name="name"
-            [(ngModel)]="form.name"
-            #name="ngModel"
-            required
-            minlength="2"
-            [ngClass]="{
-              'is-valid': name.valid && (name.dirty || name.touched || submitted),
-              'is-invalid': name.invalid && (name.dirty || name.touched || submitted)
-            }"
-            placeholder="Enter your name"
-          />
+        <div class="form-group mb-4">
+          <label for="name" class="font-weight-bold">Name</label>
+          <div class="position-relative">
+            <span class="position-absolute top-50 translate-middle-y ps-3">
+              <i class="fas fa-user text-primary"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              id="name"
+              name="name"
+              [(ngModel)]="form.name"
+              #name="ngModel"
+              required
+              minlength="2"
+              [ngClass]="{
+                'is-valid': name.valid && (name.dirty || name.touched || submitted),
+                'is-invalid': name.invalid && (name.dirty || name.touched || submitted)
+              }"
+              placeholder="Enter your name"
+            />
+          </div>
           <div *ngIf="name.invalid && (name.dirty || name.touched || submitted)" class="text-danger">
             <div *ngIf="name.errors?.['required']">Name is required.</div>
             <div *ngIf="name.errors?.['minlength']">Name must be at least 2 characters long.</div>
@@ -38,23 +45,28 @@
         </div>
 
         <!-- Email Field -->
-        <div class="mb-4">
-          <label for="email" class="form-label text-secondary">Email</label>
-          <input
-            type="email"
-            class="form-control form-control-lg shadow-sm rounded-pill"
-            id="email"
-            name="email"
-            [(ngModel)]="form.email"
-            #email="ngModel"
-            required
-            email
-            [ngClass]="{
-              'is-valid': email.valid && (email.dirty || email.touched || submitted),
-              'is-invalid': email.invalid && (email.dirty || email.touched || submitted)
-            }"
-            placeholder="yourname@example.com"
-          />
+        <div class="form-group mb-4">
+          <label for="email" class="font-weight-bold">Email</label>
+          <div class="position-relative">
+            <span class="position-absolute top-50 translate-middle-y ps-3">
+              <i class="fas fa-envelope text-primary"></i>
+            </span>
+            <input
+              type="email"
+              class="form-control form-control-lg"
+              id="email"
+              name="email"
+              [(ngModel)]="form.email"
+              #email="ngModel"
+              required
+              email
+              [ngClass]="{
+                'is-valid': email.valid && (email.dirty || email.touched || submitted),
+                'is-invalid': email.invalid && (email.dirty || email.touched || submitted)
+              }"
+              placeholder="Enter your email"
+            />
+          </div>
           <div *ngIf="email.invalid && (email.dirty || email.touched || submitted)" class="text-danger">
             <div *ngIf="email.errors?.['required']">Email is required.</div>
             <div *ngIf="email.errors?.['email']">Invalid email address.</div>
@@ -62,23 +74,28 @@
         </div>
 
         <!-- Password Field -->
-        <div class="mb-4">
-          <label for="password" class="form-label text-secondary">Password</label>
-          <input
-            type="password"
-            class="form-control form-control-lg shadow-sm rounded-pill"
-            id="password"
-            name="password"
-            [(ngModel)]="form.password"
-            #password="ngModel"
-            required
-            minlength="8"
-            [ngClass]="{
-              'is-valid': password.valid && (password.dirty || password.touched || submitted),
-              'is-invalid': password.invalid && (password.dirty || password.touched || submitted)
-            }"
-            placeholder="Enter your password"
-          />
+        <div class="form-group mb-4">
+          <label for="password" class="font-weight-bold">Password</label>
+          <div class="position-relative">
+            <span class="position-absolute top-50 translate-middle-y ps-3">
+              <i class="fas fa-lock text-primary"></i>
+            </span>
+            <input
+              type="password"
+              class="form-control form-control-lg"
+              id="password"
+              name="password"
+              [(ngModel)]="form.password"
+              #password="ngModel"
+              required
+              minlength="8"
+              [ngClass]="{
+                'is-valid': password.valid && (password.dirty || password.touched || submitted),
+                'is-invalid': password.invalid && (password.dirty || password.touched || submitted)
+              }"
+              placeholder="Enter your password"
+            />
+          </div>
           <div *ngIf="password.invalid && (password.dirty || password.touched || submitted)" class="text-danger">
             <div *ngIf="password.errors?.['required']">Password is required.</div>
             <div *ngIf="password.errors?.['minlength']">Password must be at least 8 characters long.</div>
@@ -86,45 +103,52 @@
         </div>
 
         <!-- Confirm Password Field -->
-        <div class="mb-4">
-          <label for="password_confirmation" class="form-label text-secondary">Confirm Password</label>
-          <input
-            type="password"
-            class="form-control form-control-lg shadow-sm rounded-pill"
-            id="password_confirmation"
-            name="password_confirmation"
-            [(ngModel)]="form.password_confirmation"
-            #password_confirmation="ngModel"
-            required
-            [ngClass]="{
-              'is-valid': password_confirmation.valid && (password_confirmation.dirty || password_confirmation.touched || submitted) && form.password === form.password_confirmation,
-              'is-invalid': password_confirmation.invalid && (password_confirmation.dirty || password_confirmation.touched || submitted) || form.password !== form.password_confirmation
-            }"
-            placeholder="Re-enter your password"
-          />
+        <div class="form-group mb-4">
+          <label for="password_confirmation" class="font-weight-bold">Confirm Password</label>
+          <div class="position-relative">
+            <span class="position-absolute top-50 translate-middle-y ps-3">
+              <i class="fas fa-lock text-primary"></i>
+            </span>
+            <input
+              type="password"
+              class="form-control form-control-lg"
+              id="password_confirmation"
+              name="password_confirmation"
+              [(ngModel)]="form.password_confirmation"
+              #password_confirmation="ngModel"
+              required
+              [ngClass]="{
+                'is-valid': password_confirmation.valid && (password_confirmation.dirty || password_confirmation.touched || submitted) && form.password === form.password_confirmation,
+                'is-invalid': password_confirmation.invalid && (password_confirmation.dirty || password_confirmation.touched || submitted) || form.password !== form.password_confirmation
+              }"
+              placeholder="Re-enter your password"
+            />
+          </div>
           <div *ngIf="form.password !== form.password_confirmation && (password_confirmation.dirty || password_confirmation.touched || submitted)" class="text-danger">
             Passwords do not match.
           </div>
         </div>
 
-        <!-- Submit Button and Loader -->
-        <div class="text-center mt-4">
+        <!-- Submit Button -->
+        <div class="d-grid gap-2 mt-4">
           <button
             type="submit"
-            class="btn btn-primary btn-lg rounded-pill shadow-lg w-100 py-2"
+            class="btn btn-primary btn-block btn-lg"
             [disabled]="isLoading"
           >
             <span *ngIf="!isLoading">Register</span>
-            <span *ngIf="isLoading">
-              <div class="spinner-border spinner-border-sm" role="status"></div>
+            <span *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
+              <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+              Processing...
             </span>
           </button>
         </div>
       </form>
 
       <!-- Login Link -->
-      <p class="mt-4 text-center text-muted">
-        Already have an account? <a [routerLink]="['/login']" class="text-primary font-weight-bold">Login here</a>
+      <p class="mt-4 text-center">
+        <span class="text-muted">Already have an account?</span>
+        <a [routerLink]="['/login']" class="text-primary fw-bold ms-2 text-decoration-none">Login here</a>
       </p>
     </div>
   </div>

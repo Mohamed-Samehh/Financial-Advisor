@@ -1,55 +1,102 @@
 <div class="container mt-5">
   <!-- Dashboard Heading -->
-  <h2 class="text-center display-4 text-primary mb-4">Dashboard</h2>
+  <h2 class="text-center display-4 text-primary mb-5">Dashboard</h2>
 
   <!-- Card Container -->
-  <div class="card shadow-lg border-0 mb-5">
-    <div class="card-body text-center p-5">
-
+  <div class="card shadow-lg border-0 rounded-4 mb-5" style="background: linear-gradient(135deg, #f8f9fa, #e2e8f0);">
+    <div class="card-body p-5">
       <!-- Welcome Section -->
-      <h5 class="card-title text-uppercase font-weight-bold">Welcome to Your Financial Advisor!</h5>
-      <p class="card-text text-muted mb-4 diff_font">Manage your finances efficiently and reach your goals.</p>
+      <div class="text-center mb-5">
+        <h5 class="text-uppercase text-primary mb-3">Welcome to Your Financial Advisor!</h5>
+        <p class="fs-5 text-muted">Track, manage, and analyze your finances effortlessly. Let's achieve your financial goals together.</p>
+      </div>
 
-      <!-- Navigation Links -->
-      <ul class="list-group list-group-flush diff_font">
-        <li class="list-group-item py-3">
-          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/budget']" routerLinkActive="active">
-            <i class="fas fa-wallet text-primary mr-2"></i> &nbsp; Manage Budget
-          <div class="text-muted small">Plan your monthly budget.</div>
-        </a>
-        </li>
-        <li class="list-group-item py-3">
-          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/goal']" routerLinkActive="active">
-            <i class="fas fa-bullseye text-success mr-2"></i> &nbsp; Manage Goal
-          <div class="text-muted small">Define your financial target.</div>
-        </a>
-        </li>
-        <li class="list-group-item py-3">
-          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/categories']" routerLinkActive="active">
-            <i class="fas fa-list-alt text-secondary mr-2"></i> &nbsp; Manage Categories
-          <div class="text-muted small">Organize and prioritize your categories.</div>
-        </a>
-        </li>
-        <li class="list-group-item py-3">
-          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/expenses']" routerLinkActive="active">
-            <i class="fas fa-receipt text-warning mr-2"></i> &nbsp; Track Expenses
-          <div class="text-muted small">Monitor daily expenses and categorize them.</div>
-        </a>
-        </li>
-        <li class="list-group-item py-3">
-          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/analyze']" routerLinkActive="active">
-            <i class="fas fa-chart-pie text-info mr-2"></i> &nbsp; Analyze Expenses
-          <div class="text-muted small">Get insights and visual analysis of your spending.</div>
-        </a>
-        </li>
-        <li class="list-group-item py-3">
-          <a class="nav-link text-dark font-weight-bold" [routerLink]="['/history']" routerLinkActive="active">
-            <i class="fas fa-history text-primary mr-2"></i> &nbsp; Expense History
-          <div class="text-muted small">Review your past expenses.</div>
-        </a>
-        </li>
-      </ul>
+      <!-- Navigation Grid -->
+      <div class="row g-4">
+        <!-- Manage Budget -->
+        <div class="col-md-4">
+          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
+            <div class="card-body text-center p-4">
+              <div class="text-primary mt-4 mb-3 mx-auto">
+                <i class="fas fa-wallet display-5"></i>
+              </div>
+              <h6 class="fw-bold text-primary">Manage Budget</h6>
+              <p class="small text-muted">Plan your monthly budget effectively.</p>
+              <a [routerLink]="['/budget']" class="stretched-link"></a>
+            </div>
+          </div>
+        </div>
 
+        <!-- Manage Goal -->
+        <div class="col-md-4">
+          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
+            <div class="card-body text-center p-4">
+              <div class="text-success mt-4 mb-3 mx-auto">
+                <i class="fas fa-bullseye display-5"></i>
+              </div>
+              <h6 class="fw-bold text-success">Manage Goal</h6>
+              <p class="small text-muted">Define your financial targets clearly.</p>
+              <a [routerLink]="['/goal']" class="stretched-link"></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manage Categories -->
+        <div class="col-md-4">
+          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
+            <div class="card-body text-center p-4">
+              <div class="text-secondary mt-4 mb-3 mx-auto">
+                <i class="fas fa-list-alt display-5"></i>
+              </div>
+              <h6 class="fw-bold text-secondary">Manage Categories</h6>
+              <p class="small text-muted">Organize and prioritize your categories effectively.</p>
+              <a [routerLink]="['/categories']" class="stretched-link"></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Track Expenses -->
+        <div class="col-md-4">
+          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
+            <div class="card-body text-center p-4">
+              <div class="text-warning mt-4 mb-3 mx-auto">
+                <i class="fas fa-receipt display-5"></i>
+              </div>
+              <h6 class="fw-bold text-warning">Track Expenses</h6>
+              <p class="small text-muted">Monitor and categorize your daily expenses.</p>
+              <a [routerLink]="['/expenses']" class="stretched-link"></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analyze Expenses -->
+        <div class="col-md-4">
+          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
+            <div class="card-body text-center p-4">
+              <div class="text-info mt-4 mb-3 mx-auto">
+                <i class="fas fa-chart-pie display-5"></i>
+              </div>
+              <h6 class="fw-bold text-info">Analyze Expenses</h6>
+              <p class="small text-muted">Gain insights with visual expense analysis.</p>
+              <a [routerLink]="['/analyze']" class="stretched-link"></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expense History -->
+        <div class="col-md-4">
+          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
+            <div class="card-body text-center p-4">
+              <div class="text-primary mt-4 mb-3 mx-auto">
+                <i class="fas fa-history display-5"></i>
+              </div>
+              <h6 class="fw-bold text-primary">Expense History</h6>
+              <p class="small text-muted">Review and reflect on your past expenses.</p>
+              <a [routerLink]="['/history']" class="stretched-link"></a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
