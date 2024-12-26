@@ -20,7 +20,7 @@ export class ExpensesComponent implements OnInit {
   maxDate: string;
   isLoading: boolean = false;
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 8;
   paginatedExpenses: any[] = [];
   totalPages: number = 0;
   pages: number[] = [];

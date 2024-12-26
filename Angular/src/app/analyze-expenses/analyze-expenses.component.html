@@ -58,7 +58,7 @@
       </div>
 
       <!-- Warning Section -->
-      <div class="card shadow-lg border-0 mb-4">
+      <div *ngIf="analysis.advice && analysis.advice.length > 0" class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
           <h5 class="text-muted"><b>Warning:</b></h5>
           <div *ngIf="isLoading && !analysis.advice" class="text-center">
@@ -71,19 +71,23 @@
             <h5 class="text-muted">Not enough data to analyse</h5>
           </div>
 
-          <!-- If warning is empty -->
-          <div *ngIf="!isLoading && analysis.monthly_budget && analysis.advice.length === 0">
-            <h5 class="text-muted">Everything looking good so far!</h5>
-          </div>
-
           <ul class="list-group list-group-flush">
-            <li *ngFor="let tip of analysis.advice" class="list-group-item border-0 text-muted fs-5">{{ tip }}</li>
+            <li *ngFor="let tip of analysis.advice; let i = index" class="list-group-item border-0 text-muted fs-5">
+              <div class="d-flex flex-column p-2 mb-2 border-start border-4 border-danger">
+                <div class="fs-6 fw-bold mb-1 text-danger">
+                  Warning {{ i + 1 }}:
+                </div>
+                <div>
+                  {{ tip }}
+                </div>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
 
       <!-- Insights Section -->
-      <div class="card shadow-lg border-0 mb-4">
+      <div *ngIf="analysis.smart_insights && analysis.smart_insights.length > 0" class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
           <h5 class="text-muted"><b>Insights:</b></h5>
           <div *ngIf="isLoading && !analysis.smart_insights" class="text-center">
@@ -96,13 +100,17 @@
             <h5 class="text-muted">Not enough data to analyse</h5>
           </div>
 
-          <!-- If insights are empty -->
-          <div *ngIf="!isLoading && analysis.monthly_budget && analysis.smart_insights.length === 0">
-            <h5 class="text-muted">No insights to show</h5>
-          </div>
-
           <ul class="list-group list-group-flush">
-            <li *ngFor="let insight of analysis.smart_insights" class="list-group-item border-0 text-muted fs-5">{{ insight }}</li>
+            <li *ngFor="let insight of analysis.smart_insights; let i = index" class="list-group-item border-0 text-muted fs-5">
+              <div class="d-flex flex-column p-2 mb-2 border-start border-4 border-success">
+                <div class="fs-6 fw-bold mb-1 text-success">
+                  Insight {{ i + 1 }}:
+                </div>
+                <div>
+                  {{ insight }}
+                </div>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
