@@ -18,10 +18,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     const token = this.getToken();
     this.isLoggedIn = !!token;
-
-    if (!token) {
-      this.router.navigate(['/login']);
-    }
   }
 
   logout() {

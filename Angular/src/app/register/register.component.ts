@@ -24,6 +24,14 @@ export class RegisterComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  ngOnInit(): void {
+    const token = this.authService.getToken();
+
+    if (token) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
   onSubmit(registrationForm: any): void {
     this.submitted = true;
 

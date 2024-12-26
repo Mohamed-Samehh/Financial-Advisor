@@ -189,15 +189,19 @@ class ExpenseController extends Controller
             'total_spent' => $totalSpent,
         ];
 
-        // Use Flask for analysis
+        $result = [
+            'category_limits' => [],
+            'advice' => [],
+            'smart_insights' => []
+        ];
+
+        // Attempt to use Flask for analysis
         $pythonAnalysisUrl = 'http://127.0.0.1:5000/analysis';
         $response = Http::post($pythonAnalysisUrl, $data);
 
-        if ($response->failed()) {
-            return response()->json(['error' => 'Failed to analyze expenses'], 500);
+        if ($response->successful()) {
+            $result = $response->json();
         }
-
-        $result = $response->json();
 
         return response()->json([
             'goal' => $goalAmount,

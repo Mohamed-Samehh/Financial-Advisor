@@ -18,7 +18,7 @@
 
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">Not enough data to analyse</h5>
+            <h5 class="text-muted">To view your analysis, please set a budget first.</h5>
           </div>
 
           <!-- If there are no expenses -->
@@ -34,22 +34,22 @@
           <div *ngIf="!isLoading && analysis.total_spent">
             <h5 class="text-muted">Total Spent:
               <span
-                [ngClass]="{'text-danger': analysis.total_spent > (analysis.monthly_budget * 0.5),
-                            'text-success': analysis.total_spent <= (analysis.monthly_budget * 0.5)}">
+                [ngClass]="{'text-danger': analysis.total_spent > (analysis.monthly_budget * 0.75),
+                            'text-success': analysis.total_spent <= (analysis.monthly_budget * 0.75)}">
                 E£{{ formatNumber(analysis.total_spent) }}
               </span>
             </h5>
             <h5 class="text-muted">Remaining Allowable Spending:
               <span
-                [ngClass]="{'text-danger': (analysis.remaining_budget - analysis.goal) < (analysis.monthly_budget - analysis.goal) * 0.5,
-                            'text-success': (analysis.remaining_budget - analysis.goal) >= (analysis.monthly_budget - analysis.goal) * 0.5}">
+                [ngClass]="{'text-danger': (analysis.remaining_budget - analysis.goal) < (analysis.monthly_budget - analysis.goal) * 0.25,
+                            'text-success': (analysis.remaining_budget - analysis.goal) >= (analysis.monthly_budget - analysis.goal) * 0.25}">
                 E£{{ formatNumber(analysis.remaining_budget - analysis.goal) }}
               </span>
             </h5>
             <h5 class="text-muted">Remaining Budget:
               <span
-                [ngClass]="{'text-danger': analysis.remaining_budget < (analysis.monthly_budget * 0.5),
-                            'text-success': analysis.remaining_budget >= (analysis.monthly_budget * 0.5)}">
+                [ngClass]="{'text-danger': analysis.remaining_budget < (analysis.monthly_budget * 0.25),
+                            'text-success': analysis.remaining_budget >= (analysis.monthly_budget * 0.25)}">
                 E£{{ formatNumber(analysis.remaining_budget) }}
               </span>
             </h5>
@@ -68,7 +68,7 @@
 
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">Not enough data to analyse</h5>
+            <h5 class="text-muted">To view your analysis, please set a budget first.</h5>
           </div>
 
           <ul class="list-group list-group-flush">
@@ -97,7 +97,7 @@
 
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">Not enough data to analyse</h5>
+            <h5 class="text-muted">To view your analysis, please set a budget first.</h5>
           </div>
 
           <!-- If insights are empty -->
@@ -137,7 +137,7 @@
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget">
-              <h5 class="text-muted text-center mt-4">Not enough data to analyse</h5>
+              <h5 class="text-muted text-center mt-4">To view your analysis, please set a budget first.</h5>
             </div>
 
             <!-- If there are no expenses -->
@@ -166,7 +166,7 @@
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget" class="no-expenses-message" style="width: 100%;">
-              <h5 class="text-muted text-center mt-5 mb-5">Not enough data to analyse</h5>
+              <h5 class="text-muted text-center mt-5 mb-5">To view your analysis, please set a budget first.</h5>
             </div>
           </div>
         </div>

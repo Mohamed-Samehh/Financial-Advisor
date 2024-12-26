@@ -39,13 +39,14 @@ def analyze_expenses():
 
     if goal_amount > 0:
         if total_spent > (monthly_budget - goal_amount):
-            advice.append("You've spent more than your savings goal allows.")
+            advice.append("You've spent more than your goal allows.")
     else:
         advice.append('No goal was set for this month.')
 
-    for _, row in expenses.iterrows():
-        if row['amount'] > row['limit']:
-            advice.append(f"You've exceeded the limit for '{row['category']}'. Stop spending to avoid risks.")
+    over_budget_categories = expenses[expenses['amount'] > expenses['limit']]['category'].unique()
+    if len(over_budget_categories) > 0:
+        combined_categories = "', '".join(over_budget_categories)
+        advice.append(f"You've exceeded the limit for '{combined_categories}'. Stop spending to avoid risks.")
 
     # Predictive insights (Minimum 10 records)
     if len(expenses) >= 10:
@@ -68,7 +69,7 @@ def analyze_expenses():
             ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         )
         peak_day = weekday_spending.idxmax()
-        smart_insights.append(f"Your highest spending is usually on {peak_day}s. Plan for it!")
+        smart_insights.append(f"Your highest spending occurs on {peak_day}s. Plan for it!")
 
     # Category-based spending trends analysis (Minimum 20 records and 3 unique categories)
     if len(expenses) >= 20 and len(expenses['category'].unique()) >= 3:
@@ -90,14 +91,19 @@ def analyze_expenses():
                 largest_increase_category = deviations.idxmax()
                 largest_decrease_category = deviations.idxmin()
 
-                if deviations[largest_increase_category] > 0:
+                if deviations[largest_increase_category] > 0 and deviations[largest_decrease_category] < 0:
                     smart_insights.append(
-                        f"Spending in the '{largest_increase_category}' category increased significantly compared to your usual spending."
+                        f"Spending in the '{largest_increase_category}' category increased while the '{largest_decrease_category}' category decreased significantly compared to your usual spending."
                     )
-                if deviations[largest_decrease_category] < 0:
-                    smart_insights.append(
-                        f"Spending in the '{largest_decrease_category}' category decreased significantly compared to your usual spending."
-                    )
+                else:
+                    if deviations[largest_increase_category] > 0:
+                        smart_insights.append(
+                            f"Spending in the '{largest_increase_category}' category increased significantly compared to your usual spending."
+                        )
+                    if deviations[largest_decrease_category] < 0:
+                        smart_insights.append(
+                            f"Spending in the '{largest_decrease_category}' category decreased significantly compared to your usual spending."
+                        )
 
     # Behavioral clustering (Minimum 50 records)
     if len(expenses) >= 50:
