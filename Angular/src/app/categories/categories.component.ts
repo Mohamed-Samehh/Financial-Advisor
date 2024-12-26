@@ -21,11 +21,13 @@ export class CategoriesComponent implements OnInit {
   };
   message: { type: string; text: string } | null = null;
   submitted: boolean = false;
+  suggestedCategories: any[] = [];
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {
     this.loadCategories();
+    this.loadSuggestedCategories();
   }
 
   loadCategories() {
@@ -43,6 +45,20 @@ export class CategoriesComponent implements OnInit {
       },
     });
   }
+
+  loadSuggestedCategories() {
+    this.apiService.getCategorySuggestions().subscribe({
+      next: (res) => {
+        if (res && res.suggested_priorities && res.suggested_priorities.length > 0) {
+          this.suggestedCategories = res.suggested_priorities;
+        }
+      },
+      error: () => {
+        this.suggestedCategories = [];
+      }
+    });
+  }
+
 
   checkDuplicates() {
     const trimmedName = this.form.name.trim().toLowerCase();

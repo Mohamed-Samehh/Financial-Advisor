@@ -100,4 +100,8 @@ export class ApiService {
   deleteCategory(id: any): Observable<any> {
     return this.http.delete(`${this.apiUrl}/categories/${id}`, { headers: this.getHeaders() });
   }
+
+  getCategorySuggestions(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/categories/suggest`, { headers: this.getHeaders() });
+  }
 }

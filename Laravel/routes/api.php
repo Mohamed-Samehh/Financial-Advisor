@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+    Route::get('/categories/suggest', [CategoryController::class, 'suggestCategoryPriorities']);
 
     Route::get('/analyze-expenses', [ExpenseController::class, 'analyzeExpenses']);
 });

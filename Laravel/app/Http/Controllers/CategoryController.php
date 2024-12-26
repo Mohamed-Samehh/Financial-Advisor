@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class CategoryController extends Controller
 {
@@ -76,5 +77,42 @@ class CategoryController extends Controller
         }
 
         return response()->json(['error' => 'Category not found'], 404);
+    }
+
+    // Suggest Category Priorities
+    public function suggestCategoryPriorities(Request $request)
+    {
+        $user = $request->user();
+        $previousMonth = Carbon::now()->subMonth();
+
+        $previousMonthExpenses = Expense::where('user_id', $user->id)
+            ->whereYear('date', $previousMonth->year)
+            ->whereMonth('date', $previousMonth->month)
+            ->get();
+
+        if ($previousMonthExpenses->isEmpty()) {
+            return response()->json(['message' => 'No suggestions available for the first month'], 200);
+        }
+
+        $categoryExpenses = $previousMonthExpenses->groupBy('category')->map(function ($expenses) {
+            return $expenses->sum('amount');
+        });
+
+        $sortedCategories = $categoryExpenses->sortDesc();
+
+        $suggestedPriorities = [];
+        $priority = 1;
+        foreach ($sortedCategories as $category => $totalAmount) {
+            $suggestedPriorities[] = [
+                'category' => $category,
+                'suggested_priority' => $priority++,
+                'total_expenses' => $totalAmount,
+            ];
+        }
+
+        return response()->json([
+            'message' => 'Category priority suggestions based on previous month expenses',
+            'suggested_priorities' => $suggestedPriorities
+        ], 200);
     }
 }
