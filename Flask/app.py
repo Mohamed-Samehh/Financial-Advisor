@@ -61,15 +61,20 @@ def analyze_expenses():
             smart_insights.append(f"Next month's spending is predicted to be around E£{rounded_spending:,.0f}.")
 
     # Day-of-week spending analysis (Minimum 30 records)
-    if len(expenses) >= 30:
-        expenses['date'] = pd.to_datetime(expenses['date'])
-        expenses['day_of_week'] = expenses['date'].dt.day_name()
+    if len(all_expenses) >= 30:
+        all_expenses['date'] = pd.to_datetime(all_expenses['date'])
+        all_expenses['day_of_week'] = all_expenses['date'].dt.day_name()
 
-        weekday_spending = expenses.groupby('day_of_week')['amount'].sum().reindex(
-            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        weekday_counts = all_expenses['day_of_week'].value_counts().reindex(
+            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], fill_value=0
         )
-        peak_day = weekday_spending.idxmax()
-        smart_insights.append(f"Your highest spending occurs on {peak_day}s. Plan for it!")
+
+        if (weekday_counts >= 5).any():
+            weekday_spending = all_expenses.groupby('day_of_week')['amount'].mean().reindex(
+                ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+            )
+            peak_day = weekday_spending.idxmax()
+            smart_insights.append(f"You tend to spend the most on {peak_day}s. Plan ahead!")
 
     # Category-based spending trends analysis (Minimum 20 records and 3 unique categories)
     if len(expenses) >= 20 and len(expenses['category'].unique()) >= 3:
@@ -79,7 +84,7 @@ def analyze_expenses():
             most_variable_category = category_variability.idxmax()
             if pd.notna(most_variable_category):
                 smart_insights.append(
-                    f"Your spending in '{most_variable_category}' varies the most. Keep an eye on it!"
+                    f"Spending in '{most_variable_category}' varies the most. Keep an eye on it!"
                 )
 
         if len(all_expenses) >= 20 and len(all_expenses['category'].unique()) >= 3:

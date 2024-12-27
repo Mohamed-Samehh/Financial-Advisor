@@ -75,7 +75,12 @@ export class UserProfileComponent implements OnInit {
           this.updateInfoSuccess = 'Profile updated successfully!';
           this.updateInfoError = '';
           this.submittedInfo = false;
+          const updatedValues = this.updateInfoForm.value;
+
           this.updateInfoForm.reset();
+
+          this.userData = { ...updatedValues };
+
           this.loadingUpdateInfo = false;
         },
         error: (err) => {

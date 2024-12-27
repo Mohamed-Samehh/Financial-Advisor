@@ -2,9 +2,14 @@
   transition: color 0.3s ease;
 }
 
-.nav-link:hover {
+.Blue-Hov:hover {
   color: #007bff;
 }
+
+.Red-Hov:hover {
+  color: #dc3545;
+}
+
 
 .navbar-brand {
   font-weight: bold;

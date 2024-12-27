@@ -9,7 +9,7 @@
       </div>
 
       <!-- Error Message -->
-      <div *ngIf="loginError" class="alert alert-danger text-center">
+      <div *ngIf="loginError && !loading" class="alert alert-danger text-center">
         {{ loginError }}
       </div>
 

@@ -9,7 +9,7 @@
       </div>
 
       <!-- Display error or success messages -->
-      <div *ngIf="message" class="alert text-center" [ngClass]="{'alert-success': message.type === 'success', 'alert-danger': message.type === 'error'}">
+      <div *ngIf="message && !isLoading" class="alert text-center" [ngClass]="{'alert-success': message.type === 'success', 'alert-danger': message.type === 'error'}">
         {{ message.text }}
       </div>
 
