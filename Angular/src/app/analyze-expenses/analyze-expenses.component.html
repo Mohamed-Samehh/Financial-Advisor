@@ -1,6 +1,11 @@
 <div class="container mt-5 mb-5">
   <h2 class="text-center text-primary display-4 mb-4">Analyze Your Expenses</h2>
 
+  <!-- Advisory Message -->
+  <div *ngIf="!isLoading && analysis.predicted_next_month_weighted && analysis.predicted_next_month_linear" class="alert alert-info text-center mb-4" role="alert">
+    <strong>Insight:</strong> Based on your historical expense data, the predicted spending for the next month is E£{{ formatNumber(analysis.predicted_next_month_weighted) }} using the Weighted Average method, and E£{{ formatNumber(analysis.predicted_next_month_linear) }} based on the Linear Regression model. For a detailed overview, please visit the History page.
+  </div>
+
   <!-- Expense Summary and Insights Side by Side -->
   <div class="row mb-4">
     <!-- Left Column: Expense Summary -->
@@ -37,6 +42,13 @@
                 [ngClass]="{'text-danger': analysis.total_spent > (analysis.monthly_budget * 0.75),
                             'text-success': analysis.total_spent <= (analysis.monthly_budget * 0.75)}">
                 E£{{ formatNumber(analysis.total_spent) }}
+              </span>
+            </h5>
+            <h5 *ngIf="analysis.predicted_current_month" class="text-muted">Predicted Total to be Spent:
+              <span
+                [ngClass]="{'text-danger': analysis.predicted_current_month >= analysis.monthly_budget,
+                            'text-success': analysis.predicted_current_month < analysis.monthly_budget}">
+                E£{{ formatNumber(analysis.predicted_current_month) }}
               </span>
             </h5>
             <h5 class="text-muted">Remaining Allowable Spending:

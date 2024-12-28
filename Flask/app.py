@@ -5,7 +5,6 @@ from sklearn.cluster import KMeans
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from apyori import apriori
-import math
 
 app = Flask(__name__)
 
@@ -18,50 +17,41 @@ def assign_limits(categories, monthly_budget, goal_amount):
 
 
 # Predict total spending for the current month using daily average
-def predictive_insights(expenses, smart_insights):
+def predictive_insights(expenses):
     expenses['date'] = pd.to_datetime(expenses['date'])
-
     total_days_in_month = expenses['date'].dt.daysinmonth.max()
     last_expense_day = expenses['date'].max().day
 
     if last_expense_day < 30:
         days_elapsed = (expenses['date'].max() - expenses['date'].min()).days + 1
-    
         if days_elapsed > 0:
             average_daily_spending = expenses['amount'].sum() / days_elapsed
             remaining_days = total_days_in_month - days_elapsed
             predicted_remaining_spending = average_daily_spending * remaining_days
-
             predicted_total_spending = expenses['amount'].sum() + predicted_remaining_spending
-            rounded_spending = math.ceil(predicted_total_spending)
-
-            smart_insights.append(f"You're on track to spend around E£{rounded_spending:,.0f} by the end of this month.")
+            return round(predicted_total_spending, 2)
+    return None
 
 
 # Predict total spending for the next month using Weighted Average
-def weighted_average(all_expenses, smart_insights):
+def weighted_average(all_expenses):
     all_expenses['date'] = pd.to_datetime(all_expenses['date'])
     all_expenses['month'] = all_expenses['date'].dt.month
     all_expenses['year'] = all_expenses['date'].dt.year
 
     monthly_spending = all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
-    monthly_spending['date'] = pd.to_datetime(
-        monthly_spending[['year', 'month']].assign(day=1)
-    )
+    monthly_spending['date'] = pd.to_datetime(monthly_spending[['year', 'month']].assign(day=1))
     monthly_spending = monthly_spending.sort_values('date')
 
     if len(monthly_spending) >= 3:
         weights = range(1, len(monthly_spending) + 1)
         weighted_avg = (monthly_spending['amount'] * weights).sum() / sum(weights)
-
-        predicted_spending = weighted_avg
-        smart_insights.append(
-            f"Based on Weighted Average, the predicted spending for next month is ${predicted_spending:,.0f}."
-        )
+        return round(weighted_avg, 2)
+    return None
 
 
 # Predict total spending for the next month using Linear Regression
-def linear_regression(all_expenses, smart_insights):
+def linear_regression(all_expenses):
     all_expenses['date'] = pd.to_datetime(all_expenses['date'])
     all_expenses['month'] = all_expenses['date'].dt.month
     all_expenses['year'] = all_expenses['date'].dt.year
@@ -78,10 +68,8 @@ def linear_regression(all_expenses, smart_insights):
 
         next_month_num = monthly_spending['month_num'].max() + 1
         predicted_spending = model.predict(np.array([[next_month_num]]))[0]
-
-        predicted_spending_rounded = round(predicted_spending, 2)
-
-        smart_insights.append(f"Based on Linear Regression, the predicted spending for next month is ${predicted_spending_rounded:,.0f}.")
+        return round(predicted_spending, 2)
+    return None
 
 
 # Behavioral clustering using KMeans to identify spending patterns
@@ -99,7 +87,7 @@ def kmeans_clustering(expenses, smart_insights):
         cluster_data = expenses[expenses['cluster'] == cluster]
         unique_categories = cluster_data['category'].unique()
 
-        if len(unique_categories) == 0 or len(unique_categories) > 5:
+        if len(unique_categories) == 0 or len(unique_categories) > 4:
             continue
 
         all_categories.update(unique_categories)
@@ -148,11 +136,12 @@ def frequent_pattern(all_expenses, frequent_pattern):
                 break
 
 
-# Category-based spending trends analysis to identify significant changes
-def category_trends_analysis(expenses, all_expenses, smart_insights, min_expenses_threshold=3):
+# Analyze category spending variability
+def analyze_spending_variability(expenses, smart_insights, min_expenses_threshold=2):
     category_expense_counts = expenses['category'].value_counts()
     valid_categories = category_expense_counts[category_expense_counts >= min_expenses_threshold].index
 
+    # Calculate standard deviation for valid categories
     category_variability = (
         expenses[expenses['category'].isin(valid_categories)]
         .groupby('category')['amount']
@@ -160,15 +149,15 @@ def category_trends_analysis(expenses, all_expenses, smart_insights, min_expense
         .sort_values(ascending=False)
     )
 
-    # Check for the most variable category
     if not category_variability.empty:
         most_variable_category = category_variability.idxmax()
         if pd.notna(most_variable_category):
             smart_insights.append(f"Spending in '{most_variable_category}' varies the most. Keep an eye on it!")
 
-    # Check for significant deviations in category spending trends
-    if len(all_expenses) >= 20 and len(all_expenses['category'].unique()) >= 3:
-        category_average = all_expenses.groupby('category')['amount'].mean()
+
+# Analyze deviations in category spending trends
+def analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights):
+        category_average = distinct_all_expenses.groupby('category')['amount'].mean()
         current_month_average = expenses.groupby('category')['amount'].mean()
 
         deviations = (current_month_average - category_average).sort_values(ascending=False)
@@ -193,16 +182,16 @@ def category_trends_analysis(expenses, all_expenses, smart_insights, min_expense
 
 
 # Day-of-week spending analysis to identify peak spending days
-def day_of_week_analysis(all_expenses, smart_insights):
-    all_expenses['date'] = pd.to_datetime(all_expenses['date'])
-    all_expenses['day_of_week'] = all_expenses['date'].dt.day_name()
+def day_of_week_analysis(expenses, smart_insights):
+    expenses['date'] = pd.to_datetime(expenses['date'])
+    expenses['day_of_week'] = expenses['date'].dt.day_name()
 
-    weekday_counts = all_expenses['day_of_week'].value_counts().reindex(
+    weekday_counts = expenses['day_of_week'].value_counts().reindex(
         ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], fill_value=0
     )
 
-    if (weekday_counts >= 5).any():
-        weekday_spending = all_expenses.groupby('day_of_week')['amount'].mean().reindex(
+    if (weekday_counts >= 3).any():
+        weekday_spending = expenses.groupby('day_of_week')['amount'].mean().reindex(
             ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         )
         peak_day = weekday_spending.idxmax()
@@ -222,6 +211,7 @@ def analyze_expenses():
     monthly_budget = data['monthly_budget']
     goal_amount = data['goal_amount']
     total_spent = data['total_spent']
+    distinct_all_expenses = all_expenses[~all_expenses.index.isin(expenses.index)]
 
     # Assign limits to categories
     expenses['priority'] = expenses['category'].map(dict(zip(categories['name'], categories['priority']))).fillna(-1)
@@ -245,33 +235,34 @@ def analyze_expenses():
 
     if len(over_budget_categories) > 0:
         combined_categories = "', '".join(over_budget_categories)
-        advice.append(f"You've exceeded the limit for '{combined_categories}'. Stop spending to avoid risks.")
+        advice.append(f"You're overspending on '{combined_categories}'. Stop spending to avoid risks.")
+
+    predicted_current_month = predictive_insights(expenses) if len(expenses) >= 5 else None
+    predicted_next_month_weighted = weighted_average(all_expenses) if len(expenses) >= 10 else None
+    predicted_next_month_linear = linear_regression(all_expenses) if len(expenses) >= 10 else None
 
     if len(expenses) >= 10:
-        predictive_insights(expenses, smart_insights)
-
-    if len(expenses) >= 10:
-        linear_regression(all_expenses, smart_insights)
-    
-    if len(expenses) >= 10:
-        weighted_average(all_expenses, smart_insights)
-
-    if len(expenses) >= 15:
         kmeans_clustering(expenses, smart_insights)
 
     if len(all_expenses) >= 10:
         frequent_pattern(all_expenses, frequent_patterns)
 
-    if len(all_expenses) >= 10:
-        day_of_week_analysis(all_expenses, smart_insights)
-
     if len(expenses) >= 10 and len(expenses['category'].unique()) >= 3:
-        category_trends_analysis(expenses, all_expenses, smart_insights)
+        analyze_spending_variability(expenses, smart_insights, min_expenses_threshold=2)
+
+    if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 and len(expenses['category'].unique()) >= 3:
+        analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights)
+
+    if len(expenses) >= 10:
+        day_of_week_analysis(expenses, smart_insights)
 
     # Prepare results for API response
     category_limits_dict = category_limits.to_dict(orient='records')
 
     result = {
+        'predicted_current_month': predicted_current_month,
+        'predicted_next_month_weighted': predicted_next_month_weighted,
+        'predicted_next_month_linear': predicted_next_month_linear,
         'category_limits': category_limits_dict,
         'advice': advice,
         'smart_insights': smart_insights,
