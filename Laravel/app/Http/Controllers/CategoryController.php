@@ -102,12 +102,22 @@ class CategoryController extends Controller
 
         $suggestedPriorities = [];
         $priority = 1;
+        $lastAmount = null;
+
         foreach ($sortedCategories as $category => $totalAmount) {
+            if ($totalAmount !== $lastAmount) {
+                $lastAmount = $totalAmount;
+            } else {
+                $priority--;
+            }
+
             $suggestedPriorities[] = [
                 'category' => $category,
-                'suggested_priority' => $priority++,
+                'suggested_priority' => $priority,
                 'total_expenses' => $totalAmount,
             ];
+
+            $priority++;
         }
 
         return response()->json([
