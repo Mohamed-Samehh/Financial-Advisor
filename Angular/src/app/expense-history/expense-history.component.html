@@ -22,7 +22,12 @@
             <h5 class="mb-0">{{ monthYear }}</h5>
             <div class="d-flex align-items-center">
               <span *ngIf="totalExpensesByMonth[monthYear]"
-                    [ngStyle]="{'color': Expense_summary(monthYear) === 'goal_met' ? 'green' : 'red'}">
+                [ngStyle]="{
+                  'color': (Expense_summary(monthYear) === 'goal_met' ? 'green' :
+                            (Expense_summary(monthYear) === 'goal_not_met' ? 'darkorange' :
+                            (Expense_summary(monthYear) === 'budget_surpassed' ? 'red' : 'black')))
+                }"
+              >
                 Total: E£{{ formatNumber(totalExpensesByMonth[monthYear]) }} &nbsp;
               </span>
               <span *ngIf="!totalExpensesByMonth[monthYear]">
@@ -62,15 +67,15 @@
 
                 <!-- Display goal/budget messages -->
                 <div *ngIf="goalByMonth[monthYear] && Expense_summary(monthYear) === 'goal_met'" class="alert alert-success" role="alert">
-                  <strong>Goal Achieved!</strong> You've successfully reached your financial goal for this month. Keep up the great work! 🎉
+                  <strong>Goal Achieved!</strong> You've successfully reached your financial goal this month. Keep up the great work! 🎉
                 </div>
 
                 <div *ngIf="goalByMonth[monthYear] && Expense_summary(monthYear) === 'goal_not_met'" class="alert alert-warning" role="alert">
-                  <strong>Goal Not Met!</strong> Unfortunately, the financial goal for this month wasn't reached.
+                  <strong>Goal Not Met!</strong> Unfortunately, the financial goal this month wasn't reached.
                 </div>
 
                 <div *ngIf="budgetByMonth[monthYear] && Expense_summary(monthYear) === 'budget_surpassed'" class="alert alert-danger" role="alert">
-                  <strong>Budget Exceeded!</strong> You've gone over your budget for this month. ⚠️
+                  <strong>Budget Exceeded!</strong> You've gone over your budget this month. ⚠️
                 </div>
 
                 <!-- Expense List -->

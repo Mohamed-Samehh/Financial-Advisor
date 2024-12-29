@@ -7,7 +7,7 @@
   </div>
 
   <!-- Expense Summary and Insights Side by Side -->
-  <div class="row mb-4">
+  <div class="row">
     <!-- Left Column: Expense Summary -->
     <div class="col-md-6">
       <!-- Expense Summary Section -->
@@ -23,7 +23,7 @@
 
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">To view your analysis, please set a budget first.</h5>
+            <h5 class="text-muted">To view your expense summary, please set a budget first.</h5>
           </div>
 
           <!-- If there are no expenses -->
@@ -46,8 +46,8 @@
             </h5>
             <h5 *ngIf="analysis.predicted_current_month" class="text-muted">Predicted Total to be Spent:
               <span
-                [ngClass]="{'text-danger': analysis.predicted_current_month >= analysis.monthly_budget,
-                            'text-success': analysis.predicted_current_month < analysis.monthly_budget}">
+                [ngClass]="{'text-danger': analysis.predicted_current_month > (analysis.monthly_budget - analysis.goal),
+                            'text-success': analysis.predicted_current_month <= (analysis.monthly_budget - analysis.goal)}">
                 E£{{ formatNumber(analysis.predicted_current_month) }}
               </span>
             </h5>
@@ -73,15 +73,6 @@
       <div *ngIf="analysis.advice && analysis.advice.length > 0" class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
           <h5 class="text-muted"><b>Warning:</b></h5>
-          <div *ngIf="isLoading && !analysis.advice" class="text-center">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p><b>Processing...</b></p>
-          </div>
-
-          <!-- If there are no budget -->
-          <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">To view your analysis, please set a budget first.</h5>
-          </div>
 
           <ul class="list-group list-group-flush">
             <li *ngFor="let tip of analysis.advice; let i = index" class="list-group-item border-0 text-muted fs-5">
@@ -109,7 +100,7 @@
 
           <!-- If there are no budget -->
           <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">To view your analysis, please set a budget first.</h5>
+            <h5 class="text-muted">To view insights, please set a budget first.</h5>
           </div>
 
           <!-- If insights are empty -->
@@ -149,7 +140,7 @@
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget">
-              <h5 class="text-muted text-center mt-4">To view your analysis, please set a budget first.</h5>
+              <h5 class="text-muted text-center mt-4">To view your expense categories, please set a budget first.</h5>
             </div>
 
             <!-- If there are no expenses -->
@@ -159,6 +150,35 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Category Limits -->
+  <div *ngIf="analysis.category_limits && analysis.category_limits.length > 0" class="card shadow-lg border-0 mb-4">
+    <div class="card-body p-4">
+      <h5 class="text-center text-muted mb-3"><b>Category Limits</b></h5>
+      <p class="text-center text-muted mb-4" style="font-size: 14px;">Category limits are determined by their priority, ensuring your spending aligns with your financial goals.</p>
+
+      <!-- Category Limits List -->
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let category of analysis.category_limits" class="list-group-item border-0 text-muted d-flex justify-content-between align-items-center
+            p-3 rounded mb-2 shadow-sm hover-shadow-lg" style="background-color: #f8f9fa; transition: background-color 0.3s ease;">
+
+          <!-- Left Side: Category Name and Icon -->
+          <div class="d-flex align-items-center">
+            <i class="fa fa-folder me-2 text-primary"></i>
+            <span style="font-size: 16px;"><b>{{ category.name }}</b></span>
+          </div>
+
+          <!-- Right Side: Enhanced Limit Value -->
+          <span [ngClass]="{
+            'text-success': categoryTotals[category.name] <= category.limit,
+            'text-danger': categoryTotals[category.name] > category.limit
+          }">
+            <b>{{ (category.limit / (analysis.monthly_budget - analysis.goal)) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
+          </span>
+        </li>
+      </ul>
     </div>
   </div>
 
@@ -178,7 +198,7 @@
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget" class="no-expenses-message" style="width: 100%;">
-              <h5 class="text-muted text-center mt-5 mb-5">To view your analysis, please set a budget first.</h5>
+              <h5 class="text-muted text-center mt-5 mb-5">To view the remaining budget over days, please set a budget first.</h5>
             </div>
           </div>
         </div>

@@ -4,15 +4,20 @@ from sklearn.cluster import KMeans
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-from apyori import apriori
 
 app = Flask(__name__)
 
 
 # Assign limits to categories based on priority
-def assign_limits(categories, monthly_budget, goal_amount):
+def assign_limits(categories, allowed_spending):
     categories['weight'] = (categories['priority'].count() + 1) - categories['priority']
-    categories['limit'] = (categories['weight'] / categories['weight'].sum()) * (monthly_budget - goal_amount)
+    categories['limit'] = (categories['weight'] / categories['weight'].sum()) * allowed_spending
+
+    total_calculated = categories['limit'].sum()
+    rounding_error = allowed_spending - total_calculated
+
+    categories.at[categories['weight'].idxmax(), 'limit'] += rounding_error
+
     return categories[['name', 'limit']]
 
 
@@ -79,9 +84,9 @@ def linear_regression(all_expenses, decay_factor=0.95, degree=2):
 
 
 # Combine weighted average and linear regression for final prediction
-def blended_prediction(all_expenses, alpha=0.7, decay_factor=0.95):
-    weighted_avg = weighted_average(all_expenses, decay_factor)
-    linear_pred = linear_regression(all_expenses, decay_factor)
+def blended_prediction(all_expenses, alpha=0.9):
+    weighted_avg = weighted_average(all_expenses)
+    linear_pred = linear_regression(all_expenses)
 
     if weighted_avg is not None and linear_pred is not None:
         return round(alpha * weighted_avg + (1 - alpha) * linear_pred, 2)
@@ -111,45 +116,6 @@ def kmeans_clustering(expenses, smart_insights):
     if all_categories:
         combined_categories = ', '.join(sorted(all_categories))
         smart_insights.append(f"Consider reducing expenses on {combined_categories}, as they show patterns of higher spending.")
-
-
-# Frequent pattern analysis using Apriori algorithm to identify common spending patterns
-def frequent_pattern(all_expenses, frequent_pattern):
-    all_expenses['date'] = pd.to_datetime(all_expenses['date'])
-    all_expenses['day_of_week'] = all_expenses['date'].dt.day_name()
-
-    category_mapping = {i: category for i, category in enumerate(all_expenses['category'].unique())}
-
-    pivot_table = all_expenses.pivot_table(index='day_of_week', columns='category', values='amount', aggfunc='sum').fillna(0)
-    pivot_table = (pivot_table > 0).astype(int)
-
-    if pivot_table.shape[0] >= 7 and pivot_table.shape[1] >= 2:
-        transactions = pivot_table.values.tolist()
-
-        frequent_itemsets = apriori(transactions, min_support=0.2, min_confidence=0.3)
-
-        for rule in frequent_itemsets:
-            for ordered_statistic in rule.ordered_statistics:
-                lhs = list(ordered_statistic.items_base)
-                rhs = list(ordered_statistic.items_add)
-
-                lhs_str = ', '.join([category_mapping[item] for item in lhs])
-                rhs_str = ', '.join([category_mapping[item] for item in rhs])
-
-                if lhs_str and rhs_str:
-                    arrow_rule = f"{lhs_str} -> {rhs_str}"
-
-                    frequent_pattern.append({
-                        'rule': arrow_rule,
-                        'support': rule.support,
-                        'confidence': ordered_statistic.confidence,
-                        'lift': ordered_statistic.lift,
-                    })
-
-                    if len(frequent_pattern) >= 10:
-                        break
-            if len(frequent_pattern) >= 10:
-                break
 
 
 # Analyze category spending variability
@@ -227,42 +193,59 @@ def analyze_expenses():
     monthly_budget = data['monthly_budget']
     goal_amount = data['goal_amount']
     total_spent = data['total_spent']
+    allowed_spending = monthly_budget - goal_amount
     distinct_all_expenses = all_expenses[~all_expenses.index.isin(expenses.index)]
 
     # Assign limits to categories
     expenses['priority'] = expenses['category'].map(dict(zip(categories['name'], categories['priority']))).fillna(-1)
-    category_limits = assign_limits(categories, monthly_budget, goal_amount)
-    expenses = expenses.merge(category_limits, left_on='category', right_on='name', how='left')
+    category_limits = assign_limits(categories, allowed_spending)
+    category_totals = expenses.groupby('category')['amount'].sum().reset_index()
+    category_totals = category_totals.merge(category_limits, left_on='category', right_on='name', how='left')
 
     advice = []
     smart_insights = []
-    frequent_patterns = []
+    
 
-    if total_spent > monthly_budget:
-        advice.append("You've exceeded your monthly budget!")
+    predicted_current_month = predictive_insights(expenses) if len(expenses) >= 5 else None
 
     if goal_amount > 0:
-        if total_spent > (monthly_budget - goal_amount):
+        if total_spent > monthly_budget:
+            advice.append("You've exceeded your monthly budget!")
+
+        elif total_spent > allowed_spending:
             advice.append("You've spent more than your goal allows.")
+
+            if predicted_current_month is not None and predicted_current_month > monthly_budget:
+                advice.append("You're predicted to exceed your monthly budget.")
+        
+        elif predicted_current_month is not None and predicted_current_month > monthly_budget:
+            advice.append("You're predicted to exceed your monthly budget.")
+
+        elif predicted_current_month is not None and predicted_current_month > allowed_spending:
+            advice.append("You're predicted to spend more than your goal allows.")
+
     else:
         advice.append('No goal was set for this month.')
 
-    over_budget_categories = expenses[expenses['amount'] > expenses['limit']]['category'].unique()
+        if total_spent > monthly_budget:
+            advice.append("You've exceeded your monthly budget!")
+
+        elif predicted_current_month is not None and predicted_current_month > monthly_budget:
+            advice.append("You're predicted to exceed your monthly budget.")
+
+
+    over_budget_categories = category_totals[category_totals['amount'] > category_totals['limit']]
 
     if len(over_budget_categories) > 0:
-        combined_categories = "', '".join(over_budget_categories)
+        combined_categories = "', '".join(over_budget_categories['category'])
         advice.append(f"You're overspending on '{combined_categories}'. Stop spending to avoid risks.")
 
-    predicted_current_month = predictive_insights(expenses) if len(expenses) >= 5 else None
-    predicted_next_month_weighted = weighted_average(all_expenses, decay_factor=0.95) if len(expenses) >= 10 else None
-    # predicted_next_month_linear = linear_regression(all_expenses, decay_factor=0.95, degree=2) if len(expenses) >= 10 else None
-    predicted_next_month_linear = blended_prediction(all_expenses, alpha=0.7, decay_factor=0.95) if len(expenses) >= 10 else None
+    predicted_next_month_weighted = weighted_average(all_expenses) if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 else None
+    # predicted_next_month_linear = linear_regression(all_expenses) if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 else None
+    predicted_next_month_linear = blended_prediction(all_expenses) if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 else None
 
     if len(expenses) >= 10:
         kmeans_clustering(expenses, smart_insights)
-
-    if len(all_expenses) >= 10:
-        frequent_pattern(all_expenses, frequent_patterns)
 
     if len(expenses) >= 10 and len(expenses['category'].unique()) >= 3:
         analyze_spending_variability(expenses, smart_insights, min_expenses_threshold=2)
@@ -283,7 +266,6 @@ def analyze_expenses():
         'category_limits': category_limits_dict,
         'advice': advice,
         'smart_insights': smart_insights,
-        'frequent_patterns': frequent_patterns,
     }
 
     return jsonify(result)

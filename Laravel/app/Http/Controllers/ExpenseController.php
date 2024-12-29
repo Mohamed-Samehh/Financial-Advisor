@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Models\Goal;
 use App\Models\Budget;
 use App\Models\Expense;
 use App\Models\Category;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class ExpenseController extends Controller
 {
@@ -194,15 +195,18 @@ class ExpenseController extends Controller
             'category_limits' => [],
             'advice' => [],
             'smart_insights' => [],
-            'frequent_patterns' => [],
         ];
 
-        // Attempt to use Flask for analysis
-        $pythonAnalysisUrl = 'http://127.0.0.1:5000/analysis';
-        $response = Http::post($pythonAnalysisUrl, $data);
+        // Use Flask for analysis
+        try {
+            $pythonAnalysisUrl = 'http://127.0.0.1:5000/analysis';
+            $response = Http::post($pythonAnalysisUrl, $data);
 
-        if ($response->successful()) {
-            $result = $response->json();
+            if ($response->successful()) {
+                $result = $response->json();
+            }
+        } catch (\Exception $e) {
+            Log::error('Flask analysis failed: ' . $e->getMessage()); // Handle the error and continue the process
         }
 
         return response()->json([
@@ -216,7 +220,6 @@ class ExpenseController extends Controller
             'category_limits' => $result['category_limits'],
             'advice' => $result['advice'],
             'smart_insights' => $result['smart_insights'],
-            'frequent_patterns' => $result['frequent_patterns'],
             'daily_expenses' => $dailyExpenses,
         ], 200);
     }

@@ -17,6 +17,7 @@ export class AnalyzeExpensesComponent implements OnInit {
   categoryChart: any;
   isLoading: boolean = true;
   errorMessage: string | null = null;
+  categoryTotals: { [category: string]: number } = {};
 
   constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {}
 
@@ -25,6 +26,9 @@ export class AnalyzeExpensesComponent implements OnInit {
       this.analysis = res;
       this.createChart();
       this.isLoading = false;
+      if (this.analysis.category_limits) {
+        this.analysis.category_limits.sort((a: any, b: any) => b.limit - a.limit);
+      }
     });
 
     this.apiService.getExpenses().subscribe(
@@ -134,6 +138,10 @@ export class AnalyzeExpensesComponent implements OnInit {
       } else {
         categoryMap.set(expense.category, expense.amount);
       }
+    });
+
+    categoryMap.forEach((totalExpense, category) => {
+      this.categoryTotals[category] = totalExpense;
     });
 
     const categories = Array.from(categoryMap.keys());
