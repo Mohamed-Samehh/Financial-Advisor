@@ -22,9 +22,11 @@ class CategoryController extends Controller
     // Create a new category
     public function store(Request $request)
     {
+        $maxPriority = Category::where('user_id', $request->user()->id)->count() + 1;
+
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,NULL,id,user_id,' . $request->user()->id,
-            'priority' => 'required|integer|min:1|max:9',
+            'priority' => 'required|integer|min:1|max:' . $maxPriority,
         ]);
 
         $category = Category::create([
@@ -47,9 +49,11 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Category not found'], 404);
         }
 
+        $maxPriority = Category::where('user_id', $request->user()->id)->count();
+
         $request->validate([
             'name' => 'sometimes|string|max:255|unique:categories,name,' . $id . ',id,user_id,' . $request->user()->id,
-            'priority' => 'sometimes|integer|min:1|max:9',
+            'priority' => 'sometimes|integer|min:1|max:' . $maxPriority,
         ]);
 
         if ($request->has('name') && $category->name !== $request->name) {
@@ -66,14 +70,41 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    // Delete a category
+    // Delete a category and assign expenses to a new category
     public function destroy(Request $request, $id)
     {
-        $category = Category::where('id', $id)->where('user_id', $request->user()->id)->first();
+        $request->validate([
+            'new_category' => 'required|string',
+        ]);
+
+        $userId = $request->user()->id;
+        $inputCategoryName = $request->input('new_category');
+
+        // Find the exact match for the new category
+        $existingCategory = Category::whereRaw('LOWER(`name`) = ?', [strtolower($inputCategoryName)])
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$existingCategory) {
+            return response()->json(['error' => 'The selected category does not exist.'], 404);
+        }
+
+        $category = Category::where('id', $id)
+            ->where('user_id', $userId)
+            ->first();
 
         if ($category) {
+            if (strtolower($category->name) === strtolower($existingCategory->name)) {
+                return response()->json(['error' => 'You cannot assign expenses to the same category being deleted.'], 400);
+            }
+
+            Expense::where('category', $category->name)
+                ->where('user_id', $userId)
+                ->update(['category' => $existingCategory->name]);
+
             $category->delete();
-            return response()->json(['message' => 'Category deleted successfully'], 200);
+
+            return response()->json(['message' => 'Category deleted and expenses reassigned successfully'], 200);
         }
 
         return response()->json(['error' => 'Category not found'], 404);

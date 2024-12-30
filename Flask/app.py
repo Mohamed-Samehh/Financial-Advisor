@@ -12,12 +12,6 @@ app = Flask(__name__)
 def assign_limits(categories, allowed_spending):
     categories['weight'] = (categories['priority'].count() + 1) - categories['priority']
     categories['limit'] = (categories['weight'] / categories['weight'].sum()) * allowed_spending
-
-    total_calculated = categories['limit'].sum()
-    rounding_error = allowed_spending - total_calculated
-
-    categories.at[categories['weight'].idxmax(), 'limit'] += rounding_error
-
     return categories[['name', 'limit']]
 
 

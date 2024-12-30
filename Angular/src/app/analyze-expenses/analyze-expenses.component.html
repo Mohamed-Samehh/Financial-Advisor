@@ -178,7 +178,7 @@
           <div class="text-end">
             <span
               [ngClass]="{
-                'text-success': categoryTotals[category.name] <= category.limit,
+                'text-success': categoryTotals[category.name] <= category.limit || categoryTotals[category.name] === undefined,
                 'text-danger': categoryTotals[category.name] > category.limit
               }"
               class="d-block"

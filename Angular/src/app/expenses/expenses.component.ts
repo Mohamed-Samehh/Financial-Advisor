@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ExpensesComponent implements OnInit {
   expenses: any[] = [];
+  sortKey: 'date' | 'amount' = 'date';
   form: any = {};
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted: boolean = false;
@@ -47,6 +48,7 @@ export class ExpensesComponent implements OnInit {
     this.apiService.getExpenses().subscribe({
       next: (res) => {
         this.expenses = res.expenses || [];
+        this.sortExpenses();
         this.totalPages = Math.ceil(this.expenses.length / this.itemsPerPage);
         this.updatePaginatedExpenses();
         this.updatePageNumbers();
@@ -73,6 +75,19 @@ export class ExpensesComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  sortExpenses() {
+    this.expenses.sort((a, b) => {
+      if (this.sortKey === 'date') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime(); // Sort by latest date
+      }
+      if (this.sortKey === 'amount') {
+        return b.amount - a.amount; // Sort by highest amount
+      }
+      return 0;
+    });
+    this.updatePaginatedExpenses();
   }
 
   formatNumber(value: number): string {

@@ -1,8 +1,8 @@
 <div class="container mt-5">
   <h2 class="text-center text-primary display-4 mb-4">Manage Categories</h2>
 
-    <!-- Success/Error Message -->
-    <div
+  <!-- Success/Error Message -->
+  <div
     *ngIf="message"
     class="alert text-center alert-dismissible fade show"
     [ngClass]="{
@@ -53,10 +53,10 @@
       </div>
     </div>
 
-    <!-- Category Form -->
-    <div *ngIf="isUpdating" class="card shadow-lg border-0 mb-4 bg-light">
+    <!-- Category Form (Add or Update) -->
+    <div *ngIf="isUpdating || isAdding" class="card shadow-lg border-0 mb-4 bg-light">
       <div class="card-body p-5">
-        <form (ngSubmit)="onSubmit(categoryForm)" #categoryForm="ngForm">
+        <form (ngSubmit)="isAdding ? onAddCategory(categoryForm) : onSubmit(categoryForm)" #categoryForm="ngForm">
           <!-- Category Name -->
           <div class="form-group mb-4">
             <label for="name" class="font-weight-bold">Category Name:</label>
@@ -64,7 +64,8 @@
               type="text"
               id="name"
               class="form-control form-control-lg"
-              [(ngModel)]="form.name"
+              [ngModel]="isAdding ? addForm.name : form.name"
+              (ngModelChange)="isAdding ? addForm.name = $event : form.name = $event"
               name="name"
               required
               #name="ngModel"
@@ -84,30 +85,45 @@
               type="number"
               id="priority"
               class="form-control form-control-lg"
-              [(ngModel)]="form.priority"
+              [ngModel]="isAdding ? addForm.priority : form.priority"
+              (ngModelChange)="isAdding ? addForm.priority = $event : form.priority = $event"
               name="priority"
               required
               min="1"
-              max="9"
+              [max]="isAdding ? categories.length + 1 : categories.length"
               #priority="ngModel"
             />
             <div *ngIf="priority.invalid && (priority.dirty || priority.touched || submitted)" class="text-danger">
               <div *ngIf="priority.errors?.['required']">Priority is required.</div>
               <div *ngIf="priority.errors?.['min']">Priority must be greater than 0.</div>
-              <div *ngIf="priority.errors?.['max']">Priority cannot be greater than 9.</div>
-            </div>
-            <div *ngIf="errorMessages.priority" class="text-danger">
-              {{ errorMessages.priority }}
+              <div *ngIf="priority.errors?.['max']">{{ errorMessages.priority }}</div>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-block btn-lg">Update Category</button>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            {{ isAdding ? 'Add Category' : 'Update Category' }}
+          </button>
         </form>
       </div>
     </div>
 
     <!-- Categories List -->
     <h4 class="mt-5 text-secondary">Categories:</h4>
+
+    <!-- Add Button -->
+    <div class="mb-3">
+      <button
+        [class.btn-success]="!isAdding"
+        [class.btn-danger]="isAdding"
+        class="btn"
+        style="font-size: 1.2rem;"
+        (click)="toggleAddForm()"
+      >
+        <i [ngClass]="isAdding ? 'fas fa-times-circle' : 'fas fa-plus-circle'"></i>
+        {{ isAdding ? 'Cancel' : 'Add Category' }}
+      </button>
+    </div>
+
     <div *ngIf="categories.length === 0" class="text-center text-muted mt-3 mb-5">No categories available.</div>
     <ul class="list-group mt-3 mb-5">
       <li
@@ -129,9 +145,8 @@
           </span>
         </div>
 
+        <!-- Update Category -->
         <div>
-
-          <!-- *ngIf="category.name !== 'Other'" -->
           <button
             [ngClass]="{
               'btn-outline-primary': !(isUpdating && form.id === category.id),
@@ -141,6 +156,17 @@
             (click)="editCategory(category)"
           >
             <i class="fas fa-pencil-alt"></i>
+          </button>
+        </div>
+
+        <!-- Delete Category -->
+        <div>
+          <button
+            class="btn btn-outline-danger btn-sm ms-2"
+            title="Delete Category"
+            (click)="deleteCategoryWithConfirmation(category.id)"
+          >
+            <i class="fas fa-trash-alt"></i>
           </button>
         </div>
       </li>

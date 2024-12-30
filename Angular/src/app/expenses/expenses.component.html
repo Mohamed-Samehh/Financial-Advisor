@@ -109,9 +109,27 @@
   <!-- Expense List -->
   <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Expenses:</h4>
   <div *ngIf="!isLoading && expenses.length > 0" class="list-group mt-3 mb-5">
+
+    <!-- Sorting Dropdown Card -->
+    <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <label for="sortBy" class="me-2 font-weight-bold mb-0"><b>Sort Expenses:</b></label>
+        <select
+          id="sortBy"
+          class="form-select w-auto"
+          [(ngModel)]="sortKey"
+          (change)="sortExpenses()"
+        >
+          <option value="date">Date (Latest)</option>
+          <option value="amount">Amount (Highest)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Expense Details -->
     <li *ngFor="let expense of paginatedExpenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div>
-        <strong>{{ expense.category }}</strong>: E£{{ formatNumber(expense.amount) }} on {{ expense.date | date:'mediumDate' }}
+        <b>{{ expense.category }}</b>: E£{{ formatNumber(expense.amount) }} on {{ expense.date | date:'mediumDate' }}
         <br>
         <small class="text-muted">{{ expense.description || 'No description' }}</small>
 
