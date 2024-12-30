@@ -157,26 +157,41 @@
   <div *ngIf="analysis.category_limits && analysis.category_limits.length > 0" class="card shadow-lg border-0 mb-4">
     <div class="card-body p-4">
       <h5 class="text-center text-muted mb-3"><b>Category Limits</b></h5>
-      <p class="text-center text-muted mb-4" style="font-size: 14px;">Category limits are determined by their priority, ensuring your spending aligns with your financial goals.</p>
+      <p class="text-center text-muted mb-4" style="font-size: 14px;">
+        Category limits are determined by their priority, ensuring your spending aligns with your financial goals.
+      </p>
 
       <!-- Category Limits List -->
       <ul class="list-group list-group-flush">
-        <li *ngFor="let category of analysis.category_limits" class="list-group-item border-0 text-muted d-flex justify-content-between align-items-center
-            p-3 rounded mb-2 shadow-sm hover-shadow-lg" style="background-color: #f8f9fa; transition: background-color 0.3s ease;">
-
+        <li
+          *ngFor="let category of analysis.category_limits"
+          class="list-group-item border-0 text-muted d-flex justify-content-between align-items-center p-3 rounded mb-2 shadow-sm hover-shadow-lg"
+          style="background-color: #f8f9fa; transition: background-color 0.3s ease;"
+        >
           <!-- Left Side: Category Name and Icon -->
           <div class="d-flex align-items-center">
             <i class="fa fa-folder me-2 text-primary"></i>
             <span style="font-size: 16px;"><b>{{ category.name }}</b></span>
           </div>
 
-          <!-- Right Side: Enhanced Limit Value -->
-          <span [ngClass]="{
-            'text-success': categoryTotals[category.name] <= category.limit,
-            'text-danger': categoryTotals[category.name] > category.limit
-          }">
-            <b>{{ (category.limit / (analysis.monthly_budget - analysis.goal)) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
-          </span>
+          <!-- Right Side: Limit Value and Total Spending -->
+          <div class="text-end">
+            <span
+              [ngClass]="{
+                'text-success': categoryTotals[category.name] <= category.limit,
+                'text-danger': categoryTotals[category.name] > category.limit
+              }"
+              class="d-block"
+            >
+              <b>{{ (category.limit / (analysis.monthly_budget - analysis.goal)) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
+            </span>
+            <span
+              class="d-block mt-1 text-muted"
+              style="font-size: 14px;"
+            >
+              <i class="fa fa-wallet me-1" style="font-size: 12px;"></i> Spent: <b>E£{{ formatNumber(categoryTotals[category.name]) }}</b>
+            </span>
+          </div>
         </li>
       </ul>
     </div>

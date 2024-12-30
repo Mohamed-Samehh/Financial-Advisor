@@ -248,7 +248,7 @@ def analyze_expenses():
         kmeans_clustering(expenses, smart_insights)
 
     if len(expenses) >= 10 and len(expenses['category'].unique()) >= 3:
-        analyze_spending_variability(expenses, smart_insights, min_expenses_threshold=2)
+        analyze_spending_variability(expenses, smart_insights)
 
     if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 and len(expenses['category'].unique()) >= 3:
         analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights)
