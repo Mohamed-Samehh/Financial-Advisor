@@ -113,14 +113,14 @@
     <!-- Add Button -->
     <div class="mb-3">
       <button
-        [class.btn-success]="!isAdding"
+        [class.btn-primary]="!isAdding"
         [class.btn-danger]="isAdding"
         class="btn"
-        style="font-size: 1.2rem;"
+        [ngStyle]="{
+          'font-size': '18px'
+        }"
         (click)="toggleAddForm()"
-      >
-        <i [ngClass]="isAdding ? 'fas fa-times-circle' : 'fas fa-plus-circle'"></i>
-        {{ isAdding ? 'Cancel' : 'Add Category' }}
+      ><i [ngClass]="isAdding ? 'fas fa-times-circle' : 'fas fa-plus-circle'"></i>&nbsp; {{ isAdding ? 'Cancel' : 'Add Category' }}
       </button>
     </div>
 
