@@ -178,8 +178,11 @@ export class CategoriesComponent implements OnInit {
     this.isAdding = !this.isAdding;
     if (this.isAdding) {
       this.isUpdating = false;
+    } else {
+      this.addForm = { name: '', priority: null };
+      this.errorMessages = { name: null, priority: null };
+      this.submitted = false;
     }
-    this.addForm = { name: '', priority: null };
   }
 
   // Edit category for updating
