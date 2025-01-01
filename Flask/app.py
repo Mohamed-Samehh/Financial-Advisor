@@ -2,8 +2,7 @@ from flask import Flask, request, jsonify
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.linear_model import LinearRegression
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
 
@@ -65,15 +64,13 @@ def linear_regression(all_expenses):
 
         weights = generate_weights(len(y))
 
-        model = Pipeline([
-            ('poly', PolynomialFeatures(degree=2)),
-            ('reg', LinearRegression())
-        ])
-        model.fit(X, y, reg__sample_weight=weights)
+        model = LinearRegression()
+        model.fit(X, y, sample_weight=weights)
 
         next_month_num = monthly_spending['month_num'].max() + 1
         predicted_spending = model.predict([[next_month_num]])[0]
-        return round(predicted_spending, 2)
+        if predicted_spending > 0:
+            return round(predicted_spending, 2)
     return None
 
 

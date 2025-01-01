@@ -2,8 +2,8 @@
   <h2 class="text-center text-primary display-4 mb-4">Analyze Your Expenses</h2>
 
   <!-- Advisory Message -->
-  <div *ngIf="!isLoading && analysis.predicted_next_month_weighted && analysis.predicted_next_month_linear" class="alert alert-info text-center mb-4" role="alert">
-    <strong>Analysis:</strong> Based on your historical expense data, the predicted spending for the next month is <b>E£{{ formatNumber(analysis.predicted_next_month_weighted) }}</b> using the <b>Weighted Average method</b>, and <b>E£{{ formatNumber(analysis.predicted_next_month_linear) }}</b> based on the <b>Linear Regression model</b>. For a detailed overview, please visit the History page.
+  <div *ngIf="!isLoading && analysis.predicted_next_month_weighted || analysis.predicted_next_month_linear" class="alert alert-info text-center mb-4" role="alert">
+    <strong>Analysis:</strong> Based on your historical expense data, the predicted spending for the next month is <b>E£{{ formatNumber(analysis.predicted_next_month_weighted) }}</b> using the <b>Weighted Average method</b><span *ngIf="analysis.predicted_next_month_linear">, and <b>E£{{ formatNumber(analysis.predicted_next_month_linear) }}</b> based on the <b>Linear Regression model</b></span>. For a detailed overview, please visit the History page.
   </div>
 
   <!-- Expense Summary and Insights Side by Side -->
