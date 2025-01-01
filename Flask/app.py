@@ -179,7 +179,7 @@ def day_of_week_analysis(expenses, smart_insights):
 def analyze_expenses():
     data = request.json
 
-    if not all(key in data for key in ['expenses', 'all_expenses', 'categories', 'monthly_budget', 'goal_amount', 'total_spent', 'all_expenses']):
+    if not all(key in data for key in ['expenses', 'all_expenses', 'categories', 'monthly_budget', 'goal_amount', 'total_spent']):
         return jsonify({'error': 'Missing required data'}), 400
 
     if data['total_spent'] <= 0:
