@@ -33,26 +33,26 @@ def predictive_insights(expenses):
 
 
 # Generate weights with exponential decay
-def generate_weights(length, decay_factor):
+def generate_weights(length, decay_factor=0.95):
     return [decay_factor ** (length - i - 1) for i in range(length)]
 
 
 # Predict spending using weighted average
-def weighted_average(all_expenses, decay_factor=0.95):
+def weighted_average(all_expenses):
     all_expenses['date'] = pd.to_datetime(all_expenses['date'])
     all_expenses['month'] = all_expenses['date'].dt.month
     all_expenses['year'] = all_expenses['date'].dt.year
 
     monthly_spending = all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
     if len(monthly_spending) >= 3:
-        weights = generate_weights(len(monthly_spending), decay_factor)
+        weights = generate_weights(len(monthly_spending))
         weighted_avg = (monthly_spending['amount'] * weights).sum() / sum(weights)
         return round(weighted_avg, 2)
     return None
 
 
 # Predict spending using weighted linear regression
-def linear_regression(all_expenses, decay_factor=0.95, degree=2):
+def linear_regression(all_expenses):
     all_expenses['date'] = pd.to_datetime(all_expenses['date'])
     all_expenses['month'] = all_expenses['date'].dt.month
     all_expenses['year'] = all_expenses['date'].dt.year
@@ -63,10 +63,10 @@ def linear_regression(all_expenses, decay_factor=0.95, degree=2):
         X = monthly_spending[['month_num']].values
         y = monthly_spending['amount'].values
 
-        weights = generate_weights(len(y), decay_factor)
+        weights = generate_weights(len(y))
 
         model = Pipeline([
-            ('poly', PolynomialFeatures(degree=degree)),
+            ('poly', PolynomialFeatures(degree=2)),
             ('reg', LinearRegression())
         ])
         model.fit(X, y, reg__sample_weight=weights)
@@ -78,9 +78,10 @@ def linear_regression(all_expenses, decay_factor=0.95, degree=2):
 
 
 # Combine weighted average and linear regression for final prediction
-def blended_prediction(all_expenses, alpha=0.9):
+def blended_prediction(all_expenses):
     weighted_avg = weighted_average(all_expenses)
     linear_pred = linear_regression(all_expenses)
+    alpha=0.9
 
     if weighted_avg is not None and linear_pred is not None:
         return round(alpha * weighted_avg + (1 - alpha) * linear_pred, 2)
@@ -113,9 +114,9 @@ def kmeans_clustering(expenses, smart_insights):
 
 
 # Analyze category spending variability
-def analyze_spending_variability(expenses, smart_insights, min_expenses_threshold=2):
+def analyze_spending_variability(expenses, smart_insights):
     category_expense_counts = expenses['category'].value_counts()
-    valid_categories = category_expense_counts[category_expense_counts >= min_expenses_threshold].index
+    valid_categories = category_expense_counts[category_expense_counts >= 2].index
 
     # Calculate standard deviation for valid categories
     category_variability = (
@@ -178,12 +179,15 @@ def day_of_week_analysis(expenses, smart_insights):
 def analyze_expenses():
     data = request.json
 
-    if not all(key in data for key in ['expenses', 'categories', 'monthly_budget', 'goal_amount', 'total_spent']):
+    if not all(key in data for key in ['expenses', 'all_expenses', 'categories', 'monthly_budget', 'goal_amount', 'total_spent', 'all_expenses']):
         return jsonify({'error': 'Missing required data'}), 400
 
-    categories = pd.DataFrame(data['categories'])
+    if data['total_spent'] <= 0:
+        return jsonify({'error': 'Total spent should be greater than 0'}), 400
+
     expenses = pd.DataFrame(data['expenses'])
     all_expenses = pd.DataFrame(data['all_expenses'])
+    categories = pd.DataFrame(data['categories'])
     monthly_budget = data['monthly_budget']
     goal_amount = data['goal_amount']
     total_spent = data['total_spent']
@@ -234,9 +238,9 @@ def analyze_expenses():
         combined_categories = "', '".join(over_budget_categories['category'])
         advice.append(f"You're overspending on '{combined_categories}'. Stop spending to avoid risks.")
 
-    predicted_next_month_weighted = weighted_average(all_expenses) if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 else None
-    # predicted_next_month_linear = linear_regression(all_expenses) if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 else None
-    predicted_next_month_linear = blended_prediction(all_expenses) if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 else None
+    predicted_next_month_weighted = weighted_average(all_expenses) if len(distinct_all_expenses) >= 10 else None
+    predicted_next_month_linear = linear_regression(all_expenses) if len(distinct_all_expenses) >= 10 else None
+    # predicted_next_month_linear = blended_prediction(all_expenses) if len(distinct_all_expenses) >= 10 else None
 
     if len(expenses) >= 10:
         kmeans_clustering(expenses, smart_insights)
