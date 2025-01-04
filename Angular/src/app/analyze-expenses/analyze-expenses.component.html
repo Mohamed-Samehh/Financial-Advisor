@@ -66,6 +66,12 @@
               </span>
             </h5>
           </div>
+
+          <!-- Color Code Explanation -->
+          <div class="mt-3 text-muted small">
+            <span class="text-success">Green:</span> Under control &nbsp;|&nbsp;
+            <span class="text-danger">Red:</span> Exceeded or near limit
+          </div>
         </div>
       </div>
 
@@ -157,9 +163,15 @@
   <div *ngIf="analysis.category_limits && analysis.category_limits.length > 0" class="card shadow-lg border-0 mt-4 mb-4">
     <div class="card-body p-4">
       <h5 class="text-center text-muted mb-3"><b>Category Limits</b></h5>
-      <p class="text-center text-muted mb-4" style="font-size: 14px;">
+      <p class="text-center text-muted mb-2" style="font-size: 14px;">
         Category limits are determined by their priority, ensuring your spending aligns with your financial goals.
       </p>
+
+      <!-- Color Code Explanation -->
+      <div class="mt-3 text-muted small text-center mb-4">
+        <span class="text-success">Green:</span> Within limit &nbsp;|&nbsp;
+        <span class="text-danger">Red:</span> Exceeded limit
+      </div>
 
       <!-- Category Limits List -->
       <ul class="list-group list-group-flush">
