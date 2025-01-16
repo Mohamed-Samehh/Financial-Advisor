@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
@@ -55,6 +56,7 @@ def linear_regression(all_expenses):
     all_expenses['date'] = pd.to_datetime(all_expenses['date'])
     all_expenses['month'] = all_expenses['date'].dt.month
     all_expenses['year'] = all_expenses['date'].dt.year
+    min_correlation = 0.6
 
     monthly_spending = all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
     if len(monthly_spending) >= 3:
@@ -67,8 +69,16 @@ def linear_regression(all_expenses):
         model = LinearRegression()
         model.fit(X, y, sample_weight=weights)
 
+        # Correlation r^2
+        y_pred = model.predict(X)
+        r_squared = r2_score(y, y_pred)
+
+        if r_squared < min_correlation:
+            return None
+
         next_month_num = monthly_spending['month_num'].max() + 1
         predicted_spending = model.predict([[next_month_num]])[0]
+
         if predicted_spending > 0:
             return round(predicted_spending, 2)
     return None
