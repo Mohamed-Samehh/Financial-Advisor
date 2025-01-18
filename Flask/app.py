@@ -44,7 +44,7 @@ def weighted_average(all_expenses):
     all_expenses['year'] = all_expenses['date'].dt.year
 
     monthly_spending = all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
-    if len(monthly_spending) >= 3:
+    if len(monthly_spending) >= 2:
         weights = generate_weights(len(monthly_spending))
         weighted_avg = (monthly_spending['amount'] * weights).sum() / sum(weights)
         return round(weighted_avg, 2)
@@ -88,7 +88,7 @@ def linear_regression(all_expenses):
 def blended_prediction(all_expenses):
     weighted_avg = weighted_average(all_expenses)
     linear_pred = linear_regression(all_expenses)
-    alpha=0.9
+    alpha=0.9 # Higher alpha means more weight to weighted average
 
     if weighted_avg is not None and linear_pred is not None:
         return round(alpha * weighted_avg + (1 - alpha) * linear_pred, 2)
@@ -104,20 +104,17 @@ def kmeans_clustering(expenses, smart_insights):
     clusters = kmeans.fit_predict(expenses[['normalized_amount']])
     expenses['cluster'] = clusters
 
-    all_categories = set()
+    cluster_totals = expenses.groupby('cluster')['amount'].sum()
+    highest_spending_cluster = cluster_totals.idxmax()
 
-    for cluster in range(3):
-        cluster_data = expenses[expenses['cluster'] == cluster]
-        unique_categories = cluster_data['category'].unique()
+    highest_cluster_data = expenses[expenses['cluster'] == highest_spending_cluster]
+    unique_categories = highest_cluster_data['category'].value_counts().index.tolist()
 
-        if len(unique_categories) == 0 or len(unique_categories) > 4:
-            continue
+    top_categories = unique_categories[:4]
 
-        all_categories.update(unique_categories)
-
-    if all_categories:
-        combined_categories = ', '.join(sorted(all_categories))
-        smart_insights.append(f"Consider reducing expenses on {combined_categories}, as they show patterns of higher spending.")
+    if len(top_categories) > 0:
+        combined_categories = ', '.join(sorted(top_categories))
+        smart_insights.append(f"Consider reducing expenses on {combined_categories}, as they are in the highest spending cluster.")
 
 
 # Analyze category spending variability
@@ -140,6 +137,7 @@ def analyze_spending_variability(expenses, smart_insights):
 
 
 # Analyze deviations in category spending trends
+# Momken ne5aleha a5er shahr bas law gebt a5er shahr etdafa3 fel "distinct_all_expenses"
 def analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights):
         category_average = distinct_all_expenses.groupby('category')['amount'].mean()
         current_month_average = expenses.groupby('category')['amount'].mean()
