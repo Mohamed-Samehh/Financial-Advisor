@@ -114,7 +114,7 @@ def kmeans_clustering(expenses, smart_insights):
 
     if len(top_categories) > 0:
         combined_categories = ', '.join(sorted(top_categories))
-        smart_insights.append(f"Consider reducing expenses on {combined_categories}, as they are in the highest spending cluster.")
+        smart_insights.append(f"Consider monitoring expenses in {combined_categories}, as they fall within the highest spending cluster.")
 
 
 # Analyze category spending variability
