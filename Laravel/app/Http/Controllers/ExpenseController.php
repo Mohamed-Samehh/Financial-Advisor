@@ -182,6 +182,7 @@ class ExpenseController extends Controller
             ];
         })->toArray();
 
+        $flaskPassword = "Y7!mK4@vW9#qRp$2"; // Require a password as a layer of security
         $data = [
             'expenses' => $expensesArray,
             'all_expenses' => $allExpensesArray,
@@ -189,6 +190,7 @@ class ExpenseController extends Controller
             'monthly_budget' => $monthlyBudget,
             'goal_amount' => $goalAmount,
             'total_spent' => $totalSpent,
+            'password' => $flaskPassword,
         ];
 
         $result = [

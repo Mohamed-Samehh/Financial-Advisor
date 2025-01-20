@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
 
+FLASK_PASSWORD = "Y7!mK4@vW9#qRp$2" # Require a password as a layer of security
 
 # Assign limits to categories based on priority
 def assign_limits(categories, allowed_spending):
@@ -148,6 +149,9 @@ def day_of_week_analysis(expenses, smart_insights):
 def analyze_expenses():
     data = request.json
 
+    if data.get('password') != FLASK_PASSWORD:
+        return jsonify({'error': 'Unauthorized'}), 401
+
     if not all(key in data for key in ['expenses', 'all_expenses', 'categories', 'monthly_budget', 'goal_amount', 'total_spent']):
         return jsonify({'error': 'Missing required data'}), 400
 
@@ -160,14 +164,13 @@ def analyze_expenses():
     monthly_budget = data['monthly_budget']
     goal_amount = data['goal_amount']
     total_spent = data['total_spent']
-    allowed_spending = monthly_budget - goal_amount
-
     expenses['date'] = pd.to_datetime(expenses['date'])
     all_expenses['date'] = pd.to_datetime(all_expenses['date'])
+    allowed_spending = monthly_budget - goal_amount
 
-    # Creating a copy of 'expenses' to avoid modifying the original DataFrame (Error)
-    expenses_copy = expenses.copy()
-
+    
+    # Remove current month's expenses from all expenses
+    expenses_copy = expenses.copy() # Creating a copy of 'expenses' to avoid modifying the original DataFrame (Error)
     current_year = expenses_copy['date'].max().year
     current_month = expenses_copy['date'].max().month
     distinct_all_expenses = all_expenses[~((all_expenses['date'].dt.year == current_year) & 
