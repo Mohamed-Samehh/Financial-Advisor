@@ -53,7 +53,7 @@ export class UserProfileComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Failed to fetch user profile:', err);
+        console.error('Failed to fetch user account:', err);
         this.isLoading = false;
       },
     });
@@ -72,7 +72,7 @@ export class UserProfileComponent implements OnInit {
     if (this.updateInfoForm.valid) {
       this.authService.updateProfile(this.updateInfoForm.value).subscribe({
         next: () => {
-          this.updateInfoSuccess = 'Profile updated successfully!';
+          this.updateInfoSuccess = 'Account updated successfully!';
           this.updateInfoError = '';
           this.submittedInfo = false;
           const updatedValues = this.updateInfoForm.value;
@@ -94,7 +94,7 @@ export class UserProfileComponent implements OnInit {
               this.updateInfoError = 'Validation failed. Please check your input.';
             }
           } else {
-            this.updateInfoError = 'Failed to update profile. Please try again.';
+            this.updateInfoError = 'Failed to update account. Please try again.';
           }
           this.updateInfoSuccess = '';
           this.loadingUpdateInfo = false;

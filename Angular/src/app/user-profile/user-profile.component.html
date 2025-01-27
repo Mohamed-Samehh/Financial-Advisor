@@ -1,6 +1,6 @@
 <div class="container mt-5 mb-5">
   <!-- Header -->
-  <h2 class="text-center text-primary display-4 mb-4">User Profile</h2>
+  <h2 class="text-center text-primary display-4 mb-4">User Account</h2>
 
   <!-- Loader -->
   <div *ngIf="isLoading" class="text-center mt-5">
@@ -11,7 +11,7 @@
   <div *ngIf="!isLoading">
     <!-- Update Information -->
     <div class="card shadow-lg border-0 mb-4 bg-light">
-      <div class="card-header text-uppercase font-weight-bold">Update Profile Information</div>
+      <div class="card-header text-uppercase font-weight-bold">Update Account Information</div>
       <div class="card-body p-5">
         <!-- Success/Error Messages -->
         <div *ngIf="updateInfoSuccess" class="alert alert-success">{{ updateInfoSuccess }}</div>

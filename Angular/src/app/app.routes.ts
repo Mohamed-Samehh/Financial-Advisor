@@ -23,7 +23,7 @@ export const routes: Routes = [
   { path: 'analyze', component: AnalyzeExpensesComponent, canActivate: [AuthGuard] },
   { path: 'invest', component: InvestComponent, canActivate: [AuthGuard] },
   { path: 'history', component: ExpenseHistoryComponent, canActivate: [AuthGuard] },
-  { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
+  { path: 'account', component: UserProfileComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: '**', component: NotFoundComponent }
