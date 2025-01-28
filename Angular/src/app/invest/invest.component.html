@@ -1,60 +1,76 @@
 <div class="container mt-5 mb-5">
   <!-- Introduction Section -->
   <div class="text-center mb-5">
-    <h2 class="text-primary display-4 mb-4">Egyptian Bank Certificates</h2>
-    <div class="alert alert-info text-center mb-4" role="alert">
-      <strong>Tip:</strong> Maximize your financial growth by exploring the best investment options offered by leading banks. This page provides insights into various certificates, including interest rates, durations, and minimum investments. By aligning these options with your financial goals, you can effectively grow your savings and work towards a secure financial future.
+    <h2 class="text-primary display-4 mb-4">Investment Explorer</h2>
+    <div *ngIf="!isLoading && !showInvestmentModeMessage" class="alert alert-info text-center mb-4" role="alert">
+      <strong>Banks Data Last Update: 1st of February 2025</strong>
+      <br>
+      <strong>Tip:</strong> Explore top investment options from leading banks to grow your savings. Compare interest rates, durations, and minimum investments to align with your financial goals and secure your future.
     </div>
   </div>
 
-  <!-- Bank Certificates Information -->
-  <div *ngFor="let bank of banks" class="mb-5">
-    <div class="card shadow-lg border-0 bg-light">
-      <div class="card-body text-center p-4">
-        <!-- Centered Bank Header -->
-        <div class="mb-4">
-          <img
-            [src]="bank.image"
-            alt="{{ bank.name }}"
-            class="img-fluid shadow-md border mb-3"
-            style="
-              max-width: 120px;
-              height: auto;
-              border-radius: 10px;
-              border: 1px solid rgba(0, 0, 0, 0.1);
-              background-color: #f9f9f9;
-              padding: 10px;"
-          />
-          <h3 class="card-title text-primary fw-bold mb-2">{{ bank.name }}</h3>
-          <p class="text-muted">{{ bank.description }}</p>
-        </div>
+  <!-- Loader while fetching goal -->
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary mt-5" role="status"></div>
+    <p><b>Loading...</b></p>
+  </div>
 
-        <!-- Centered Certificates Section -->
-        <div class="row justify-content-center g-4">
-          <div *ngFor="let certificate of bank.certificates" class="col-md-4">
-            <div class="card border-0 h-100 shadow-sm text-center">
-              <div class="card-body">
-                <h5 class="card-title text-secondary">{{ certificate.type }}</h5>
-                <ul class="list-unstyled text-center">
-                  <li><strong>Interest Rate:</strong> {{ certificate.interestRate }}</li>
-                  <li><strong>Duration:</strong> {{ certificate.duration }}</li>
-                  <li><strong>Minimum Investment:</strong> {{ certificate.minInvestment | currency:'E£':'symbol':'1.0-0' }}</li>
-                </ul>
-                <p class="card-text text-muted">{{ certificate.description }}</p>
+  <!-- Warning message if goal name does not include "Invest" -->
+  <div *ngIf="showInvestmentModeMessage && !isLoading" class="alert alert-danger text-center" role="alert">
+    <strong>To turn on Investment Explorer, just include "invest" in your goal name.</strong>
+  </div>
+
+  <!-- Page content (bank certificates) -->
+  <div *ngIf="!isLoading && !showInvestmentModeMessage">
+    <!-- Bank Certificates Information -->
+    <div *ngFor="let bank of banks" class="mb-5">
+      <div class="card shadow-lg border-0 bg-light">
+        <div class="card-body text-center p-4">
+          <!-- Centered Bank Header -->
+          <div class="mb-4">
+            <img
+              [src]="bank.image"
+              alt="{{ bank.name }}"
+              class="img-fluid shadow-md border mb-3"
+              style="
+                max-width: 120px;
+                height: auto;
+                border-radius: 10px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                background-color: #f9f9f9;
+                padding: 10px;"
+            />
+            <h3 class="card-title text-primary fw-bold mb-2">{{ bank.name }}</h3>
+            <p class="text-muted">{{ bank.description }}</p>
+          </div>
+
+          <!-- Centered Certificates Section -->
+          <div class="row justify-content-center g-4">
+            <div *ngFor="let certificate of bank.certificates" class="col-md-6">
+              <div class="card border-0 h-100 shadow-sm text-center">
+                <div class="card-body">
+                  <h5 class="card-title text-secondary">{{ certificate.type }}</h5>
+                  <ul class="list-unstyled text-center">
+                    <li><strong>Interest Rate:</strong> {{ certificate.interestRate }}</li>
+                    <li><strong>Duration:</strong> {{ certificate.duration }}</li>
+                    <li><strong>Minimum Investment:</strong> {{ certificate.minInvestment | currency:'E£':'symbol':'1.0-0' }}</li>
+                  </ul>
+                  <p class="card-text text-muted">{{ certificate.description }}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Investment Link -->
-        <div class="text-center mt-4">
-          <a
-            [href]="bank.investmentLink"
-            target="_blank"
-            class="btn btn-primary btn-lg shadow-sm"
-          >
-            More Details
-          </a>
+          <!-- Investment Link -->
+          <div class="text-center mt-4">
+            <a
+              [href]="bank.investmentLink"
+              target="_blank"
+              class="btn btn-primary btn-lg shadow-sm"
+            >
+              More Details
+            </a>
+          </div>
         </div>
       </div>
     </div>
