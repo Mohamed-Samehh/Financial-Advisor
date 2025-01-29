@@ -51,9 +51,15 @@
                 <div class="card-body">
                   <h5 class="card-title text-secondary">{{ certificate.type }}</h5>
                   <ul class="list-unstyled text-center">
-                    <li><strong>Interest Rate:</strong> {{ certificate.interestRate }}</li>
-                    <li><strong>Duration:</strong> {{ certificate.duration }}</li>
+                    <li><strong>Duration:</strong> {{ certificate.duration }} years</li>
                     <li><strong>Minimum Investment:</strong> {{ certificate.minInvestment | currency:'E£':'symbol':'1.0-0' }}</li>
+                    <li><strong>Investment Increment (Allowed Multiples):</strong> {{ certificate.minInvestment | currency:'E£':'symbol':'1.0-0' }}</li>
+                    <li *ngIf="certificate.dailyInterestRate"><strong>Interest Rate (paid daily):</strong> {{ certificate.dailyInterestRate }}</li>
+                    <li *ngIf="certificate.monthlyInterestRate"><strong>Interest Rate (paid monthly):</strong> {{ certificate.monthlyInterestRate }}</li>
+                    <li *ngIf="certificate.quarterlyInterestRate"><strong>Interest Rate (paid quarterly):</strong> {{ certificate.quarterlyInterestRate }}</li>
+                    <li *ngIf="certificate.semiAnnuallyInterestRate"><strong>Interest Rate (paid semi-annually):</strong> {{ certificate.semiAnnuallyInterestRate }}</li>
+                    <li *ngIf="certificate.annuallyInterestRate"><strong>Interest Rate (paid annually):</strong> {{ certificate.annuallyInterestRate }}</li>
+                    <li *ngIf="certificate.atMaturityInterestRate"><strong>Interest Rate (paid at maturity):</strong> {{ certificate.atMaturityInterestRate }}</li>
                   </ul>
                   <p class="card-text text-muted">{{ certificate.description }}</p>
                 </div>
