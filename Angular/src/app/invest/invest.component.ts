@@ -284,7 +284,7 @@ export class InvestComponent implements OnInit {
 
   goal: any = { id: null, name: '', target_amount: null };
   isLoading: boolean = true;
-  showInvestmentModeMessage: boolean = false;
+  showInvestmentModeMessage: boolean = true;
 
   constructor(private apiService: ApiService) { }
 

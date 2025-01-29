@@ -16,7 +16,7 @@
   </div>
 
   <!-- Advisory Message -->
-  <div class="alert alert-info text-center mb-4" role="alert">
+  <div *ngIf="!isLoading" class="alert alert-info text-center mb-4" role="alert">
     <strong>Tip:</strong> Assign priorities based on the importance of each category to your financial goals. Higher priority should be given to the most essential categories.
   </div>
 
