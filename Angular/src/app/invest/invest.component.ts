@@ -13,12 +13,8 @@ interface Bank {
 interface Certificate {
   type: string;
   duration: number;
-  minInvestment?: number;
-  minInvestmentMonthly?: number;
-  minInvestmentAnnually?: number;
-  investmentIncrement?: number;
-  investmentIncrementMonthly?: number;
-  investmentIncrementAnnually?: number;
+  minInvestment: number;
+  multiples: number;
   dailyInterestRate?: string;
   monthlyInterestRate?: string;
   quarterlyInterestRate?: string;
@@ -49,7 +45,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '26% (1st year), 22% (2nd year), 18% (3rd year)',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A declining interest certificate with a higher rate in the first year.'
         },
         {
@@ -57,7 +53,7 @@ export class InvestComponent implements OnInit {
           annuallyInterestRate: '30% (1st year), 25% (2nd year), 20% (3rd year)',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Provides annual step-down interest rates for long-term investment planning.'
         },
         {
@@ -65,7 +61,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '21.5%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Offers stable monthly payouts for medium-term investors.'
         },
         {
@@ -73,7 +69,7 @@ export class InvestComponent implements OnInit {
           quarterlyInterestRate: '27.5%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A variable interest certificate with quarterly payouts.'
         },
         {
@@ -81,7 +77,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '14.25%',
           duration: 5,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A long-term investment option with consistent monthly returns.'
         },
         {
@@ -89,7 +85,7 @@ export class InvestComponent implements OnInit {
           atMaturityInterestRate: '13%',
           duration: 3,
           minInvestment: 500,
-          investmentIncrement: 500,
+          multiples: 500,
           description: 'A low-minimum investment certificate with a fixed interest rate and a cap on maximum investment.'
         },
         {
@@ -99,7 +95,7 @@ export class InvestComponent implements OnInit {
           annuallyInterestRate: '27%',
           duration: 1,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A high-yield certificate with options for monthly, daily, or annual interest payouts.'
         }
       ]
@@ -116,7 +112,7 @@ export class InvestComponent implements OnInit {
           atMaturityInterestRate: '27%',
           duration: 1,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A 1-year certificate offering a high fixed interest rate, with options for monthly payments or lump sum at maturity.'
         },
         {
@@ -124,10 +120,8 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '12.25%',
           annuallyInterestRate: '12.5%',
           duration: 5,
-          minInvestmentMonthly: 1200,
-          minInvestmentAnnually: 1000,
-          investmentIncrementMonthly: 1200,
-          investmentIncrementAnnually: 1000,
+          minInvestment: 1000,
+          multiples: 1000,
           description: 'A 5-year certificate offering fixed interest rates with options for monthly or annual payouts.'
         },
         {
@@ -135,7 +129,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '12.75%',
           duration: 7,
           minInvestment: 750,
-          investmentIncrement: 750,
+          multiples: 750,
           description: 'A 7-year certificate providing a fixed monthly interest rate.'
         },
         {
@@ -143,23 +137,15 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '21.5%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A 3-year certificate providing a fixed monthly interest rate.'
-        },
-        {
-          type: 'Al Tholatheya Certificate',
-          monthlyInterestRate: 'Variable',
-          duration: 3,
-          minInvestment: 500,
-          investmentIncrement: 500,
-          description: 'A 3-year certificate with a variable monthly interest rate.'
         },
         {
           type: 'Aman Al Masreyeen Certificate of Deposit',
           atMaturityInterestRate: '13%',
           duration: 3,
           minInvestment: 500,
-          investmentIncrement: 500,
+          multiples: 500,
           description: 'A 3-year nominal certificate offering life insurance and prize draws, with interest paid at maturity.'
         },
         {
@@ -169,7 +155,7 @@ export class InvestComponent implements OnInit {
           annuallyInterestRate: '30% (1st year), 25% (2nd year), 20% (3rd year)',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A 3-year certificate with a descending fixed interest rate, offering multiple payout options.'
         }
       ]
@@ -185,7 +171,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '24.75%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Offers a variable interest rate linked to the Central Bank of Egypt\'s rates, suitable for those anticipating rate increases.'
         },
         {
@@ -193,7 +179,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '18%',
           duration: 3,
           minInvestment: 100000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Designed for investors seeking stable returns with a lower entry point.'
         },
         {
@@ -201,7 +187,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '19%',
           duration: 3,
           minInvestment: 500000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Ideal for investors desiring competitive returns with a moderate initial investment.'
         },
         {
@@ -209,7 +195,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '20%',
           duration: 3,
           minInvestment: 1000000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Suitable for investors seeking high returns with a substantial initial investment.'
         }
       ]
@@ -228,7 +214,7 @@ export class InvestComponent implements OnInit {
           annuallyInterestRate: '20.15%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Suitable for investors seeking stable returns with a modest initial investment.'
         },
         {
@@ -238,7 +224,7 @@ export class InvestComponent implements OnInit {
           annuallyInterestRate: '21.15% ',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Ideal for investors desiring higher returns with a low entry point.'
         },
         {
@@ -246,7 +232,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '21.50%',
           duration: 3,
           minInvestment: 1000000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Designed for investors seeking premium returns with a substantial initial investment.'
         },
         {
@@ -254,7 +240,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '22.50%',
           duration: 3,
           minInvestment: 5000000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Tailored for investors aiming for the highest returns with a significant initial investment.'
         }
       ]
@@ -270,7 +256,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '22%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A premium certificate with high interest and monthly payments.'
         },
         {
@@ -278,7 +264,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '14%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A solid option for investors seeking monthly payouts.'
         },
         {
@@ -286,7 +272,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '19%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A competitive certificate with a strong interest rate.'
         },
         {
@@ -295,7 +281,7 @@ export class InvestComponent implements OnInit {
           annuallyInterestRate: '17.25%',
           duration: 3,
           minInvestment: 100000,
-          investmentIncrement: 5000,
+          multiples: 5000,
           description: 'A high-value certificate with flexible interest payment options.'
         }
       ]
@@ -311,7 +297,7 @@ export class InvestComponent implements OnInit {
           monthlyInterestRate: '20.50%',
           duration: 3,
           minInvestment: 10000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'A high-return savings certificate with monthly interest payments and tax exemption.'
         }
       ]
@@ -328,7 +314,7 @@ export class InvestComponent implements OnInit {
           quarterlyInterestRate: '23%',
           duration: 3,
           minInvestment: 1000,
-          investmentIncrement: 1000,
+          multiples: 1000,
           description: 'Floating interest rate, adjusted with CBE discount rate changes.'
         }
       ]
@@ -357,5 +343,51 @@ export class InvestComponent implements OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  // Calculate interest returns based on the average interest rate
+  calculateReturns(targetAmount: number, interestRate: string, duration: number): {
+    daily: number;
+    monthly: number;
+    quarterly: number;
+    semiAnnual: number;
+    annual: number;
+    atMaturity: number;
+    isChangingRate: boolean;
+  } {
+    const rates = this.extractInterestRates(interestRate);
+    const isChangingRate = rates.length > 1;
+
+    const averageRate = rates.length > 0
+      ? rates.reduce((sum, rate) => sum + rate, 0) / rates.length / 100
+      : 0;
+
+    const dailyReturn = targetAmount * (averageRate / 365);
+    const monthlyReturn = targetAmount * (averageRate / 12);
+    const quarterlyReturn = targetAmount * (averageRate / 4);
+    const semiAnnualReturn = targetAmount * (averageRate / 2);
+    const annualReturn = targetAmount * averageRate;
+    const atMaturityReturn = targetAmount * averageRate * duration;
+
+    return {
+      daily: dailyReturn,
+      monthly: monthlyReturn,
+      quarterly: quarterlyReturn,
+      semiAnnual: semiAnnualReturn,
+      annual: annualReturn,
+      atMaturity: atMaturityReturn,
+      isChangingRate
+    };
+  }
+
+  // Extract interest rates from a strings with percentage values
+  extractInterestRates(interestRate: string): number[] {
+    const rateMatches = interestRate.match(/\d+(\.\d+)?(?=%)/g);
+    return rateMatches ? rateMatches.map(rate => parseFloat(rate)) : [];
+  }
+
+  // Round the target amount to the nearest multiple
+  roundToNearestMultiple(targetAmount: number, multiple: number): number {
+    return Math.floor(targetAmount / multiple) * multiple;
   }
 }
