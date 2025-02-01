@@ -87,7 +87,6 @@ def analyze_spending_variability(expenses, smart_insights):
     category_expense_counts = expenses['category'].value_counts()
     valid_categories = category_expense_counts[category_expense_counts >= 2].index
 
-    # Calculate standard deviation for valid categories
     if len(valid_categories) >= 2:
         category_variability = (
             expenses[expenses['category'].isin(valid_categories)]
