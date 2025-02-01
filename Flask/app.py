@@ -68,8 +68,8 @@ def kmeans_clustering(expenses, smart_insights):
     clusters = kmeans.fit_predict(expenses[['normalized_amount']])
     expenses['cluster'] = clusters
 
-    cluster_totals = expenses.groupby('cluster')['amount'].sum()
-    highest_spending_cluster = cluster_totals.idxmax()
+    cluster_averages = expenses.groupby('cluster')['normalized_amount'].mean()
+    highest_spending_cluster = cluster_averages.idxmax()
 
     highest_cluster_data = expenses[expenses['cluster'] == highest_spending_cluster]
 
@@ -88,17 +88,18 @@ def analyze_spending_variability(expenses, smart_insights):
     valid_categories = category_expense_counts[category_expense_counts >= 2].index
 
     # Calculate standard deviation for valid categories
-    category_variability = (
-        expenses[expenses['category'].isin(valid_categories)]
-        .groupby('category')['amount']
-        .std()
-        .sort_values(ascending=False)
-    )
+    if len(valid_categories) >= 2:
+        category_variability = (
+            expenses[expenses['category'].isin(valid_categories)]
+            .groupby('category')['amount']
+            .std()
+            .sort_values(ascending=False)
+        )
 
-    if not category_variability.empty:
-        most_variable_category = category_variability.idxmax()
-        if pd.notna(most_variable_category):
-            smart_insights.append(f"Spending in '{most_variable_category}' varies the most. Keep an eye on it!")
+        if not category_variability.empty:
+            most_variable_category = category_variability.idxmax()
+            if pd.notna(most_variable_category):
+                smart_insights.append(f"Spending in '{most_variable_category}' varies the most. Keep an eye on it!")
 
 
 # Analyze deviations in category spending trends
@@ -137,12 +138,14 @@ def day_of_week_analysis(expenses, smart_insights):
         ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], fill_value=0
     )
 
-    if (weekday_counts >= 3).any():
-        weekday_spending = expenses.groupby('day_of_week')['amount'].mean().reindex(
-            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        )
-        peak_day = weekday_spending.idxmax()
-        smart_insights.append(f"You tend to spend the most on {peak_day}s. Plan ahead!")
+    weekday_spending = expenses.groupby('day_of_week')['amount'].mean().reindex(
+        ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    )
+
+    if len(weekday_counts[weekday_counts > 0]) >= 2:
+        peak_count_day = weekday_counts.idxmax()
+        peak_spending_day = weekday_spending.idxmax()
+        smart_insights.append(f"You have the highest number of expenses on {peak_count_day}s, and the highest spending on {peak_spending_day}s. Plan ahead!")
 
 
 @app.route('/analysis', methods=['POST'])
