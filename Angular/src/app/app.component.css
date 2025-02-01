@@ -1,17 +1,111 @@
+.navbar {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .nav-link {
-  transition: color 0.3s ease;
+  position: relative;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
 }
 
-.Blue-Hov:hover {
-  color: #007bff;
+.nav-link:hover {
+  background-color: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b !important;
 }
 
-.Red-Hov:hover {
-  color: #dc3545;
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #ff6b6b;
+  transition: width 0.3s ease, left 0.3s ease;
 }
 
+.nav-link:hover::after {
+  width: 100%;
+  left: 0;
+}
 
-.navbar-brand {
-  font-weight: bold;
-  font-size: 1.5rem;
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.navbar-brand img {
+  animation: bounce 2s infinite;
+}
+
+.navbar-collapse.menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background: linear-gradient(45deg, #010b1f, #0f1d36);
+  z-index: 9999;
+  transition: left 0.3s ease-in-out;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 25px;
+}
+
+.navbar-collapse.menu.show {
+  left: 0;
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9000;
+  display: none;
+}
+
+.navbar-collapse.menu.show + .menu-overlay {
+  display: block;
+}
+
+.navbar-nav {
+  padding: 1rem;
+  flex-direction: column;
+}
+
+.nav-item {
+  margin: 0.5rem 0;
+}
+
+.logout-section {
+  margin-top: auto;
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-button {
+  display: block;
+  text-align: center;
+  background-color: #f33d3d;
+  color: white !important;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button::after {
+  display: none;
+}
+
+.logout-button:hover {
+  background-color: #fa172a;
+  color: white !important;
 }

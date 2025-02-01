@@ -1,51 +1,55 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-dark" style="background: linear-gradient(45deg, #010b1f, #0f1d36);">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+    <a class="navbar-brand d-flex align-items-center" style="font-size: 24px;" routerLink="/">
       <img src="logo.png" alt="Logo" style="height: 40px; width: auto; margin-right: 10px;" />
       Financial Advisor
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <button class="navbar-toggler" style="border: none;" (click)="toggleNavbar()">
+      <i class="fa fa-bars" style="font-size: 28px;"></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="navbar-collapse menu" [ngClass]="{'show': isNavbarVisible}">
+      <div class="menu-overlay" *ngIf="isNavbarVisible" (click)="toggleNavbar()"></div>
+      <a class="navbar-brand ms-4" routerLink="/">
+        Financial Advisor
+      </a>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
+          <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/budget']" routerLinkActive="active">Budget</a>
+          <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active">Budget</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/goal']" routerLinkActive="active">Goal</a>
+          <a class="nav-link" [routerLink]="['/goal']" routerLinkActive="active">Goal</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/categories']" routerLinkActive="active">Categories</a>
+          <a class="nav-link" [routerLink]="['/categories']" routerLinkActive="active">Categories</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/expenses']" routerLinkActive="active">Expenses</a>
+          <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active">Expenses</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/analyze']" routerLinkActive="active">Analyze</a>
+          <a class="nav-link" [routerLink]="['/analyze']" routerLinkActive="active">Analyze</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/invest']" routerLinkActive="active">Invest</a>
+          <a class="nav-link" [routerLink]="['/invest']" routerLinkActive="active">Invest</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/history']" routerLinkActive="active">History</a>
+          <a class="nav-link" [routerLink]="['/history']" routerLinkActive="active">History</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/account']" routerLinkActive="active">Account</a>
-        </li>
-        <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link Red-Hov" href="javascript:void(0)" (click)="logout()">Logout</a>
+          <a class="nav-link" [routerLink]="['/account']" routerLinkActive="active">Account</a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/login']" routerLinkActive="active">Login</a>
+          <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active">Login</a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link Blue-Hov" [routerLink]="['/register']" routerLinkActive="active">Register</a>
+          <a class="nav-link" [routerLink]="['/register']" routerLinkActive="active">Register</a>
         </li>
       </ul>
+      <div class="logout-section" *ngIf="isLoggedIn">
+        <a class="nav-link logout-button" href="javascript:void(0)" (click)="logout()">Logout</a>
+      </div>
     </div>
   </div>
 </nav>

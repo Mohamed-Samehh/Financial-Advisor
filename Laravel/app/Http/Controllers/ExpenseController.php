@@ -17,6 +17,7 @@ class ExpenseController extends Controller
     public function index(Request $request)
     {
         $expenses = Expense::where('user_id', $request->user()->id)
+            ->whereYear('date', '>', Carbon::now()->subYears(3)->year) // Get expenses for the last 3 years only
             ->orderBy('date', 'desc')
             ->get();
 

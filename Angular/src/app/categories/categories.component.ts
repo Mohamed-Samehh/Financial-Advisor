@@ -24,6 +24,7 @@ export class CategoriesComponent implements OnInit {
   message: { type: string; text: string } | null = null;
   submitted: boolean = false;
   suggestedCategories: any[] = [];
+  lastMonthWithExpenses: string | null = null;
   buttonHover: boolean = false;
 
   constructor(private apiService: ApiService) {}
@@ -53,10 +54,15 @@ export class CategoriesComponent implements OnInit {
       next: (res) => {
         if (res && res.suggested_priorities && res.suggested_priorities.length > 0) {
           this.suggestedCategories = res.suggested_priorities;
+
+          if (res.last_month_with_expenses) {
+            this.lastMonthWithExpenses = res.last_month_with_expenses;
+          }
         }
       },
       error: () => {
         this.suggestedCategories = [];
+        this.lastMonthWithExpenses = null;
       }
     });
   }

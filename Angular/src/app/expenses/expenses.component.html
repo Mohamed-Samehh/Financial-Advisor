@@ -128,10 +128,10 @@
 
     <!-- Expense Details -->
     <li *ngFor="let expense of paginatedExpenses" class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
-      <div>
+      <div class="w-100">
         <b>{{ expense.category }}</b>: E£{{ formatNumber(expense.amount) }} on {{ expense.date | date:'mediumDate' }}
         <br>
-        <small class="text-muted">{{ expense.description || 'No description' }}</small>
+        <small class="text-muted d-block text-break" style="width: 100%;">{{ expense.description || 'No description' }}</small>
 
         <span *ngIf="expense.isRecentlyAdded" class="badge bg-success text-light ms-2">
           Recently Added
@@ -143,7 +143,7 @@
       </div>
       <div class="d-flex">
         <button
-          class="btn btn-sm"
+          class="btn btn-sm ms-2"
           [ngClass]="{
             'btn-outline-primary': !(isEditing && editingExpenseId === expense.id),
             'btn-warning text-dark': isEditing && editingExpenseId === expense.id

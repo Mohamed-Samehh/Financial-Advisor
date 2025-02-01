@@ -30,7 +30,7 @@
           <div *ngIf="!isLoading && !analysis.total_spent && analysis.monthly_budget">
             <h5 class="text-muted">Total Spent: <span class="text-success">E£0</span></h5>
 
-            <h5 class="text-muted">Remaining Allowable Spending: <span class="text-success">E£{{ formatNumber(analysis.monthly_budget - analysis.goal) }}</span></h5>
+            <h5 class="text-muted">Remaining Allowance: <span class="text-success">E£{{ formatNumber(analysis.monthly_budget - analysis.goal) }}</span></h5>
 
             <h5 class="text-muted">Remaining Budget: <span class="text-success">E£{{ formatNumber(analysis.monthly_budget) }}</span></h5>
           </div>
@@ -44,14 +44,14 @@
                 E£{{ formatNumber(analysis.total_spent) }}
               </span>
             </h5>
-            <h5 *ngIf="analysis.predicted_current_month" class="text-muted">Predicted Total to be Spent:
+            <h5 *ngIf="analysis.predicted_current_month" class="text-muted">Estimated Total:
               <span
                 [ngClass]="{'text-danger': analysis.predicted_current_month > (analysis.monthly_budget - analysis.goal),
                             'text-success': analysis.predicted_current_month <= (analysis.monthly_budget - analysis.goal)}">
                 E£{{ formatNumber(analysis.predicted_current_month) }}
               </span>
             </h5>
-            <h5 class="text-muted">Remaining Allowable Spending:
+            <h5 class="text-muted">Remaining Allowance:
               <span
                 [ngClass]="{'text-danger': (analysis.remaining_budget - analysis.goal) < (analysis.monthly_budget - analysis.goal) * 0.25,
                             'text-success': (analysis.remaining_budget - analysis.goal) >= (analysis.monthly_budget - analysis.goal) * 0.25}">
@@ -70,7 +70,7 @@
           <!-- Color Code Explanation -->
           <div *ngIf="!isLoading && analysis.monthly_budget" class="mt-3 text-muted small">
             <span class="text-success">Green:</span> Under control &nbsp;|&nbsp;
-            <span class="text-danger">Red:</span> Exceeded or near limit
+            <span class="text-danger">Red:</span> Near limit
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@
           </div>
 
           <div class="position-relative">
-            <canvas *ngIf="!isLoading && analysis.monthly_budget" id="categoryChart" height="200"></canvas>
+            <canvas *ngIf="!isLoading && analysis.monthly_budget" id="categoryChart" height="550"></canvas>
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget">
@@ -221,7 +221,7 @@
           </div>
 
           <div class="position-relative">
-            <canvas id="expensesChart" height="200"></canvas>
+            <canvas id="expensesChart" height="400"></canvas>
 
             <!-- If there are no budget -->
             <div *ngIf="!isLoading && !analysis.monthly_budget" class="no-expenses-message" style="width: 100%;">

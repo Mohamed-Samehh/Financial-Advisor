@@ -30,7 +30,7 @@
     <!-- Display Suggested Priorities -->
     <div *ngIf="suggestedCategories && suggestedCategories.length > 0" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7;">
       <h5 class="text-center font-weight-bold mb-2">Suggested Category Priorities</h5>
-      <p class="text-center text-sm mb-3">Based on your previous month expenses</p>
+      <p class="text-center text-sm mb-3">Based on your previous month expenses<br>{{lastMonthWithExpenses}}</p>
 
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
         <div *ngFor="let suggested of suggestedCategories" class="col">

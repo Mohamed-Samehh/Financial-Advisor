@@ -4,3 +4,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+#expensesChart {
+  height: 700px !important;
+}
+
+@media (max-width: 767.98px) {
+  #expensesChart {
+    height: 500px !important;
+    width: 110% !important;
+    margin-left: -7%;
+  }
+}

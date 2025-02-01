@@ -77,52 +77,99 @@ export class AnalyzeExpensesComponent implements OnInit {
             borderColor: '#FF6384',
             backgroundColor: 'rgba(255,99,132,0.2)',
             fill: true,
-            tension: 0.1
+            tension: 0.4,
+            pointRadius: window.innerWidth < 768 ? 3 : 5,
+            pointHoverRadius: window.innerWidth < 768 ? 5 : 7,
+            pointBackgroundColor: '#FF6384',
+            borderWidth: 2,
           },
           {
             label: 'Goal Limit',
             data: Array(days.length).fill(this.analysis.goal),
             borderColor: '#36A2EB',
             borderDash: [10, 5],
-            fill: false
+            fill: false,
+            borderWidth: 2,
           },
           {
             label: 'Budget Limit',
             data: Array(days.length).fill(this.analysis.monthly_budget),
             borderColor: '#4BC0C0',
             borderDash: [10, 5],
-            fill: false
+            fill: false,
+            borderWidth: 2,
           },
           {
             label: 'Zero Line',
             data: Array(days.length).fill(0),
             borderColor: '#000000',
             borderDash: [5, 5],
-            fill: false
+            fill: false,
+            borderWidth: 1,
           }
         ]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'top',
+            labels: {
+              font: {
+                size: window.innerWidth < 768 ? 18 : 14,
+              }
+            }
+          },
+          tooltip: {
+            enabled: true,
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: { size: window.innerWidth < 768 ? 18 : 14 },
+            bodyFont: { size: window.innerWidth < 768 ? 16 : 12 },
+            padding: 8,
           }
         },
         scales: {
           x: {
             title: {
               display: true,
-              text: 'Days of the Month'
+              text: 'Days of the Month',
+              font: {
+                size: window.innerWidth < 768 ? 18 : 14,
+              }
+            },
+            ticks: {
+              font: {
+                size: window.innerWidth < 768 ? 16 : 12,
+              }
             }
           },
           y: {
             title: {
               display: true,
-              text: 'Amount (EGP)'
+              text: 'Amount (EGP)',
+              font: {
+                size: window.innerWidth < 768 ? 18 : 14,
+              }
+            },
+            ticks: {
+              font: {
+                size: window.innerWidth < 768 ? 16 : 12,
+              }
             }
           }
-        }
+        },
+        animation: {
+          duration: 1000,
+          easing: 'easeInOutQuart',
+        },
+        interaction: {
+          mode: 'nearest',
+          intersect: false,
+        },
+        devicePixelRatio: window.devicePixelRatio || 1,
       }
     });
   }
@@ -159,11 +206,29 @@ export class AnalyzeExpensesComponent implements OnInit {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'top',
+            labels: {
+              font: {
+                size: window.innerWidth < 768 ? 18 : 14,
+              }
+            }
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: { size: window.innerWidth < 768 ? 18 : 14 },
+            bodyFont: { size: window.innerWidth < 768 ? 16 : 12 },
+            padding: 8,
           }
-        }
+        },
+        animation: {
+          duration: 1000,
+          easing: 'easeInOutQuart',
+        },
+        devicePixelRatio: window.devicePixelRatio || 1,
       }
     });
   }

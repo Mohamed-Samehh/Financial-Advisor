@@ -114,18 +114,35 @@ class CategoryController extends Controller
     public function suggestCategoryPriorities(Request $request)
     {
         $user = $request->user();
-        $previousMonth = Carbon::now()->subMonth();
 
-        $previousMonthExpenses = Expense::where('user_id', $user->id)
-            ->whereYear('date', $previousMonth->year)
-            ->whereMonth('date', $previousMonth->month)
-            ->get();
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+        $lastExpense = Expense::where('user_id', $user->id)
+            ->where(function ($query) use ($currentYear, $currentMonth) {
+                $query->whereYear('date', '<', $currentYear)
+                    ->orWhere(function ($query) use ($currentYear, $currentMonth) {
+                        $query->whereYear('date', $currentYear)
+                                ->whereMonth('date', '<', $currentMonth);
+                    });
+            })
+            ->orderBy('date', 'desc')
+            ->first();
 
-        if ($previousMonthExpenses->isEmpty()) {
-            return response()->json(['message' => 'No suggestions available for the first month'], 200);
+        if (!$lastExpense) {
+            return response()->json(['message' => 'No expenses found for the user (excluding the current month)'], 200);
         }
 
-        $categoryExpenses = $previousMonthExpenses->groupBy('category')->map(function ($expenses) {
+        $lastMonthWithExpenses = Carbon::parse($lastExpense->date)->startOfMonth();
+        $lastMonthExpenses = Expense::where('user_id', $user->id)
+            ->whereYear('date', $lastMonthWithExpenses->year)
+            ->whereMonth('date', $lastMonthWithExpenses->month)
+            ->get();
+
+        if ($lastMonthExpenses->isEmpty()) {
+            return response()->json(['message' => 'No suggestions available'], 200);
+        }
+
+        $categoryExpenses = $lastMonthExpenses->groupBy('category')->map(function ($expenses) {
             return $expenses->sum('amount');
         });
 
@@ -151,8 +168,11 @@ class CategoryController extends Controller
             $priority++;
         }
 
+        $formattedDate = $lastMonthWithExpenses->format('F Y');
+
         return response()->json([
-            'message' => 'Category priority suggestions based on previous month expenses',
+            'message' => 'Suggested category priorities based on your spending in the most recent month with expenses (excluding the current month).',
+            'last_month_with_expenses' => $formattedDate,
             'suggested_priorities' => $suggestedPriorities
         ], 200);
     }

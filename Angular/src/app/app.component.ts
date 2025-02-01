@@ -12,12 +12,17 @@ import { CommonModule } from '@angular/common';
 export class AppComponent implements OnInit {
   title = 'frontend';
   isLoggedIn = false;
+  isNavbarVisible: boolean = false;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
     const token = this.getToken();
     this.isLoggedIn = !!token;
+  }
+
+  toggleNavbar() {
+    this.isNavbarVisible = !this.isNavbarVisible;
   }
 
   logout() {
@@ -27,7 +32,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // Token management
   getToken(): string | null {
     return localStorage.getItem('token');
   }
