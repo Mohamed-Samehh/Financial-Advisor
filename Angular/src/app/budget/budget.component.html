@@ -25,7 +25,7 @@
       <!-- Budget Form -->
       <form (ngSubmit)="onSubmit(budgetForm)" #budgetForm="ngForm">
         <div class="form-group mb-4">
-          <label for="monthlyBudget" class="font-weight-bold">Monthly Budget:</label>
+          <label for="monthlyBudget" class="fw-bold">Monthly Budget:</label>
           <input
             type="number"
             id="monthlyBudget"
@@ -64,7 +64,7 @@
 
   <div *ngIf="budget.id && !isLoading" class="list-group mt-3 mb-5">
     <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
-      <span class="font-weight-bold text-dark">This Month's Budget: E£{{ formatNumber(budget.monthly_budget) }}</span>
+      <span class="fw-bold text-dark">This Month's Budget: E£{{ formatNumber(budget.monthly_budget) }}</span>
       <button class="btn btn-outline-danger btn-sm ms-3" (click)="deleteBudget(budget.id)">
         <i class="fas fa-trash-alt"></i>
       </button>

@@ -11,7 +11,7 @@
   <div *ngIf="!isLoading">
     <!-- Update Information -->
     <div class="card shadow-lg border-0 mb-4 bg-light">
-      <div class="card-header text-uppercase font-weight-bold">Update Account Information</div>
+      <div class="card-header text-uppercase fw-bold bg-primary text-light">Update Account Information</div>
       <div class="card-body p-5">
         <!-- Success/Error Messages -->
         <div *ngIf="updateInfoSuccess" class="alert alert-success">{{ updateInfoSuccess }}</div>
@@ -66,7 +66,7 @@
 
     <!-- Update Password -->
     <div class="card shadow-lg border-0 mb-4 bg-light">
-      <div class="card-header text-uppercase font-weight-bold">Update Password</div>
+      <div class="card-header text-uppercase fw-bold bg-primary text-light">Update Password</div>
       <div class="card-body p-5">
         <!-- Success/Error Messages -->
         <div *ngIf="updatePasswordSuccess" class="alert alert-success">{{ updatePasswordSuccess }}</div>
@@ -141,11 +141,8 @@
 
     <!-- Delete Account Button -->
     <div class="text-center mt-4" *ngIf="!isLoading">
-      <button
-        type="button"
-        class="btn btn-danger"
-        (click)="onDeleteAccount()">
-        <i class="fas fa-trash-alt me-2"></i>Delete Account
+      <button type="button" class="btn btn-outline-danger mt-3" (click)="onDeleteAccount()">
+        <i class="fas fa-trash-alt me-2"></i> Delete Account
       </button>
     </div>
   </div>

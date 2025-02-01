@@ -26,7 +26,7 @@
       <form (ngSubmit)="onSubmit(expenseForm)" #expenseForm="ngForm">
         <!-- Category -->
         <div class="form-group mb-4">
-          <label for="category" class="font-weight-bold">Category:</label>
+          <label for="category" class="fw-bold">Category:</label>
           <select
             id="category"
             [(ngModel)]="form.category"
@@ -45,7 +45,7 @@
 
         <!-- Amount -->
         <div class="form-group mb-4">
-          <label for="amount" class="font-weight-bold">Amount:</label>
+          <label for="amount" class="fw-bold">Amount:</label>
           <input
             type="number"
             id="amount"
@@ -65,7 +65,7 @@
 
         <!-- Date -->
         <div class="form-group mb-4">
-          <label for="date" class="font-weight-bold">Date:</label>
+          <label for="date" class="fw-bold">Date:</label>
           <input
             type="date"
             id="date"
@@ -84,7 +84,7 @@
 
         <!-- Description -->
         <div class="form-group mb-4">
-          <label for="description" class="font-weight-bold">Description:</label>
+          <label for="description" class="fw-bold">Description:</label>
           <textarea
             id="description"
             [(ngModel)]="form.description"
@@ -113,7 +113,7 @@
     <!-- Sorting Dropdown Card -->
     <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
       <div class="d-flex justify-content-between align-items-center w-100">
-        <label for="sortBy" class="me-2 font-weight-bold mb-0"><b>Sort Expenses:</b></label>
+        <label for="sortBy" class="me-2 fw-bold mb-0">Sort Expenses:</label>
         <select
           id="sortBy"
           class="form-select w-auto"

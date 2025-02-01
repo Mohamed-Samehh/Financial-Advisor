@@ -30,7 +30,7 @@
       <form (ngSubmit)="onSubmit(goalForm)" #goalForm="ngForm">
         <!-- Goal Name Field -->
         <div class="form-group mb-4">
-          <label for="goalName" class="font-weight-bold">Goal Name:</label>
+          <label for="goalName" class="fw-bold">Goal Name:</label>
           <input
             type="text"
             id="goalName"
@@ -52,7 +52,7 @@
 
         <!-- Target Amount Field -->
         <div class="form-group mb-4">
-          <label for="targetAmount" class="font-weight-bold">Target Amount:</label>
+          <label for="targetAmount" class="fw-bold">Target Amount:</label>
           <input
             type="number"
             id="targetAmount"
@@ -91,7 +91,7 @@
 
   <div *ngIf="goal.id && !isLoading && budget" class="list-group mt-3 mb-5">
     <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm">
-      <span class="font-weight-bold text-dark">{{ goal.name }}: save E£{{ formatNumber(goal.target_amount) }} by the end of this month</span>
+      <span class="fw-bold text-dark">{{ goal.name }}: save E£{{ formatNumber(goal.target_amount) }} by the end of this month</span>
       <button class="btn btn-outline-danger btn-sm ms-3" (click)="deleteGoal(goal.id)">
         <i class="fas fa-trash-alt"></i>
       </button>

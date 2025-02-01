@@ -2,7 +2,7 @@
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" style="font-size: 24px;" routerLink="/">
       <img src="logo.png" alt="Logo" style="height: 40px; width: auto; margin-right: 10px;" />
-      Financial Advisor
+      <span class="diff_font">Financial Advisor</span>
     </a>
     <button class="navbar-toggler" style="border: none;" (click)="toggleNavbar()">
       <i class="fa fa-bars" style="font-size: 28px;"></i>
@@ -14,37 +14,37 @@
       </a>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
+          <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active"><i class="fas fa-compass"></i>&nbsp; Dashboard</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active">Budget</a>
+          <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active"><i class="fas fa-wallet"></i>&nbsp; Budget</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/goal']" routerLinkActive="active">Goal</a>
+          <a class="nav-link" [routerLink]="['/goal']" routerLinkActive="active"><i class="fas fa-bullseye"></i>&nbsp; Goal</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/categories']" routerLinkActive="active">Categories</a>
+          <a class="nav-link" [routerLink]="['/categories']" routerLinkActive="active"><i class="fas fa-list"></i>&nbsp; Categories</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active">Expenses</a>
+          <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active"><i class="fas fa-receipt"></i>&nbsp; Expenses</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/analyze']" routerLinkActive="active">Analyze</a>
+          <a class="nav-link" [routerLink]="['/analyze']" routerLinkActive="active"><i class="fas fa-chart-pie"></i>&nbsp; Analyze</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/invest']" routerLinkActive="active">Invest</a>
+          <a class="nav-link" [routerLink]="['/invest']" routerLinkActive="active"><i class="fas fa-chart-line"></i>&nbsp; Invest</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/history']" routerLinkActive="active">History</a>
+          <a class="nav-link" [routerLink]="['/history']" routerLinkActive="active"><i class="fas fa-history"></i>&nbsp; History</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/account']" routerLinkActive="active">Account</a>
+          <a class="nav-link" [routerLink]="['/account']" routerLinkActive="active"><i class="fas fa-user-cog"></i>&nbsp; Account</a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active">Login</a>
+          <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active"><i class="fas fa-sign-in-alt"></i>&nbsp; Login</a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link" [routerLink]="['/register']" routerLinkActive="active">Register</a>
+          <a class="nav-link" [routerLink]="['/register']" routerLinkActive="active"><i class="fas fa-user-edit"></i>&nbsp; Register</a>
         </li>
       </ul>
       <div class="logout-section" *ngIf="isLoggedIn">

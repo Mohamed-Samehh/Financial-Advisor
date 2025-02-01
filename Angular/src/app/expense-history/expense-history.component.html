@@ -18,7 +18,7 @@
         <div *ngFor="let monthYear of getMonthsForCurrentPage(); let i = index" class="card mb-4 shadow-lg border-0">
 
           <!-- Collapsible Card Header -->
-          <div class="card-header font-weight-bold bg-light text-dark d-flex justify-content-between align-items-center" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" aria-controls="collapse">
+          <div class="card-header fw-bold bg-light text-dark d-flex justify-content-between align-items-center" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" aria-controls="collapse">
             <h5 class="mb-0">{{ monthYear }}</h5>
             <div class="d-flex align-items-center">
               <span *ngIf="totalExpensesByMonth[monthYear]"
