@@ -212,16 +212,16 @@
   <!-- Association Rules Section -->
   <div *ngIf="!isLoading && analysis.association_rules && analysis.association_rules.length > 0" class="card shadow-lg border-0 mb-4">
     <div class="card-body p-4">
-      <h5 class="text-muted text-center mb-4"><b>Association Rules</b></h5>
+      <h5 class="text-muted text-center mb-4"><b>Frequently Spent Together</b></h5>
 
       <!-- Table for Displaying Rules -->
       <table class="table table-bordered table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Antecedent</th>
-            <th scope="col">Consequent</th>
-            <th scope="col">Confidence (%)</th>
+            <th scope="col">If</th>
+            <th scope="col">Then</th>
+            <th scope="col">Confidence</th>
           </tr>
         </thead>
         <tbody>
