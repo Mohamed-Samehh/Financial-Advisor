@@ -25,6 +25,8 @@ export class CategoriesComponent implements OnInit {
   submitted: boolean = false;
   suggestedCategories: any[] = [];
   lastMonthWithExpenses: string | null = null;
+  classifiedCategories: any[] = [];
+  accuracy: number | null = null;
   buttonHover: boolean = false;
 
   constructor(private apiService: ApiService) {}
@@ -32,6 +34,7 @@ export class CategoriesComponent implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadSuggestedCategories();
+    this.loadClassifiedCategories();
   }
 
   loadCategories() {
@@ -63,6 +66,28 @@ export class CategoriesComponent implements OnInit {
       error: () => {
         this.suggestedCategories = [];
         this.lastMonthWithExpenses = null;
+      }
+    });
+  }
+
+  loadClassifiedCategories() {
+    this.apiService.getCategoryClassifications().subscribe({
+      next: (res) => {
+        if (res && res.importance_classification && res.importance_classification.length > 0) {
+          const classificationData = res.importance_classification[0];
+          this.accuracy = classificationData.accuracy;
+          this.classifiedCategories = classificationData.predicted_importance.map((item: any) => ({
+            category: item.category,
+            predicted_importance: item.predicted_importance
+          }));
+        } else {
+          this.classifiedCategories = [];
+          this.accuracy = null;
+        }
+      },
+      error: () => {
+        this.classifiedCategories = [];
+        this.accuracy = null;
       }
     });
   }

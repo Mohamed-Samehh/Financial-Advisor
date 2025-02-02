@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use App\Models\Expense;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -174,6 +176,57 @@ class CategoryController extends Controller
             'message' => 'Suggested category priorities based on your spending in the most recent month with expenses (excluding the current month).',
             'last_month_with_expenses' => $formattedDate,
             'suggested_priorities' => $suggestedPriorities
+        ], 200);
+    }
+
+    // Classify Categories Importance
+    public function classifyCategories(Request $request)
+    {
+        $user = $request->user();
+
+        $all_expenses = Expense::where('user_id', $user->id)
+            ->with('category')
+            ->whereYear('date', '>', Carbon::now()->subYears(3)->year) // Get last 3 years' expenses
+            ->get();
+
+        $distinctMonths = $all_expenses->map(function ($expense) {
+            return Carbon::parse($expense->date)->format('Y-m');
+        })->unique();
+
+        if ($distinctMonths->count() < 2) {
+            return response()->json([
+                'message' => 'Not enough data: At least two months of expense history required.'
+            ], 400);
+        }
+
+        $allExpensesArray = $all_expenses->map(function ($all_expenses) {
+            return [
+                'amount' => $all_expenses->amount,
+                'date' => $all_expenses->date,
+                'category' => $all_expenses->category,
+            ];
+        })->toArray();
+
+        $flaskPassword = "Y7!mK4@vW9#qRp$2"; // Security layer
+        $data = [
+            'all_expenses' => $allExpensesArray,
+            'password' => $flaskPassword,
+        ];
+
+        // Call Flask API for classification
+        try {
+            $flaskClassificationUrl = 'http://127.0.0.1:5000/importance-classification';
+            $response = Http::post($flaskClassificationUrl, $data);
+
+            if ($response->successful()) {
+                $result = $response->json();
+            }
+        } catch (\Exception $e) {
+            Log::error('Flask classification failed: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'importance_classification' => $result['importance_classification'] ?? [],
         ], 200);
     }
 }

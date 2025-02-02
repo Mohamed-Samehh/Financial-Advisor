@@ -209,6 +209,31 @@
     </div>
   </div>
 
+  <!-- Spending Classification Model Card -->
+  <div *ngIf="analysis.spending_classification && analysis.spending_classification.length > 0" class="card shadow-lg border-0 mb-4">
+    <div class="card-body p-4">
+      <h5 class="text-center text-muted mb-3"><b>Spending Classification Model</b></h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col" class="text-center">Spending Category</th>
+              <th scope="col" class="text-center">Classification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of analysis.spending_classification[0].predicted_frequency">
+              <td class="text-center">{{ item.category }}</td>
+              <td class="text-center">
+                {{ item.predicted_frequency }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- Association Rules Section -->
   <div *ngIf="!isLoading && analysis.association_rules && analysis.association_rules.length > 0" class="card shadow-lg border-0 mb-4">
     <div class="card-body p-4">

@@ -3,7 +3,10 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from mlxtend.frequent_patterns import apriori
 from itertools import combinations
-from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 app = Flask(__name__)
 
@@ -18,7 +21,6 @@ def assign_limits(categories, allowed_spending):
 
 # Predict total spending for the current month using daily average
 def predictive_insights(expenses):
-    expenses['date'] = pd.to_datetime(expenses['date'])
     total_days_in_month = expenses['date'].dt.daysinmonth.max()
     days_elapsed = (expenses['date'].max() - expenses['date'].min()).days + 1
 
@@ -38,7 +40,6 @@ def generate_weights(length, decay_factor=0.9):
 
 # Predict spending using weighted average
 def weighted_average(distinct_all_expenses, expenses, predicted_current_month):
-    distinct_all_expenses['date'] = pd.to_datetime(distinct_all_expenses['date'])
     distinct_all_expenses['month'] = distinct_all_expenses['date'].dt.month
     distinct_all_expenses['year'] = distinct_all_expenses['date'].dt.year
 
@@ -84,6 +85,7 @@ def kmeans_clustering(expenses, smart_insights):
         smart_insights.append(f"Consider monitoring expenses in {combined_categories}, as they show a high spending pattern.")
 
 
+# Generate association rules to identify category relationships
 def get_association_rules(expenses, association_rules, min_support=0.5, min_confidence=0.8, min_lift=1.5):
     basket = expenses.groupby(['date', 'category'])['category'].count().unstack().fillna(0)
     basket = basket.map(lambda x: 1 if x > 0 else 0)
@@ -110,6 +112,101 @@ def get_association_rules(expenses, association_rules, min_support=0.5, min_conf
                             'confidence': confidence,
                             'lift': lift
                         })
+
+
+# Random forest classification to classify category importance
+def importance_random_forest_classification(all_expenses, importance_classification, accuracy_threshold=0.75):
+    all_expenses['category_encoded'] = LabelEncoder().fit_transform(all_expenses['category'])
+    all_expenses['year'] = all_expenses['date'].dt.year
+    all_expenses['month'] = all_expenses['date'].dt.month
+
+    category_stats = all_expenses.groupby('category').agg(
+        total_spent=('amount', 'sum'),
+        frequency=('category', 'count'),
+        consistency=('amount', 'std')
+    )
+
+    conditions = [
+        (category_stats['total_spent'] > category_stats['total_spent'].quantile(0.75)) & 
+        (category_stats['consistency'] < category_stats['consistency'].quantile(0.25)),
+        (category_stats['frequency'] > category_stats['frequency'].quantile(0.75)),
+        (category_stats['total_spent'].between(category_stats['total_spent'].quantile(0.25), category_stats['total_spent'].quantile(0.75))) &
+        (category_stats['frequency'].between(category_stats['frequency'].quantile(0.25), category_stats['frequency'].quantile(0.75)))
+    ]
+
+    labels = ['Essential', 'Essential', 'Moderate', 'Non-Essential']
+
+    category_stats['importance'] = 'Non-Essential'
+    for i in range(len(conditions)):
+        category_stats.loc[conditions[i], 'importance'] = labels[i]
+
+    features = all_expenses[['amount', 'category_encoded']]
+    target = all_expenses['category'].map(category_stats['importance'])
+
+    if len(features) >= 5:
+        X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
+
+        rf = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42)
+        rf.fit(X_train, y_train)
+        predictions = rf.predict(X_test)
+
+        accuracy = accuracy_score(y_test, predictions)
+
+        if accuracy >= accuracy_threshold:
+            predictions_all = rf.predict(features)
+            category_importance = pd.DataFrame({
+                'category': all_expenses['category'],
+                'predicted_importance': predictions_all
+            }).drop_duplicates().sort_values('predicted_importance', ascending=False)
+
+            importance_classification.append({
+                'predicted_importance': [
+                    {'category': row[0], 'predicted_importance': row[1]}
+                    for row in category_importance[['category', 'predicted_importance']].values.tolist()
+                ],
+                'accuracy': accuracy
+            })
+
+
+# Random forest classification to classify category spending frequency
+def spending_random_forest_classification(expenses, spending_classification, accuracy_threshold=0.4):
+    expenses['category_encoded'] = LabelEncoder().fit_transform(expenses['category'])
+    expenses['month'] = expenses['date'].dt.month
+    expenses['year'] = expenses['date'].dt.year
+
+    frequency = expenses.groupby('category').size()
+
+    labels = ['High', 'Moderate', 'Low']
+    frequency_classification = pd.cut(frequency, bins=[0, frequency.quantile(0.5), frequency.quantile(0.75), frequency.max()], labels=labels)
+
+    expenses['spending_frequency'] = expenses['category'].map(frequency_classification)
+
+    features = expenses[['amount', 'category_encoded']]
+    target = expenses['spending_frequency']
+
+    if len(features) >= 5:
+        X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
+
+        rf = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42)
+        rf.fit(X_train, y_train)
+        predictions = rf.predict(X_test)
+
+        accuracy = accuracy_score(y_test, predictions)
+
+        if accuracy >= accuracy_threshold:
+            predictions_all = rf.predict(features)
+            category_frequency = pd.DataFrame({
+                'category': expenses['category'],
+                'predicted_frequency': predictions_all
+            }).drop_duplicates().sort_values('predicted_frequency', ascending=False)
+
+            spending_classification.append({
+                'predicted_frequency': [
+                    {'category': row[0], 'predicted_frequency': row[1]}
+                    for row in category_frequency[['category', 'predicted_frequency']].values.tolist()
+                ],
+                'accuracy': accuracy
+            })
 
 
 # Analyze category spending variability
@@ -160,7 +257,6 @@ def analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights)
 
 # Day-of-week spending analysis to identify peak spending days
 def day_of_week_analysis(expenses, smart_insights):
-    expenses['date'] = pd.to_datetime(expenses['date'])
     expenses['day_of_week'] = expenses['date'].dt.day_name()
 
     weekday_counts = expenses['day_of_week'].value_counts().reindex(
@@ -219,6 +315,7 @@ def analyze_expenses():
     advice = []
     smart_insights = []
     association_rules = []
+    spending_classification = []
     
 
     predicted_current_month = predictive_insights(expenses) if len(expenses) >= 5 else None
@@ -259,6 +356,7 @@ def analyze_expenses():
 
     if len(expenses) >= 5:
         kmeans_clustering(expenses, smart_insights)
+        spending_random_forest_classification(expenses, spending_classification)
 
     if len(expenses) >= 30:
         get_association_rules(expenses, association_rules, min_support=0.2, min_confidence=0.6, min_lift=1.0)
@@ -286,9 +384,30 @@ def analyze_expenses():
         'advice': advice,
         'smart_insights': smart_insights,
         'association_rules': association_rules,
+        'spending_classification': spending_classification,
     }
 
     return jsonify(result)
+
+
+# API endpoint for importance classification only
+@app.route('/importance-classification', methods=['POST'])
+def importance_classification_endpoint():
+    data = request.json
+
+    if data.get('password') != FLASK_PASSWORD:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    if 'all_expenses' not in data:
+        return jsonify({'error': 'Missing required data: all_expenses'}), 400
+
+    all_expenses = pd.DataFrame(data['all_expenses'])
+    all_expenses['date'] = pd.to_datetime(all_expenses['date'])
+
+    importance_classification = []
+    importance_random_forest_classification(all_expenses, importance_classification)
+
+    return jsonify({'importance_classification': importance_classification})
 
 
 if __name__ == '__main__':

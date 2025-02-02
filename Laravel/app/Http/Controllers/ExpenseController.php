@@ -194,17 +194,10 @@ class ExpenseController extends Controller
             'password' => $flaskPassword,
         ];
 
-        $result = [
-            'category_limits' => [],
-            'advice' => [],
-            'smart_insights' => [],
-            'association_rules' => [],
-        ];
-
-        // Use Flask for analysis
+        // Call Flask API for analysis
         try {
-            $pythonAnalysisUrl = 'http://127.0.0.1:5000/analysis';
-            $response = Http::post($pythonAnalysisUrl, $data);
+            $flaskAnalysisUrl = 'http://127.0.0.1:5000/analysis';
+            $response = Http::post($flaskAnalysisUrl, $data);
 
             if ($response->successful()) {
                 $result = $response->json();
@@ -220,10 +213,11 @@ class ExpenseController extends Controller
             'remaining_budget' => $remainingBudget,
             'predicted_current_month' => $result['predicted_current_month'] ?? null,
             'predicted_next_month' => $result['predicted_next_month'] ?? null,
-            'category_limits' => $result['category_limits'],
-            'advice' => $result['advice'],
-            'smart_insights' => $result['smart_insights'],
-            'association_rules'=> $result['association_rules'],
+            'category_limits' => $result['category_limits'] ?? [],
+            'advice' => $result['advice'] ?? [],
+            'smart_insights' => $result['smart_insights'] ?? [],
+            'association_rules'=> $result['association_rules'] ?? [],
+            'spending_classification' => $result['spending_classification'] ?? [],
             'daily_expenses' => $dailyExpenses,
         ], 200);
     }
