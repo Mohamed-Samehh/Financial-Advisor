@@ -8,7 +8,7 @@
 
   <!-- Expense Summary and Insights Side by Side -->
   <div class="row">
-    <!-- Left Column: Expense Summary -->
+    <!-- Expense Summary -->
     <div class="col-md-6">
       <!-- Expense Summary Section -->
       <div class="card shadow-lg border-0 mb-4">
@@ -130,7 +130,7 @@
       </div>
     </div>
 
-    <!-- Right Column: Pie Chart for Expense Categories -->
+    <!-- Pie Chart for Expense Categories -->
     <div class="col-md-6">
       <div class="card shadow-lg border-0 mb-4">
         <div class="card-body p-4">
@@ -209,7 +209,41 @@
     </div>
   </div>
 
-  <!-- Full Width Line Chart: Remaining Budget Over Days -->
+  <!-- Association Rules Section -->
+  <div *ngIf="!isLoading && analysis.association_rules && analysis.association_rules.length > 0" class="card shadow-lg border-0 mb-4">
+    <div class="card-body p-4">
+      <h5 class="text-muted text-center mb-4"><b>Association Rules</b></h5>
+
+      <!-- Table for Displaying Rules -->
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Antecedent</th>
+            <th scope="col">Consequent</th>
+            <th scope="col">Confidence (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rule of analysis.association_rules; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td class="text-primary">{{ rule.antecedents[0] || 'No antecedent' }}</td>
+            <td class="text-success">{{ rule.consequents[0] || 'No consequent' }}</td>
+            <td class="text-muted">
+              <span class="fw-bold" [ngClass]="{
+                'text-success': rule.confidence >= 0.7,
+                'text-warning': rule.confidence < 0.7 && rule.confidence >= 0.4,
+                'text-danger': rule.confidence < 0.4 }">
+                {{ rule.confidence ? (rule.confidence * 100 | number: '1.0-0') : 'N/A' }}%
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Line Chart for Remaining Budget Over Days -->
   <div class="row mt-4">
     <div class="col-md-12">
       <div class="card shadow-lg border-0 mb-4">

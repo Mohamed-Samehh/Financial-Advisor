@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 from sklearn.cluster import KMeans
+from mlxtend.frequent_patterns import apriori
+from itertools import combinations
 from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
@@ -80,6 +82,34 @@ def kmeans_clustering(expenses, smart_insights):
     if top_categories:
         combined_categories = ', '.join(top_categories)
         smart_insights.append(f"Consider monitoring expenses in {combined_categories}, as they show a high spending pattern.")
+
+
+def get_association_rules(expenses, association_rules, min_support=0.5, min_confidence=0.8, min_lift=1.5):
+    basket = expenses.groupby(['date', 'category'])['category'].count().unstack().fillna(0)
+    basket = basket.map(lambda x: 1 if x > 0 else 0)
+    basket = basket.astype(bool)
+
+    frequent_itemsets = apriori(basket, min_support=min_support, use_colnames=True)
+    support_dict = frequent_itemsets.set_index('itemsets')['support'].to_dict()
+
+    for itemset in frequent_itemsets['itemsets']:
+        if len(itemset) >= 2:
+            for antecedent in combinations(itemset, len(itemset) - 1):
+                antecedent = frozenset(antecedent)
+                consequent = itemset - antecedent
+
+                if antecedent in support_dict and itemset in support_dict:
+                    confidence = support_dict[itemset] / support_dict[antecedent]
+                    lift = confidence / support_dict[consequent] if consequent in support_dict else None
+
+                    if confidence >= min_confidence and (lift is None or lift >= min_lift):
+                        association_rules.append({
+                            'antecedents': list(antecedent),
+                            'consequents': list(consequent),
+                            'support': support_dict[itemset],
+                            'confidence': confidence,
+                            'lift': lift
+                        })
 
 
 # Analyze category spending variability
@@ -188,6 +218,7 @@ def analyze_expenses():
 
     advice = []
     smart_insights = []
+    association_rules = []
     
 
     predicted_current_month = predictive_insights(expenses) if len(expenses) >= 5 else None
@@ -229,6 +260,13 @@ def analyze_expenses():
     if len(expenses) >= 5:
         kmeans_clustering(expenses, smart_insights)
 
+    if len(expenses) >= 30:
+        get_association_rules(expenses, association_rules, min_support=0.2, min_confidence=0.6, min_lift=1.0)
+    elif len(expenses) >= 20:
+        get_association_rules(expenses, association_rules, min_support=0.3, min_confidence=0.7, min_lift=1.2)
+    elif len(expenses) >= 10:
+        get_association_rules(expenses, association_rules, min_support=0.5, min_confidence=0.8, min_lift=1.5)
+
     if len(expenses) >= 5 and len(expenses['category'].unique()) >= 3:
         analyze_spending_variability(expenses, smart_insights)
 
@@ -247,6 +285,7 @@ def analyze_expenses():
         'category_limits': category_limits_dict,
         'advice': advice,
         'smart_insights': smart_insights,
+        'association_rules': association_rules,
     }
 
     return jsonify(result)

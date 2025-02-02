@@ -198,6 +198,7 @@ class ExpenseController extends Controller
             'category_limits' => [],
             'advice' => [],
             'smart_insights' => [],
+            'association_rules' => [],
         ];
 
         // Use Flask for analysis
@@ -222,6 +223,7 @@ class ExpenseController extends Controller
             'category_limits' => $result['category_limits'],
             'advice' => $result['advice'],
             'smart_insights' => $result['smart_insights'],
+            'association_rules'=> $result['association_rules'],
             'daily_expenses' => $dailyExpenses,
         ], 200);
     }
