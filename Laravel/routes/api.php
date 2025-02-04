@@ -42,5 +42,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
     Route::get('/categories/suggest', [CategoryController::class, 'suggestCategoryPriorities']);
-    Route::get('/categories/classify', [CategoryController::class, 'classifyCategories']);
+    Route::get('/categories/label', [CategoryController::class, 'labelCategories']);
 });

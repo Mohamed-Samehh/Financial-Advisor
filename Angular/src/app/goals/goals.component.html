@@ -9,8 +9,11 @@
   </div>
 
   <!-- If no budget is set, show a warning message -->
-  <div *ngIf="!isLoading && !budget" class="alert alert-danger text-center" role="alert">
-    <strong>No budget set!</strong> Please set a budget before setting a goal.
+  <div *ngIf="!isLoading && !budget"
+      class="d-flex flex-column justify-content-center align-items-center text-center"
+      style="min-height: 150px; background-color: #f1f5f9; border-radius: 10px; border: 1px solid #d1dbe5;">
+    <i class="fa fa-lock text-secondary mb-3" style="font-size: 3rem;"></i>
+    <h5 class="text-secondary">No budget set! Please set a budget before setting a goal.</h5>
   </div>
 
   <!-- Card for Form -->

@@ -109,7 +109,7 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/categories/suggest`, { headers: this.getHeaders() });
   }
 
-  getCategoryClassifications(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/categories/classify`, { headers: this.getHeaders() });
+  getCategoryLabels(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/categories/label`, { headers: this.getHeaders() });
   }
 }

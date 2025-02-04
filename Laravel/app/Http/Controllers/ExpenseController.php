@@ -154,11 +154,13 @@ class ExpenseController extends Controller
 
         $remainingBudget = $monthlyBudget - $totalSpent;
 
-        $dailyExpenses = $expenses->groupBy(function ($expense) {
-            return Carbon::parse($expense->date)->format('d');
-        })->map(function ($dayExpenses) {
-            return $dayExpenses->sum('amount');
-        })->sortKeys();
+        $dailyExpenses = collect([0 => 0])->merge(
+            $expenses->groupBy(function ($expense) {
+                return Carbon::parse($expense->date)->format('d');
+            })->map(function ($dayExpenses) {
+                return $dayExpenses->sum('amount');
+            })->sortKeys()
+        );
 
         $categoriesArray = $categories->map(function ($category) {
             return [
@@ -196,8 +198,8 @@ class ExpenseController extends Controller
 
         // Call Flask API for analysis
         try {
-            $flaskAnalysisUrl = 'http://127.0.0.1:5000/analysis';
-            $response = Http::post($flaskAnalysisUrl, $data);
+            $flaskUrl = 'http://127.0.0.1:5000/analysis';
+            $response = Http::post($flaskUrl, $data);
 
             if ($response->successful()) {
                 $result = $response->json();
@@ -216,8 +218,9 @@ class ExpenseController extends Controller
             'category_limits' => $result['category_limits'] ?? [],
             'advice' => $result['advice'] ?? [],
             'smart_insights' => $result['smart_insights'] ?? [],
+            'spending_clustering' => $result['spending_clustering'] ?? [],
+            'frequency_clustering' => $result['frequency_clustering'] ?? [],
             'association_rules'=> $result['association_rules'] ?? [],
-            'spending_classification' => $result['spending_classification'] ?? [],
             'daily_expenses' => $dailyExpenses,
         ], 200);
     }

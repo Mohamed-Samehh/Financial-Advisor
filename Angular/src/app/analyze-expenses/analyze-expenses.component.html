@@ -3,7 +3,7 @@
 
   <!-- Advisory Message -->
   <div *ngIf="!isLoading && analysis.predicted_next_month" class="alert alert-info text-center mb-4" role="alert">
-    <strong>Analysis:</strong> Based on your historical expense data, the predicted spending for the next month is <b>E£{{ formatNumber(analysis.predicted_next_month) }}</b>. For a detailed overview, please visit the History page.
+    <strong>Analysis:</strong> Based on your historical expense data, the predicted spending for the next month is <b>E£{{ formatNumber(analysis.predicted_next_month) }}</b>. For a detailed overview on your historical expenses, please visit the History page.
   </div>
 
   <!-- Expense Summary and Insights Side by Side -->
@@ -21,9 +21,12 @@
             <p><b>Processing...</b></p>
           </div>
 
-          <!-- If there are no budget -->
-          <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">To view your expense summary, please set a budget first.</h5>
+          <!-- If no budget is set -->
+          <div *ngIf="!isLoading && !analysis.monthly_budget"
+            class="d-flex flex-column justify-content-center align-items-center text-center p-4"
+            style="min-height: 200px; border-radius: 10px;">
+            <i class="fa fa fa-lock text-muted mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-muted">Set a budget to unlock your expense summary.</h5>
           </div>
 
           <!-- If there are no expenses -->
@@ -104,14 +107,20 @@
             <p><b>Processing...</b></p>
           </div>
 
-          <!-- If there are no budget -->
-          <div *ngIf="!isLoading && !analysis.monthly_budget">
-            <h5 class="text-muted">To view insights, please set a budget first.</h5>
+          <!-- If no budget is set -->
+          <div *ngIf="!isLoading && !analysis.monthly_budget"
+            class="d-flex flex-column justify-content-center align-items-center text-center p-4"
+            style="min-height: 200px; border-radius: 10px;">
+            <i class="fa fa-lock text-muted mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-muted">Set a budget to unlock insights.</h5>
           </div>
 
           <!-- If insights are empty -->
-          <div *ngIf="!isLoading && analysis.monthly_budget && analysis.smart_insights.length === 0">
-            <h5 class="text-muted">Looks like there are no insights available yet. Check back later after adding more expenses!</h5>
+          <div *ngIf="!isLoading && analysis.monthly_budget && analysis.smart_insights.length === 0"
+              class="d-flex flex-column justify-content-center align-items-center text-center p-4"
+              style="min-height: 200px; border-radius: 10px;">
+            <i class="fa fa-hourglass-half text-muted mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-muted">No insights available yet. Add more expenses and check back later!</h5>
           </div>
 
           <ul class="list-group list-group-flush">
@@ -142,16 +151,22 @@
           </div>
 
           <div class="position-relative">
-            <canvas *ngIf="!isLoading && analysis.monthly_budget" id="categoryChart" height="550"></canvas>
+            <canvas *ngIf="!isLoading && analysis.monthly_budget && !errorMessage" id="categoryChart" height="550"></canvas>
 
             <!-- If there are no budget -->
-            <div *ngIf="!isLoading && !analysis.monthly_budget">
-              <h5 class="text-muted text-center mt-4">To view your expense categories, please set a budget first.</h5>
+            <div *ngIf="!isLoading && !analysis.monthly_budget"
+                class="d-flex flex-column justify-content-center align-items-center text-center p-4"
+                style="min-height: 200px; border-radius: 10px;">
+              <i class="fa fa-lock text-muted mb-3" style="font-size: 3rem;"></i>
+              <h5 class="text-muted">Set a budget to view your expense categories.</h5>
             </div>
 
             <!-- If there are no expenses -->
-            <div *ngIf="errorMessage && !isLoading && analysis.monthly_budget" class="no-expenses-message text-muted text-center">
-              <p>No expenses to display</p>
+            <div *ngIf="errorMessage && !isLoading && analysis.monthly_budget"
+                class="d-flex flex-column justify-content-center align-items-center text-center p-4"
+                style="min-height: 200px; border-radius: 10px;">
+              <i class="fa fa-chart-pie text-muted mb-3" style="font-size: 3rem;"></i>
+              <h5 class="text-muted">No expenses recorded yet.</h5>
             </div>
           </div>
         </div>
@@ -162,7 +177,7 @@
   <!-- Category Limits -->
   <div *ngIf="analysis.category_limits && analysis.category_limits.length > 0" class="card shadow-lg border-0 mt-4 mb-4">
     <div class="card-body p-4">
-      <h5 class="text-center text-muted mb-3"><b>Category Limits</b></h5>
+      <h4 class="text-center text-muted mb-3"><b>Category Limits</b></h4>
       <p class="text-center text-muted small mb-2">
         Category limits are determined by their priority, ensuring your spending aligns with your financial goals.
       </p>
@@ -209,62 +224,173 @@
     </div>
   </div>
 
-  <!-- Spending Classification Model Card -->
-  <div *ngIf="analysis.spending_classification && analysis.spending_classification.length > 0" class="card shadow-lg border-0 mb-4">
-    <div class="card-body p-4">
-      <h5 class="text-center text-muted mb-3"><b>Spending Classification Model</b></h5>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover">
-          <thead class="thead-dark">
-            <tr>
-              <th scope="col" class="text-center">Spending Category</th>
-              <th scope="col" class="text-center">Classification</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of analysis.spending_classification[0].predicted_frequency">
-              <td class="text-center">{{ item.category }}</td>
-              <td class="text-center">
-                {{ item.predicted_frequency }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  <div *ngIf="analysis.spending_clustering?.length || analysis.frequency_clustering?.length || analysis.association_rules?.length" class="card shadow-lg border-0 mb-4">
+    <div class="card-body p-5">
+      <h4 class="text-center text-muted fw-bold mb-4">AI-Based Analysis</h4>
+
+      <!-- Spending Clustering Section -->
+      <div *ngIf="isSpendingClusteringView">
+        <h5 class="text-center text-secondary mb-3 fw-bold">Spending-Based Grouping</h5>
+
+        <!-- Explanation message -->
+        <div class="alert alert-info text-center mb-4" role="alert">
+          <b>Explanation:</b> This AI model groups categories based on <b>how much money you spend</b>, sorting them into high, moderate, and low to highlight where your money goes.
+        </div>
+
+        <!-- When there is spending clustering data -->
+        <div *ngIf="analysis.spending_clustering?.length; else noSpendingClustering">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="bg-light">
+                <tr>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Category</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Spending</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of analysis.spending_clustering[0].spending_group">
+                  <td class="fw-semibold">{{ item.category }}</td>
+                  <td>
+                    <span class="badge px-3 py-2" [ngClass]="{
+                      'bg-success': item.spending_group == 'Low',
+                      'bg-warning text-dark': item.spending_group == 'Moderate',
+                      'bg-danger': item.spending_group == 'High'
+                    }">
+                      {{ item.spending_group }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- When there is no spending clustering data -->
+        <ng-template #noSpendingClustering>
+          <div class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+              style="min-height: 300px; border-radius: 10px;">
+            <i class="fa fa-lock text-muted mb-3" style="font-size: 3.5rem;"></i>
+            <p class="text-muted" style="font-size: 1.2rem;">Not enough expenses entered. Add more expenses to unlock.</p>
+          </div>
+        </ng-template>
       </div>
-    </div>
-  </div>
 
-  <!-- Association Rules Section -->
-  <div *ngIf="!isLoading && analysis.association_rules && analysis.association_rules.length > 0" class="card shadow-lg border-0 mb-4">
-    <div class="card-body p-4">
-      <h5 class="text-muted text-center mb-4"><b>Frequently Spent Together</b></h5>
+      <!-- Frequency Clustering Section -->
+      <div *ngIf="isFrequencyClusteringView">
+        <h5 class="text-center text-secondary mb-3 fw-bold">Frequency-Based Grouping</h5>
 
-      <!-- Table for Displaying Rules -->
-      <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">If</th>
-            <th scope="col">Then</th>
-            <th scope="col">Confidence</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let rule of analysis.association_rules; let i = index">
-            <th scope="row">{{ i + 1 }}</th>
-            <td class="text-primary">{{ rule.antecedents[0] || 'No antecedent' }}</td>
-            <td class="text-success">{{ rule.consequents[0] || 'No consequent' }}</td>
-            <td class="text-muted">
-              <span class="fw-bold" [ngClass]="{
-                'text-success': rule.confidence >= 0.7,
-                'text-warning': rule.confidence < 0.7 && rule.confidence >= 0.4,
-                'text-danger': rule.confidence < 0.4 }">
-                {{ rule.confidence ? (rule.confidence * 100 | number: '1.0-0') : 'N/A' }}%
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <!-- Explanation message -->
+        <div class="alert alert-info text-center mb-4" role="alert">
+          <b>Explanation:</b> This AI model groups categories based on <b>how often you spend money</b> in them, showing your most regular spending habits.
+        </div>
+
+        <!-- When there is frequency clustering data -->
+        <div *ngIf="analysis.frequency_clustering?.length; else noFrequencyClustering">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="bg-light">
+                <tr>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Category</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Frequency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of analysis.frequency_clustering[0].frequency_group">
+                  <td class="fw-semibold">{{ item.category }}</td>
+                  <td>
+                    <span class="badge px-3 py-2" [ngClass]="{
+                      'bg-success': item.frequency_group == 'Low',
+                      'bg-warning text-dark': item.frequency_group == 'Moderate',
+                      'bg-danger': item.frequency_group == 'High'
+                    }">
+                      {{ item.frequency_group }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- When there is no frequency clustering data -->
+        <ng-template #noFrequencyClustering>
+          <div class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+              style="min-height: 300px; border-radius: 10px;">
+            <i class="fa fa-lock text-muted mb-3" style="font-size: 3.5rem;"></i>
+            <p class="text-muted" style="font-size: 1.2rem;">Not enough expenses entered. Add more expenses to unlock.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Association Rules Section -->
+      <div *ngIf="isAssociationRulesView">
+        <h5 class="text-center text-secondary mb-3 fw-bold">Frequently Spent Together</h5>
+
+        <!-- Explanation message -->
+        <div class="alert alert-info text-center mb-4" role="alert">
+          <b>Explanation:</b> This AI model helps find <b>connections between the categories</b>, revealing patterns in what you often spend on together.
+        </div>
+
+        <!-- When there is association rules data -->
+        <div *ngIf="analysis.association_rules?.length; else noAssociationRules">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="bg-light">
+                <tr>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">#</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">If you spent in</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Then you'll spend in</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Chance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rule of analysis.association_rules; let i = index">
+                  <td class="fw-bold">{{ i + 1 }}</td>
+                  <td class="text-primary fw-semibold">{{ rule.antecedents[0] || 'No antecedent' }}</td>
+                  <td class="text-success fw-semibold">{{ rule.consequents[0] || 'No consequent' }}</td>
+                  <td>
+                    <span class="badge px-3 py-2" [ngClass]="{
+                      'bg-success': rule.confidence >= 0.7,
+                      'bg-warning text-dark': rule.confidence >= 0.4 && rule.confidence < 0.7,
+                      'bg-danger': rule.confidence < 0.4
+                    }">
+                      {{ rule.confidence ? (rule.confidence * 100 | number: '1.0-0') : 'N/A' }}%
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- When there is no association rules data -->
+        <ng-template #noAssociationRules>
+          <div class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+              style="min-height: 300px; border-radius: 10px;">
+            <i class="fa fa-search text-muted mb-3" style="font-size: 3.5rem;"></i>
+            <p class="text-muted" style="font-size: 1.2rem;">No connections between the categories found so far.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-center align-items-center mt-4">
+        <button class="btn btn-outline-secondary px-3 py-2" (click)="goToPrevView()" [disabled]="isSpendingClusteringView">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        <button [ngClass]="isSpendingClusteringView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-3' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-3'" (click)="isSpendingClusteringView = true; isFrequencyClusteringView = false; isAssociationRulesView = false">
+          1
+        </button>
+        <button [ngClass]="isFrequencyClusteringView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-2' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-2'" (click)="isFrequencyClusteringView = true; isSpendingClusteringView = false; isAssociationRulesView = false">
+          2
+        </button>
+        <button [ngClass]="isAssociationRulesView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-2' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-2'" (click)="isAssociationRulesView = true; isSpendingClusteringView = false; isFrequencyClusteringView = false">
+          3
+        </button>
+        <button class="btn btn-outline-secondary px-3 py-2 ms-3" (click)="goToNextView()" [disabled]="isAssociationRulesView">
+          <i class="fa fa-arrow-right"></i>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -283,8 +409,11 @@
             <canvas id="expensesChart" height="400"></canvas>
 
             <!-- If there are no budget -->
-            <div *ngIf="!isLoading && !analysis.monthly_budget" class="no-expenses-message" style="width: 100%;">
-              <h5 class="text-muted text-center mt-5 mb-5">To view the remaining budget over days, please set a budget first.</h5>
+            <div *ngIf="!isLoading && !analysis.monthly_budget"
+                class="d-flex flex-column justify-content-center align-items-center text-center p-4 no-expenses-message"
+                style="min-height: 200px; border-radius: 10px;">
+              <i class="fa fa-lock text-muted mb-3" style="font-size: 3rem;"></i>
+              <h5 class="text-muted">Set a budget to track your remaining balance over time.</h5>
             </div>
           </div>
         </div>

@@ -15,9 +15,12 @@
     <p><b>Loading...</b></p>
   </div>
 
-  <!-- Warning message if goal name does not include "Invest" -->
-  <div *ngIf="showInvestmentModeMessage && !isLoading" class="alert alert-danger text-center" role="alert">
-    <strong>To turn on Investment Explorer, just include "invest" in your goal name.</strong>
+  <!-- If goal name does not include "Invest" -->
+  <div *ngIf="showInvestmentModeMessage && !isLoading"
+      class="d-flex flex-column justify-content-center align-items-center text-center"
+      style="min-height: 150px; background-color: #f1f5f9; border-radius: 10px; border: 1px solid #d1dbe5;">
+    <i class="fa fa-lock text-secondary mb-3" style="font-size: 3rem;"></i>
+    <h5 class="text-secondary">To turn on Investment Explorer, just include "invest" in your goal name.</h5>
   </div>
 
   <!-- Page content (bank certificates) -->

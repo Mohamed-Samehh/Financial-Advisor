@@ -27,13 +27,58 @@
   </div>
 
   <div *ngIf="!isLoading">
-    <!-- Display Classification Output -->
-    <div *ngIf="classifiedCategories && classifiedCategories.length > 0; else showSuggestedCategories" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7;">
-      <h5 class="text-center fw-bold mb-2">AI-Based Category Classification</h5>
-      <p class="text-center text-sm mb-3">Based on your all time expenses<br>Classification Accuracy: <strong>{{ accuracy | percent:'1.0-2' }}</strong></p>
+    <!-- Toggle Arrows -->
+    <div class="d-flex justify-content-center mb-3">
+      <button class="btn btn-outline-primary me-2" [ngClass]="{'btn-primary text-white': !isLabelView}" (click)="isLabelView = false">
+        <i class="fa fa-arrow-left"></i>&nbsp; Suggested Priorities
+      </button>
 
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
-        <div *ngFor="let category of classifiedCategories" class="col">
+      <button class="btn btn-outline-primary ms-2" [ngClass]="{'btn-primary text-white': isLabelView}" (click)="isLabelView = true">
+        Importance Labeling &nbsp;<i class="fa fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Display Suggested Priorities -->
+    <div *ngIf="!isLabelView" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7;">
+      <h5 class="text-center fw-bold mb-2">Suggested Category Priorities</h5>
+      <p class="text-center text-sm mb-3">Based on your previous month expenses<br><span class="fw-semibold">{{ lastMonthSuggested }}</span></p>
+
+      <div *ngIf="suggestedCategories; else noSuggestedCategories" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
+        <div *ngFor="let suggested of suggestedCategories" class="col">
+          <div class="card border-0 shadow-sm p-2 bg-light">
+            <div class="card-body p-3">
+              <div class="text-truncate mb-2">
+                <strong>{{ suggested.category }}</strong>
+              </div>
+              <div class="d-flex justify-content-between">
+                <div class="text-muted">
+                  Total Expenses: <span class="fw-bold">{{ suggested.total_expenses | currency:'E£':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="text-primary fw-bold">
+                  Priority: {{ suggested.suggested_priority }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noSuggestedCategories>
+        <div class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+             style="min-height: 250px; border-radius: 10px;">
+          <i class="fa fa-lock text-muted mb-3" style="font-size: 3rem;"></i>
+          <p class="text-muted" style="font-size: 1.2rem;">This option is not available for you yet.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Display Category Importance Labeling -->
+    <div *ngIf="isLabelView" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7;">
+      <h5 class="text-center fw-bold mb-2">Category Importance Labeling</h5>
+      <p class="text-center text-sm mb-3">Based on your previous month expenses<br><span class="fw-semibold">{{ lastMonthLabeled }}</span></p>
+
+      <div *ngIf="labeledCategories; else noLabeledCategories" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
+        <div *ngFor="let category of labeledCategories" class="col">
           <div class="card border-0 shadow-sm p-2 bg-light">
             <div class="card-body p-3">
               <div class="text-truncate mb-2">
@@ -48,35 +93,15 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Display Suggested Priorities (if classification data is unavailable) -->
-    <ng-template #showSuggestedCategories>
-      <div *ngIf="suggestedCategories && suggestedCategories.length > 0" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7;">
-        <h5 class="text-center fw-bold mb-2">Suggested Category Priorities</h5>
-        <p class="text-center text-sm mb-3">Based on your previous month expenses<br>{{lastMonthWithExpenses}}</p>
-
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
-          <div *ngFor="let suggested of suggestedCategories" class="col">
-            <div class="card border-0 shadow-sm p-2 bg-light">
-              <div class="card-body p-3">
-                <div class="text-truncate mb-2">
-                  <strong>{{ suggested.category }}</strong>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <div class="text-muted">
-                    Total Expenses: <span class="fw-bold">{{ suggested.total_expenses | currency:'E£':'symbol':'1.0-0' }}</span>
-                  </div>
-                  <div class="text-primary fw-bold">
-                    Priority: {{ suggested.suggested_priority }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <ng-template #noLabeledCategories>
+        <div class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+             style="min-height: 250px; border-radius: 10px;">
+          <i class="fa fa-lock text-muted mb-3" style="font-size: 3rem;"></i>
+          <p class="text-muted" style="font-size: 1.2rem;">This option is not available for you yet.</p>
         </div>
-      </div>
-    </ng-template>
+      </ng-template>
+    </div>
 
     <!-- Category Form (Add or Update) -->
     <div *ngIf="isUpdating || isAdding" class="card shadow-lg border-0 mb-4 bg-light">

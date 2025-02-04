@@ -15,6 +15,9 @@ export class AnalyzeExpensesComponent implements OnInit {
   analysis: any = {};
   chart: any;
   categoryChart: any;
+  isSpendingClusteringView: boolean = true;
+  isFrequencyClusteringView: boolean = false;
+  isAssociationRulesView: boolean = false;
   isLoading: boolean = true;
   errorMessage: string | null = null;
   categoryTotals: { [category: string]: number } = {};
@@ -26,8 +29,23 @@ export class AnalyzeExpensesComponent implements OnInit {
       this.analysis = res;
       this.createChart();
       this.isLoading = false;
+
+      if((!this.analysis.spending_clustering || this.analysis.spending_clustering.length == 0)){
+        this.isSpendingClusteringView = false;
+        this.isFrequencyClusteringView = true;
+      }
+
+      if((!this.analysis.frequency_clustering || this.analysis.frequency_clustering.length == 0)){
+        this.isFrequencyClusteringView = false;
+        this.isAssociationRulesView = true;
+      }
+
       if (this.analysis.category_limits) {
         this.analysis.category_limits.sort((a: any, b: any) => b.limit - a.limit);
+      }
+
+      if (this.analysis?.association_rules) {
+        this.analysis.association_rules.sort((a: any, b: any) => b.confidence - a.confidence);
       }
     });
 
@@ -43,6 +61,30 @@ export class AnalyzeExpensesComponent implements OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  goToPrevView() {
+    if (this.isAssociationRulesView) {
+      this.isAssociationRulesView = false;
+      this.isFrequencyClusteringView = true;
+    }
+
+    else if (this.isFrequencyClusteringView) {
+      this.isFrequencyClusteringView = false;
+      this.isSpendingClusteringView = true;
+    }
+  }
+
+  goToNextView() {
+    if (this.isSpendingClusteringView) {
+      this.isSpendingClusteringView = false;
+      this.isFrequencyClusteringView = true;
+    }
+
+    else if (this.isFrequencyClusteringView) {
+      this.isFrequencyClusteringView = false;
+      this.isAssociationRulesView = true;
+    }
   }
 
   formatNumber(value: number): string {

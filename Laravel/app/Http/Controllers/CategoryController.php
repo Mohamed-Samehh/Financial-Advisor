@@ -117,16 +117,8 @@ class CategoryController extends Controller
     {
         $user = $request->user();
 
-        $currentYear = Carbon::now()->year;
-        $currentMonth = Carbon::now()->month;
         $lastExpense = Expense::where('user_id', $user->id)
-            ->where(function ($query) use ($currentYear, $currentMonth) {
-                $query->whereYear('date', '<', $currentYear)
-                    ->orWhere(function ($query) use ($currentYear, $currentMonth) {
-                        $query->whereYear('date', $currentYear)
-                                ->whereMonth('date', '<', $currentMonth);
-                    });
-            })
+            ->whereDate('date', '<', Carbon::now()->startOfMonth())
             ->orderBy('date', 'desc')
             ->first();
 
@@ -134,15 +126,13 @@ class CategoryController extends Controller
             return response()->json(['message' => 'No expenses found for the user (excluding the current month)'], 200);
         }
 
-        $lastMonthWithExpenses = Carbon::parse($lastExpense->date)->startOfMonth();
-        $lastMonthExpenses = Expense::where('user_id', $user->id)
-            ->whereYear('date', $lastMonthWithExpenses->year)
-            ->whereMonth('date', $lastMonthWithExpenses->month)
-            ->get();
+        $lastExpenseYear = Carbon::parse($lastExpense->date)->year;
+        $lastExpenseMonth = Carbon::parse($lastExpense->date)->month;
 
-        if ($lastMonthExpenses->isEmpty()) {
-            return response()->json(['message' => 'No suggestions available'], 200);
-        }
+        $lastMonthExpenses = Expense::where('user_id', $user->id)
+            ->whereYear('date', $lastExpenseYear)
+            ->whereMonth('date', $lastExpenseMonth)
+            ->get();
 
         $categoryExpenses = $lastMonthExpenses->groupBy('category')->map(function ($expenses) {
             return $expenses->sum('amount');
@@ -170,63 +160,66 @@ class CategoryController extends Controller
             $priority++;
         }
 
-        $formattedDate = $lastMonthWithExpenses->format('F Y');
+        $formattedDate = Carbon::create($lastExpenseYear, $lastExpenseMonth)->format('F Y');
 
         return response()->json([
-            'message' => 'Suggested category priorities based on your spending in the most recent month with expenses (excluding the current month).',
-            'last_month_with_expenses' => $formattedDate,
+            'last_month_suggested' => $formattedDate,
             'suggested_priorities' => $suggestedPriorities
         ], 200);
     }
 
-    // Classify Categories Importance
-    public function classifyCategories(Request $request)
+    // Label Categories Importance
+    public function labelCategories(Request $request)
     {
         $user = $request->user();
 
-        $all_expenses = Expense::where('user_id', $user->id)
-            ->with('category')
-            ->whereYear('date', '>', Carbon::now()->subYears(3)->year) // Get last 3 years' expenses
-            ->get();
+        $lastExpense = Expense::where('user_id', $user->id)
+            ->whereDate('date', '<', Carbon::now()->startOfMonth())
+            ->orderBy('date', 'desc')
+            ->first();
 
-        $distinctMonths = $all_expenses->map(function ($expense) {
-            return Carbon::parse($expense->date)->format('Y-m');
-        })->unique();
-
-        if ($distinctMonths->count() < 2) {
-            return response()->json([
-                'message' => 'Not enough data: At least two months of expense history required.'
-            ], 400);
+        if (!$lastExpense) {
+            return response()->json(['message' => 'No expenses found for the user (excluding the current month)'], 200);
         }
 
-        $allExpensesArray = $all_expenses->map(function ($all_expenses) {
+        $lastExpenseYear = Carbon::parse($lastExpense->date)->year;
+        $lastExpenseMonth = Carbon::parse($lastExpense->date)->month;
+
+        $lastMonthExpenses = Expense::where('user_id', $user->id)
+            ->whereYear('date', $lastExpenseYear)
+            ->whereMonth('date', $lastExpenseMonth)
+            ->get();
+
+        $lastExpensesArray = $lastMonthExpenses->map(function ($expense) {
             return [
-                'amount' => $all_expenses->amount,
-                'date' => $all_expenses->date,
-                'category' => $all_expenses->category,
+                'amount' => $expense->amount,
+                'date' => $expense->date,
+                'category' => $expense->category,
             ];
         })->toArray();
 
-        $flaskPassword = "Y7!mK4@vW9#qRp$2"; // Security layer
+        $flaskPassword = "Y7!mK4@vW9#qRp$2";
         $data = [
-            'all_expenses' => $allExpensesArray,
+            'last_expenses' => $lastExpensesArray,
             'password' => $flaskPassword,
         ];
 
-        // Call Flask API for classification
         try {
-            $flaskClassificationUrl = 'http://127.0.0.1:5000/importance-classification';
-            $response = Http::post($flaskClassificationUrl, $data);
+            $flaskUrl = 'http://127.0.0.1:5000/label_categories';
+            $response = Http::post($flaskUrl, $data);
 
             if ($response->successful()) {
                 $result = $response->json();
             }
         } catch (\Exception $e) {
-            Log::error('Flask classification failed: ' . $e->getMessage());
+            Log::error('Flask labeling failed: ' . $e->getMessage());
         }
 
+        $formattedDate = Carbon::create($lastExpenseYear, $lastExpenseMonth)->format('F Y');
+
         return response()->json([
-            'importance_classification' => $result['importance_classification'] ?? [],
+            'last_month_labeled' => $formattedDate,
+            'labaled_categories' => $result['labaled_categories'] ?? [],
         ], 200);
     }
 }

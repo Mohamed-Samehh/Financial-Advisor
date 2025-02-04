@@ -23,10 +23,11 @@ export class CategoriesComponent implements OnInit {
   };
   message: { type: string; text: string } | null = null;
   submitted: boolean = false;
-  suggestedCategories: any[] = [];
-  lastMonthWithExpenses: string | null = null;
-  classifiedCategories: any[] = [];
-  accuracy: number | null = null;
+  isLabelView: boolean = false;
+  suggestedCategories?: any[] = [];
+  lastMonthSuggested?: string | null = null;
+  labeledCategories?: any[] = [];
+  lastMonthLabeled?: string | null = null;
   buttonHover: boolean = false;
 
   constructor(private apiService: ApiService) {}
@@ -34,7 +35,10 @@ export class CategoriesComponent implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadSuggestedCategories();
-    this.loadClassifiedCategories();
+    this.loadLabaledCategories();
+    if((this.suggestedCategories == undefined || this.suggestedCategories.length == 0)){
+      this.isLabelView = false;
+    }
   }
 
   loadCategories() {
@@ -58,36 +62,41 @@ export class CategoriesComponent implements OnInit {
         if (res && res.suggested_priorities && res.suggested_priorities.length > 0) {
           this.suggestedCategories = res.suggested_priorities;
 
-          if (res.last_month_with_expenses) {
-            this.lastMonthWithExpenses = res.last_month_with_expenses;
+          if (res.last_month_suggested) {
+            this.lastMonthSuggested = res.last_month_suggested;
           }
+        } else {
+          this.suggestedCategories = undefined;
+          this.lastMonthSuggested = undefined;
         }
       },
       error: () => {
-        this.suggestedCategories = [];
-        this.lastMonthWithExpenses = null;
+        this.suggestedCategories = undefined;
+        this.lastMonthSuggested = undefined;
       }
     });
   }
 
-  loadClassifiedCategories() {
-    this.apiService.getCategoryClassifications().subscribe({
+  loadLabaledCategories() {
+    this.apiService.getCategoryLabels().subscribe({
       next: (res) => {
-        if (res && res.importance_classification && res.importance_classification.length > 0) {
-          const classificationData = res.importance_classification[0];
-          this.accuracy = classificationData.accuracy;
-          this.classifiedCategories = classificationData.predicted_importance.map((item: any) => ({
+        if (res && res.labaled_categories && res.labaled_categories.length > 0) {
+          if (res.last_month_labeled) {
+            this.lastMonthLabeled = res.last_month_labeled;
+          }
+          const labelData = res.labaled_categories[0];
+          this.labeledCategories = labelData.predicted_importance.map((item: any) => ({
             category: item.category,
             predicted_importance: item.predicted_importance
           }));
         } else {
-          this.classifiedCategories = [];
-          this.accuracy = null;
+          this.labeledCategories = undefined;
+          this.lastMonthLabeled = undefined;
         }
       },
       error: () => {
-        this.classifiedCategories = [];
-        this.accuracy = null;
+        this.labeledCategories = undefined;
+        this.lastMonthLabeled = undefined;
       }
     });
   }
