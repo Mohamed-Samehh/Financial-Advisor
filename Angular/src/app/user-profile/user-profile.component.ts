@@ -13,16 +13,21 @@ import { AuthService } from '../auth.service';
 export class UserProfileComponent implements OnInit {
   updateInfoForm: FormGroup;
   updatePasswordForm: FormGroup;
-  updateInfoSuccess: string = '';
-  updatePasswordSuccess: string = '';
-  updateInfoError: string = '';
-  updatePasswordError: string = '';
+  deleteAccountForm: FormGroup;
+  updateInfoSuccess = '';
+  updatePasswordSuccess = '';
+  deleteAccountSuccess = '';
+  updateInfoError = '';
+  updatePasswordError = '';
+  deleteAccountError = '';
   userData: any;
   submittedInfo = false;
   submittedPassword = false;
+  submittedDelete = false;
   isLoading = false;
   loadingUpdateInfo = false;
   loadingUpdatePassword = false;
+  loadingDeleteAccount = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.updateInfoForm = this.fb.group({
@@ -30,11 +35,18 @@ export class UserProfileComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
     });
 
-    this.updatePasswordForm = this.fb.group({
-      current_password: ['', Validators.required],
-      new_password: ['', [Validators.required, Validators.minLength(8)]],
-      password_confirmation: ['', Validators.required],
-    }, { validators: this.passwordMatchValidator });
+    this.updatePasswordForm = this.fb.group(
+      {
+        current_password: ['', Validators.required],
+        new_password: ['', [Validators.required, Validators.minLength(8)]],
+        password_confirmation: ['', Validators.required],
+      },
+      { validators: this.passwordMatchValidator }
+    );
+
+    this.deleteAccountForm = this.fb.group({
+      password: ['', Validators.required],
+    });
   }
 
   ngOnInit() {
@@ -134,16 +146,35 @@ export class UserProfileComponent implements OnInit {
   }
 
   onDeleteAccount() {
-    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      this.authService.deleteAccount().subscribe({
+    this.submittedDelete = true;
+    this.deleteAccountError = '';
+    this.loadingDeleteAccount = true;
+
+    if (this.deleteAccountForm.valid) {
+      const password = this.deleteAccountForm.value.password?.toString().trim();
+
+      if (!password) {
+        this.deleteAccountError = 'Please enter your password.';
+        this.loadingDeleteAccount = false;
+        return;
+      }
+
+      this.authService.deleteAccount(password).subscribe({
         next: () => {
           alert('Account deleted successfully. You will now be logged out.');
+          this.submittedDelete = false;
+          this.deleteAccountForm.reset();
           window.location.reload();
+          this.loadingDeleteAccount = false;
         },
         error: (err) => {
-          alert(err.error?.message || 'Failed to delete account. Please try again.');
+          this.deleteAccountError = err.error?.message || 'Incorrect password. Please try again.';
+          this.loadingDeleteAccount = false;
         },
       });
+    } else {
+      this.deleteAccountError = 'Please enter your password to proceed.';
+      this.loadingDeleteAccount = false;
     }
   }
 }

@@ -139,11 +139,37 @@
       </div>
     </div>
 
-    <!-- Delete Account Button -->
-    <div class="text-center mt-4" *ngIf="!isLoading">
-      <button type="button" class="btn btn-outline-danger mt-3" (click)="onDeleteAccount()">
-        <i class="fas fa-trash-alt me-2"></i> Delete Account
-      </button>
+  <!-- Delete Account -->
+  <div class="card shadow-lg border-0 mb-4 bg-light">
+    <div class="card-header text-uppercase fw-bold bg-danger text-light">Delete Account</div>
+    <div class="card-body p-5">
+      <!-- Error Message -->
+      <div *ngIf="deleteAccountError" class="alert alert-danger">{{ deleteAccountError }}</div>
+
+      <form [formGroup]="deleteAccountForm" (ngSubmit)="onDeleteAccount()">
+        <div class="form-group">
+          <label for="password" class="text-muted">Enter Password to Confirm</label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="form-control form-control-lg"
+            placeholder="Enter current password"
+            [ngClass]="{
+              'is-valid': deleteAccountForm.get('password')?.valid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete),
+              'is-invalid': deleteAccountForm.get('password')?.invalid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete)
+            }"
+          />
+          <div *ngIf="deleteAccountForm.get('password')?.invalid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete)" class="text-danger">
+            <div *ngIf="deleteAccountForm.get('password')?.errors?.['required']">Password is required.</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-danger btn-block btn-lg mt-3" [disabled]="loadingDeleteAccount">
+          <span *ngIf="loadingDeleteAccount" class="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true"></span>
+          <span *ngIf="!loadingDeleteAccount">Delete Account</span>
+        </button>
+      </form>
     </div>
   </div>
 </div>

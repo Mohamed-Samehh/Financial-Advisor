@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError  } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
 import { LoginResponse } from './login-response.model';
 
@@ -31,8 +31,8 @@ export class AuthService {
   }
 
   // Delete user account
-  deleteAccount(): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/delete-account`, {
+  deleteAccount(password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/delete-account`, { password }, {
       headers: {
         Authorization: `Bearer ${this.getToken()}`
       }
@@ -40,6 +40,9 @@ export class AuthService {
       tap(() => {
         this.clearToken();
         this.router.navigate(['/register']);
+      }),
+      catchError((error) => {
+        return throwError(() => error);
       })
     );
   }

@@ -6,8 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -134,9 +132,16 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json(['error' => 'Incorrect password'], 403);
+        }
+
         try {
             $user->delete();
-
             return response()->json(['message' => 'Account deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete account. Please try again.'], 500);
