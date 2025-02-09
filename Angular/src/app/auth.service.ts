@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map, catchError } from 'rxjs/operators';
 import { LoginResponse } from './login-response.model';
 
 @Injectable({
@@ -87,6 +87,29 @@ export class AuthService {
   clearToken() {
     localStorage.removeItem('token');
     this.loggedIn.next(false);
+  }
+
+  checkTokenExpiry(): Observable<boolean> {
+    const token = this.getToken();
+    if (!token) {
+      this.clearToken();
+      return new BehaviorSubject(false).asObservable();
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<{ expired: boolean }>(`${this.apiUrl}/check-token-expiry`, { headers }).pipe(
+      map(response => {
+        if (response.expired) {
+          this.clearToken();
+        }
+        return !response.expired;
+      }),
+      catchError(() => {
+        this.clearToken();
+        return new BehaviorSubject(false).asObservable();
+      })
+    );
   }
 
   handleError(error: any) {

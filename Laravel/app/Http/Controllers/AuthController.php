@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -139,5 +141,21 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete account. Please try again.'], 500);
         }
+    }
+
+    public function checkTokenExpiry(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user || !$user->currentAccessToken()) {
+            return response()->json(['expired' => true], 401);
+        }
+
+        if ($user->currentAccessToken()->created_at->addDay()->isPast()) {
+            $user->currentAccessToken()->delete();
+            return response()->json(['expired' => true], 401);
+        }
+
+        return response()->json(['expired' => false], 200);
     }
 }

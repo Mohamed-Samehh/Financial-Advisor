@@ -25,7 +25,7 @@ export class LoginComponent {
   ngOnInit(): void {
     const token = this.authService.getToken();
 
-    if (token) {
+    if (token && !this.authService.checkTokenExpiry()) {
       this.router.navigate(['/dashboard']);
     }
   }

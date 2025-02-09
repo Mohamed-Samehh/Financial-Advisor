@@ -27,7 +27,7 @@ export class RegisterComponent {
   ngOnInit(): void {
     const token = this.authService.getToken();
 
-    if (token) {
+    if (token && !this.authService.checkTokenExpiry()) {
       this.router.navigate(['/dashboard']);
     }
   }
@@ -48,11 +48,9 @@ export class RegisterComponent {
         },
         (err) => {
           this.isLoading = false;
-          if (err.error?.error === 'The email is already registered.') {
-            this.message = { text: 'This email is already registered. Please use a different one.', type: 'error' };
-          } else {
-            this.message = { text: 'Error occurred during registration. Please try again.', type: 'error' };
-          }
+          this.message = err.error?.error === 'The email is already registered.'
+            ? { text: 'This email is already registered. Please use a different one.', type: 'error' }
+            : { text: 'Error occurred during registration. Please try again.', type: 'error' };
         }
       );
     } else {
