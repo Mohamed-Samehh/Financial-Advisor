@@ -226,16 +226,16 @@
 
   <div *ngIf="analysis.spending_clustering?.length || analysis.frequency_clustering?.length || analysis.association_rules?.length" class="card shadow-lg border-0 mb-4">
     <div class="card-body p-5">
-      <h4 class="text-center text-muted fw-bold mb-4">AI-Based Analysis</h4>
+      <h4 class="text-center text-muted fw-bold mb-3">AI-Based Analysis</h4>
 
       <!-- Spending Clustering Section -->
       <div *ngIf="isSpendingClusteringView">
         <h5 class="text-center text-secondary mb-3 fw-bold">Spending-Based Grouping</h5>
 
         <!-- Explanation message -->
-        <div class="alert alert-info text-center mb-4" role="alert">
-          <b>Explanation:</b> This AI model groups categories based on <b>how much money you spend</b>, sorting them into high, moderate, and low to highlight where your money goes.
-        </div>
+        <p class="text-center text-muted small mt-3 mb-4">
+          This model groups categories based on <b>how much money you spend</b>, sorting them into high, moderate, and low to highlight where your money goes.
+        </p>
 
         <!-- When there is spending clustering data -->
         <div *ngIf="analysis.spending_clustering?.length; else noSpendingClustering">
@@ -280,9 +280,9 @@
         <h5 class="text-center text-secondary mb-3 fw-bold">Frequency-Based Grouping</h5>
 
         <!-- Explanation message -->
-        <div class="alert alert-info text-center mb-4" role="alert">
-          <b>Explanation:</b> This AI model groups categories based on <b>how often you spend money</b> in them, showing your most regular spending habits.
-        </div>
+        <p class="text-center text-muted small mt-3 mb-4">
+          This model groups categories based on <b>how often you spend money</b> in them, showing your most regular spending habits.
+        </p>
 
         <!-- When there is frequency clustering data -->
         <div *ngIf="analysis.frequency_clustering?.length; else noFrequencyClustering">
@@ -327,9 +327,9 @@
         <h5 class="text-center text-secondary mb-3 fw-bold">Frequently Spent Together</h5>
 
         <!-- Explanation message -->
-        <div class="alert alert-info text-center mb-4" role="alert">
-          <b>Explanation:</b> This AI model helps find <b>connections between the categories</b>, revealing patterns in what you often spend on together.
-        </div>
+        <p class="text-center text-muted small mt-3 mb-4">
+          This model helps find <b>connections between the categories</b>, revealing patterns in what you often spend on together.
+        </p>
 
         <!-- When there is association rules data -->
         <div *ngIf="analysis.association_rules?.length; else noAssociationRules">
