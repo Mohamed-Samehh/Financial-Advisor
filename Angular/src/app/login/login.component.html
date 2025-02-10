@@ -76,6 +76,9 @@
               <i [class]="showPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
             </span>
           </div>
+          <div *ngIf="password.invalid && (password.dirty || password.touched || submitted)" class="text-danger">
+            <div *ngIf="password.errors?.['required']">Password is required.</div>
+          </div>
         </div>
 
         <!-- Submit Button -->
