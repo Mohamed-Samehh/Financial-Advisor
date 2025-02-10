@@ -6,10 +6,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-use Laravel\Sanctum\PersonalAccessToken;
-use Illuminate\Support\Facades\Notification;
+use App\Mail\WelcomeMail;
 use App\Notifications\ResetPasswordNotification;
 
 class AuthController extends Controller
@@ -50,6 +50,9 @@ class AuthController extends Controller
         ];
 
         $user->categories()->createMany($categories);
+
+        // Send welcome email
+        Mail::to($user->email)->send(new WelcomeMail($user));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
