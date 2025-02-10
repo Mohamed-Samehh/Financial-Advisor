@@ -7,11 +7,11 @@
         <!-- Icon Circle Inside the Flow -->
         <div class="icon-circle d-inline-flex align-items-center justify-content-center shadow mb-2"
           style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #007bff, #0056b3);">
-          <i class="fas fa-user fa-2x text-white"></i>
+          <i class="fas fa-{{showForgotPassword ? 'unlock' : 'user'}} fa-2x text-white"></i>
         </div>
         <!-- Heading and Subheading -->
-        <h1 class="text-primary display-5 mb-2 diff_font">Welcome Back</h1>
-        <p class="text-muted mb-4">Please login to your account</p>
+        <h1 class="text-primary display-5 mb-2 diff_font">{{ showForgotPassword ? 'Reset Password' : 'Welcome Back' }}</h1>
+        <p class="text-muted mb-4">{{ showForgotPassword ? 'Enter your email to reset your password' : 'Please login to your account' }}</p>
       </div>
 
       <!-- Error Message -->
@@ -20,7 +20,7 @@
       </div>
 
       <!-- Login Form -->
-      <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+      <form *ngIf="!showForgotPassword" #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
         <!-- Email Field -->
         <div class="form-group mb-4">
           <label for="email" class="fw-bold">Email Address</label>
@@ -58,8 +58,8 @@
               <i class="fas fa-lock text-primary"></i>
             </span>
             <input
-              type="password"
-              class="form-control form-control-lg"
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control form-control-lg ps-5 pe-7"
               id="password"
               name="password"
               [(ngModel)]="form.password"
@@ -69,11 +69,12 @@
                 'is-valid': password.valid && (password.dirty || password.touched || submitted),
                 'is-invalid': password.invalid && (password.dirty || password.touched || submitted)
               }"
-              placeholder="Enter your password"
+              placeholder="Enter password"
+              style="background-image: none !important;"
             />
-          </div>
-          <div *ngIf="password.invalid && (password.dirty || password.touched || submitted)" class="text-danger">
-            <div *ngIf="password.errors?.['required']">Password is required.</div>
+            <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility()" style="cursor: pointer;">
+              <i [class]="showPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
+            </span>
           </div>
         </div>
 
@@ -94,10 +95,62 @@
       </form>
 
       <!-- Register Link -->
-      <p class="mt-4 text-center">
+      <p *ngIf="!showForgotPassword" class="mt-4 text-center">
         <span class="text-muted">Don't have an account?</span>
         <a [routerLink]="['/register']" class="text-primary fw-bold ms-2 text-decoration-none">Create Account</a>
       </p>
+
+      <!-- Forgot Password Form -->
+      <div *ngIf="showForgotPassword">
+        <div class="form-group mb-3">
+
+          <!-- Success Message -->
+          <div *ngIf="forgotPasswordMessage" class="alert alert-success d-flex align-items-center mb-4" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span>{{ forgotPasswordMessage }}</span>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="forgotPasswordError" class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+            {{ forgotPasswordError }}
+          </div>
+
+          <label for="forgot-email" class="fw-bold">Email Address</label>
+          <div class="position-relative">
+            <span class="position-absolute top-50 translate-middle-y ps-3">
+              <i class="fas fa-envelope text-primary"></i>
+            </span>
+            <input
+              type="email"
+              class="form-control form-control-lg ps-5 mb-4"
+              id="forgot-email"
+              name="forgotEmail"
+              [(ngModel)]="forgotPasswordEmail"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button class="btn btn-primary btn-lg" (click)="onForgotPassword()" [disabled]="loadingForgotPassword">
+            <span *ngIf="!loadingForgotPassword">Reset Password</span>
+            <span *ngIf="loadingForgotPassword" class="d-flex align-items-center justify-content-center">
+              <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+              Sending...
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Forgot Password Section -->
+      <div class="text-center mt-3">
+        <a href="javascript:void(0)" class="text-primary fw-bold text-decoration-none"
+           (click)="toggleForgotPassword()">
+          {{ showForgotPassword ? 'Back to Login' : 'Forgot Password?' }}
+        </a>
+      </div>
+
     </div>
   </div>
 </div>

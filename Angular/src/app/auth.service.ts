@@ -56,6 +56,7 @@ export class AuthService {
     });
   }
 
+  // Get user profile
   getProfile(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/profile`, {
       headers: {
@@ -83,15 +84,18 @@ export class AuthService {
     this.loggedIn.next(true);
   }
 
+  // Get the token from local storage
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
+  // Remove the token from local storage
   clearToken() {
     localStorage.removeItem('token');
     this.loggedIn.next(false);
   }
 
+  // Check if the token is expired
   checkTokenExpiry(): Observable<boolean> {
     const token = this.getToken();
     if (!token) {
@@ -99,9 +103,7 @@ export class AuthService {
       return new BehaviorSubject(false).asObservable();
     }
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    return this.http.get<{ expired: boolean }>(`${this.apiUrl}/check-token-expiry`, { headers }).pipe(
+    return this.http.post<{ expired: boolean }>(`${this.apiUrl}/check-token-expiry`, { token }).pipe(
       map(response => {
         if (response.expired) {
           this.clearToken();
@@ -115,6 +117,16 @@ export class AuthService {
     );
   }
 
+  // Forgot Password
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email }).pipe(
+      catchError((error) => {
+        return throwError(() => new Error(error.error?.message || 'An unexpected error occurred.'));
+      })
+    );
+  }
+
+  // Handle errors sent from backend
   handleError(error: any) {
     console.error('API Error:', error);
   }

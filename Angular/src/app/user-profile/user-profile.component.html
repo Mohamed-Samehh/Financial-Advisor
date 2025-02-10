@@ -75,17 +75,23 @@
         <form [formGroup]="updatePasswordForm" (ngSubmit)="onUpdatePassword()">
           <div class="form-group">
             <label for="current_password" class="text-muted">Current Password</label>
-            <input
-              type="password"
-              id="current_password"
-              formControlName="current_password"
-              class="form-control form-control-lg"
-              placeholder="Enter current password"
-              [ngClass]="{
-                'is-valid': updatePasswordForm.get('current_password')?.valid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword),
-                'is-invalid': updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)
-              }"
-            />
+            <div class="position-relative">
+              <input
+                [type]="showCurrentPassword ? 'text' : 'password'"
+                class="form-control form-control-lg"
+                id="current_password"
+                formControlName="current_password"
+                placeholder="Enter current password"
+                [ngClass]="{
+                  'is-valid': updatePasswordForm.get('current_password')?.valid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword),
+                  'is-invalid': updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)
+                }"
+                style="background-image: none !important;"
+              />
+              <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('current')" style="cursor: pointer;">
+                <i [class]="showCurrentPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
+              </span>
+            </div>
             <div *ngIf="updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)" class="text-danger">
               <div *ngIf="updatePasswordForm.get('current_password')?.errors?.['required']">Current Password is required.</div>
             </div>
@@ -93,17 +99,23 @@
 
           <div class="form-group mt-2">
             <label for="new_password" class="text-muted">New Password</label>
-            <input
-              type="password"
-              id="new_password"
-              formControlName="new_password"
-              class="form-control form-control-lg"
-              placeholder="Enter new password"
-              [ngClass]="{
-                'is-valid': updatePasswordForm.get('new_password')?.valid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword),
-                'is-invalid': updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)
-              }"
-            />
+            <div class="position-relative">
+              <input
+                [type]="showNewPassword ? 'text' : 'password'"
+                class="form-control form-control-lg"
+                id="new_password"
+                formControlName="new_password"
+                placeholder="Enter new password"
+                [ngClass]="{
+                  'is-valid': updatePasswordForm.get('new_password')?.valid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword),
+                  'is-invalid': updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)
+                }"
+                style="background-image: none !important;"
+              />
+              <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('new')" style="cursor: pointer;">
+                <i [class]="showNewPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
+              </span>
+            </div>
             <div *ngIf="updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)" class="text-danger">
               <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['required']">New Password is required.</div>
               <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['minlength']">New Password must be at least 8 characters long.</div>
@@ -112,17 +124,23 @@
 
           <div class="form-group mt-2">
             <label for="password_confirmation" class="text-muted">Confirm New Password</label>
-            <input
-              type="password"
-              id="password_confirmation"
-              formControlName="password_confirmation"
-              class="form-control form-control-lg"
-              placeholder="Confirm new password"
-              [ngClass]="{
-                'is-valid': updatePasswordForm.get('password_confirmation')?.valid && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword),
-                'is-invalid': (updatePasswordForm.get('password_confirmation')?.invalid || updatePasswordForm.errors?.['mismatch']) && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword)
-              }"
-            />
+            <div class="position-relative">
+              <input
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                class="form-control form-control-lg"
+                id="password_confirmation"
+                formControlName="password_confirmation"
+                placeholder="Confirm new password"
+                [ngClass]="{
+                  'is-valid': updatePasswordForm.get('password_confirmation')?.valid && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword),
+                  'is-invalid': (updatePasswordForm.get('password_confirmation')?.invalid || updatePasswordForm.errors?.['mismatch']) && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword)
+                }"
+                style="background-image: none !important;"
+              />
+              <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('confirm')" style="cursor: pointer;">
+                <i [class]="showConfirmPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
+              </span>
+            </div>
             <div
               *ngIf="(updatePasswordForm.errors?.['mismatch'] && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword))"
               class="text-danger"
@@ -149,17 +167,24 @@
       <form [formGroup]="deleteAccountForm" (ngSubmit)="onDeleteAccount()">
         <div class="form-group">
           <label for="password" class="text-muted">Enter Password to Confirm</label>
-          <input
-            type="password"
-            id="password"
-            formControlName="password"
-            class="form-control form-control-lg"
-            placeholder="Enter current password"
-            [ngClass]="{
-              'is-valid': deleteAccountForm.get('password')?.valid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete),
-              'is-invalid': deleteAccountForm.get('password')?.invalid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete)
-            }"
-          />
+          <div class="position-relative">
+            <input
+              [type]="showDeletePassword ? 'text' : 'password'"
+              class="form-control form-control-lg"
+              id="password"
+              formControlName="password"
+              placeholder="Enter current password"
+              [ngClass]="{
+                'is-valid': deleteAccountForm.get('password')?.valid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete),
+                'is-invalid': deleteAccountForm.get('password')?.invalid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete)
+              }"
+              style="background-image: none !important;"
+            />
+            <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="toggleDeletePasswordVisibility()" style="cursor: pointer;">
+              <i [class]="showDeletePassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
+            </span>
+          </div>
+
           <div *ngIf="deleteAccountForm.get('password')?.invalid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete)" class="text-danger">
             <div *ngIf="deleteAccountForm.get('password')?.errors?.['required']">Password is required.</div>
           </div>

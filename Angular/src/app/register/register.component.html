@@ -83,12 +83,15 @@
         <div class="form-group mb-4">
           <label for="password" class="fw-bold">Password</label>
           <div class="position-relative">
+            <!-- Lock Icon -->
             <span class="position-absolute top-50 translate-middle-y ps-3">
               <i class="fas fa-lock text-primary"></i>
             </span>
+
+            <!-- Password Input -->
             <input
-              type="password"
-              class="form-control form-control-lg"
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control form-control-lg ps-5 pe-6"
               id="password"
               name="password"
               [(ngModel)]="form.password"
@@ -99,9 +102,15 @@
                 'is-valid': password.valid && (password.dirty || password.touched || submitted),
                 'is-invalid': password.invalid && (password.dirty || password.touched || submitted)
               }"
-              placeholder="Enter your password"
+              placeholder="Enter password"
+              style="background-image: none !important;"
             />
+
+            <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('password')" style="cursor: pointer;">
+              <i [class]="showPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
+            </span>
           </div>
+
           <div *ngIf="password.invalid && (password.dirty || password.touched || submitted)" class="text-danger">
             <div *ngIf="password.errors?.['required']">Password is required.</div>
             <div *ngIf="password.errors?.['minlength']">Password must be at least 8 characters long.</div>
@@ -112,12 +121,15 @@
         <div class="form-group mb-4">
           <label for="password_confirmation" class="fw-bold">Confirm Password</label>
           <div class="position-relative">
+            <!-- Lock Icon -->
             <span class="position-absolute top-50 translate-middle-y ps-3">
               <i class="fas fa-lock text-primary"></i>
             </span>
+
+            <!-- Confirm Password Input -->
             <input
-              type="password"
-              class="form-control form-control-lg"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              class="form-control form-control-lg ps-5 pe-6"
               id="password_confirmation"
               name="password_confirmation"
               [(ngModel)]="form.password_confirmation"
@@ -127,9 +139,15 @@
                 'is-valid': password_confirmation.valid && (password_confirmation.dirty || password_confirmation.touched || submitted) && form.password === form.password_confirmation,
                 'is-invalid': password_confirmation.invalid && (password_confirmation.dirty || password_confirmation.touched || submitted) || form.password !== form.password_confirmation
               }"
-              placeholder="Re-enter your password"
-            />
+              placeholder="Re-enter password"
+              style="background-image: none !important;"
+              />
+
+            <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('confirmPassword')" style="cursor: pointer;">
+              <i [class]="showConfirmPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
+            </span>
           </div>
+
           <div *ngIf="form.password !== form.password_confirmation && (password_confirmation.dirty || password_confirmation.touched || submitted)" class="text-danger">
             Passwords do not match.
           </div>

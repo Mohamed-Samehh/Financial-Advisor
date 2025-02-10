@@ -21,6 +21,8 @@ export class RegisterComponent {
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted = false;
   isLoading = false;
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -29,6 +31,14 @@ export class RegisterComponent {
 
     if (token && !this.authService.checkTokenExpiry()) {
       this.router.navigate(['/dashboard']);
+    }
+  }
+
+  togglePasswordVisibility(field: 'password' | 'confirmPassword'): void {
+    if (field === 'password') {
+      this.showPassword = !this.showPassword;
+    } else if (field === 'confirmPassword') {
+      this.showConfirmPassword = !this.showConfirmPassword;
     }
   }
 

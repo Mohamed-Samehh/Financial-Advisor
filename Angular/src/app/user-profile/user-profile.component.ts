@@ -28,6 +28,10 @@ export class UserProfileComponent implements OnInit {
   loadingUpdateInfo = false;
   loadingUpdatePassword = false;
   loadingDeleteAccount = false;
+  showCurrentPassword: boolean = false;
+  showNewPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+  showDeletePassword: boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.updateInfoForm = this.fb.group({
@@ -176,5 +180,19 @@ export class UserProfileComponent implements OnInit {
       this.deleteAccountError = 'Please enter your password to proceed.';
       this.loadingDeleteAccount = false;
     }
+  }
+
+  togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {
+    if (field === 'current') {
+      this.showCurrentPassword = !this.showCurrentPassword;
+    } else if (field === 'new') {
+      this.showNewPassword = !this.showNewPassword;
+    } else if (field === 'confirm') {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    }
+  }
+
+  toggleDeletePasswordVisibility(): void {
+    this.showDeletePassword = !this.showDeletePassword;
   }
 }

@@ -1,15 +1,16 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/check-token-expiry', [AuthController::class, 'checkTokenExpiry']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -17,7 +18,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/update-profile', [AuthController::class, 'updateProfile']);
     Route::get('/profile', [AuthController::class, 'getProfile']);
     Route::post('/delete-account', [AuthController::class, 'deleteAccount']);
-    Route::get('/check-token-expiry', [AuthController::class, 'checkTokenExpiry']);
 
     Route::get('/budget/all', [BudgetController::class, 'index']);
     Route::get('/budget', [BudgetController::class, 'show']);

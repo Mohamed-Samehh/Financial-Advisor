@@ -6,6 +6,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\ResetPasswordNotification;
 
 class AuthController extends Controller
 {
@@ -150,17 +155,39 @@ class AuthController extends Controller
 
     public function checkTokenExpiry(Request $request)
     {
-        $user = $request->user();
+        $token = $request->input('token');
 
-        if (!$user || !$user->currentAccessToken()) {
+        if (!$token) {
             return response()->json(['expired' => true], 401);
         }
 
-        if ($user->currentAccessToken()->created_at->addDay()->isPast()) {
-            $user->currentAccessToken()->delete();
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        if (!$accessToken || $accessToken->created_at->addDay()->isPast()) {
+            if ($accessToken) {
+                $accessToken->delete();
+            }
             return response()->json(['expired' => true], 401);
         }
 
         return response()->json(['expired' => false], 200);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Email not registered.'], 404);
+        }
+
+        $newPassword = Str::random(6);
+        $user->update(['password' => Hash::make($newPassword)]);
+
+        $user->notify(new ResetPasswordNotification($newPassword));
+
+        return response()->json(['message' => 'A new password has been sent to your email.'], 200);
     }
 }

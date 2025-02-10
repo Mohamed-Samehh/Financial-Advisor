@@ -34,10 +34,8 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    if (confirm('Are you sure you want to logout?')) {
-      this.clearToken();
-      this.router.navigate(['/login']);
-    }
+    this.clearToken();
+    this.router.navigate(['/login']);
   }
 
   getToken(): string | null {
@@ -50,9 +48,7 @@ export class AppComponent implements OnInit {
   }
 
   checkTokenExpiry(token: string) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    this.http.get<{ expired: boolean }>(this.apiUrl, { headers }).subscribe(
+    this.http.post<{ expired: boolean }>(this.apiUrl, { token }).subscribe(
       (response) => {
         if (response.expired) {
           this.clearToken();
