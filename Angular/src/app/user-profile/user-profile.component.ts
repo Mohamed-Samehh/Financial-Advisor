@@ -32,6 +32,10 @@ export class UserProfileComponent implements OnInit {
   showNewPassword: boolean = false;
   showConfirmPassword: boolean = false;
   showDeletePassword: boolean = false;
+  isCurrentPasswordFilled: boolean = false;
+  isNewPasswordFilled: boolean = false;
+  isConfirmPasswordFilled: boolean = false;
+  isDeletePasswordFilled: boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.updateInfoForm = this.fb.group({
@@ -182,17 +186,32 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {
+  togglePasswordVisibility(field: 'current' | 'new' | 'confirm' | 'delete'): void {
     if (field === 'current') {
       this.showCurrentPassword = !this.showCurrentPassword;
     } else if (field === 'new') {
       this.showNewPassword = !this.showNewPassword;
     } else if (field === 'confirm') {
       this.showConfirmPassword = !this.showConfirmPassword;
+    } else if (field === 'delete') {
+      this.showDeletePassword = !this.showDeletePassword;
     }
   }
 
-  toggleDeletePasswordVisibility(): void {
-    this.showDeletePassword = !this.showDeletePassword;
+  checkPasswordInput(field: 'current' | 'new' | 'confirm' | 'delete', event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (!target) return;
+
+    const value = target.value;
+
+    if (field === 'current') {
+      this.isCurrentPasswordFilled = value.length > 0;
+    } else if (field === 'new') {
+      this.isNewPasswordFilled = value.length > 0;
+    } else if (field === 'confirm') {
+      this.isConfirmPasswordFilled = value.length > 0;
+    } else if (field === 'delete') {
+      this.isDeletePasswordFilled = value.length > 0;
+    }
   }
 }

@@ -59,12 +59,13 @@
             </span>
             <input
               [type]="showPassword ? 'text' : 'password'"
-              class="form-control form-control-lg ps-5 pe-7"
+              class="form-control form-control-lg"
               id="password"
               name="password"
               [(ngModel)]="form.password"
               #password="ngModel"
               required
+              (input)="checkPasswordInput()"
               [ngClass]="{
                 'is-valid': password.valid && (password.dirty || password.touched || submitted),
                 'is-invalid': password.invalid && (password.dirty || password.touched || submitted)
@@ -72,7 +73,8 @@
               placeholder="Enter password"
               style="background-image: none !important;"
             />
-            <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility()" style="cursor: pointer;">
+            <span *ngIf="isPasswordFilled" class="position-absolute top-50 end-0 translate-middle-y pe-3"
+                  (click)="togglePasswordVisibility()" style="cursor: pointer;">
               <i [class]="showPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
             </span>
           </div>

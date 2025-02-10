@@ -23,6 +23,7 @@ export class LoginComponent {
   showForgotPassword: boolean = false;
   loadingForgotPassword: boolean = false;
   showPassword: boolean = false;
+  isPasswordFilled: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -86,5 +87,9 @@ export class LoginComponent {
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  checkPasswordInput(): void {
+    this.isPasswordFilled = this.form.password.length > 0;
   }
 }

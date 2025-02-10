@@ -23,6 +23,8 @@ export class RegisterComponent {
   isLoading = false;
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
+  isPasswordFilled: boolean = false;
+  isConfirmPasswordFilled: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -66,5 +68,13 @@ export class RegisterComponent {
     } else {
       this.message = { text: 'Please fill out the form correctly.', type: 'error' };
     }
+  }
+
+  checkPasswordInput(): void {
+    this.isPasswordFilled = this.form.password.length > 0;
+  }
+
+  checkConfirmPasswordInput(): void {
+    this.isConfirmPasswordFilled = this.form.password_confirmation.length > 0;
   }
 }

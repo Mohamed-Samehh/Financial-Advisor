@@ -82,13 +82,14 @@
                 id="current_password"
                 formControlName="current_password"
                 placeholder="Enter current password"
+                (input)="checkPasswordInput('current', $event)"
                 [ngClass]="{
                   'is-valid': updatePasswordForm.get('current_password')?.valid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword),
                   'is-invalid': updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)
                 }"
                 style="background-image: none !important;"
               />
-              <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('current')" style="cursor: pointer;">
+              <span *ngIf="isCurrentPasswordFilled" class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('current')" style="cursor: pointer;">
                 <i [class]="showCurrentPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
               </span>
             </div>
@@ -106,13 +107,14 @@
                 id="new_password"
                 formControlName="new_password"
                 placeholder="Enter new password"
+                (input)="checkPasswordInput('new', $event)"
                 [ngClass]="{
                   'is-valid': updatePasswordForm.get('new_password')?.valid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword),
                   'is-invalid': updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)
                 }"
                 style="background-image: none !important;"
               />
-              <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('new')" style="cursor: pointer;">
+              <span *ngIf="isNewPasswordFilled" class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('new')" style="cursor: pointer;">
                 <i [class]="showNewPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
               </span>
             </div>
@@ -131,13 +133,14 @@
                 id="password_confirmation"
                 formControlName="password_confirmation"
                 placeholder="Confirm new password"
+                (input)="checkPasswordInput('confirm', $event)"
                 [ngClass]="{
                   'is-valid': updatePasswordForm.get('password_confirmation')?.valid && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword),
                   'is-invalid': (updatePasswordForm.get('password_confirmation')?.invalid || updatePasswordForm.errors?.['mismatch']) && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword)
                 }"
                 style="background-image: none !important;"
               />
-              <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('confirm')" style="cursor: pointer;">
+              <span *ngIf="isConfirmPasswordFilled" class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('confirm')" style="cursor: pointer;">
                 <i [class]="showConfirmPassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
               </span>
             </div>
@@ -174,13 +177,14 @@
               id="password"
               formControlName="password"
               placeholder="Enter current password"
+              (input)="checkPasswordInput('delete', $event)"
               [ngClass]="{
                 'is-valid': deleteAccountForm.get('password')?.valid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete),
                 'is-invalid': deleteAccountForm.get('password')?.invalid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete)
               }"
               style="background-image: none !important;"
             />
-            <span class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="toggleDeletePasswordVisibility()" style="cursor: pointer;">
+            <span *ngIf="isDeletePasswordFilled" class="position-absolute top-50 end-0 translate-middle-y pe-3" (click)="togglePasswordVisibility('delete')" style="cursor: pointer;">
               <i [class]="showDeletePassword ? 'fas fa-eye-slash text-muted' : 'fas fa-eye text-muted'"></i>
             </span>
           </div>
