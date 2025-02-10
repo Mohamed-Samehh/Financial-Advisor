@@ -39,7 +39,6 @@ export class AuthService {
     }).pipe(
       tap(() => {
         this.clearToken();
-        this.router.navigate(['/register']);
       }),
       catchError((error) => {
         return throwError(() => error);
