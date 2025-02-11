@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\Config;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeMail;
@@ -111,6 +113,17 @@ class AuthController extends Controller
             'password' => Hash::make($request->new_password),
         ]);
 
+        // Force delete all tokens for the user
+        $currentToken = $request->bearerToken();
+        $activeToken = PersonalAccessToken::findToken($currentToken);
+
+        if ($activeToken) {
+            PersonalAccessToken::where('tokenable_id', $user->id)
+                ->where('tokenable_type', get_class($user))
+                ->where('id', '!=', $activeToken->id) // Exclude the current token by ID
+                ->delete();
+        }
+
         // Send password change mail
         // Mail::to($user->email)->send(new PasswordChangedMail($user));
         return response()->json(['message' => 'Password updated successfully'], 200);
@@ -181,11 +194,18 @@ class AuthController extends Controller
 
         $accessToken = PersonalAccessToken::findToken($token);
 
-        if (!$accessToken || $accessToken->created_at->addDay()->isPast()) {
-            if ($accessToken) {
-                $accessToken->delete();
-            }
+        if (!$accessToken) {
             return response()->json(['expired' => true], 401);
+        }
+
+        $expirationMinutes = Config::get('sanctum.expiration');
+
+        if ($expirationMinutes !== null) {
+            $expiresAt = $accessToken->created_at->addMinutes($expirationMinutes);
+            if (Carbon::now()->greaterThan($expiresAt)) {
+                $accessToken->delete();
+                return response()->json(['expired' => true], 401);
+            }
         }
 
         return response()->json(['expired' => false], 200);
@@ -201,8 +221,25 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email not registered.'], 404);
         }
 
+        // Generate a new password
         $newPassword = Str::random(8);
         $user->update(['password' => Hash::make($newPassword)]);
+
+        // Force delete all tokens for the user
+        $currentToken = $request->bearerToken();
+        $activeToken = PersonalAccessToken::findToken($currentToken);
+
+        if ($activeToken) {
+            PersonalAccessToken::where('tokenable_id', $user->id)
+                ->where('tokenable_type', get_class($user))
+                ->where('id', '!=', $activeToken->id) // Exclude the current token by ID
+                ->delete();
+        } else {
+            // If no active token, delete all tokens
+            PersonalAccessToken::where('tokenable_id', $user->id)
+                ->where('tokenable_type', get_class($user))
+                ->delete();
+        }
 
         // Send password reset mail
         // Mail::to($user->email)->send(new ResetPasswordMail($user, $newPassword));
