@@ -10,7 +10,7 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center;">
 
         <div style="font-size: 22px; font-weight: bold; color: #333; padding-bottom: 15px;
-                    border-bottom: 2px solid #C70039;">
+                    border-bottom: 2px solid #D50032;">
             Password Reset Successful
         </div>
 
@@ -18,7 +18,7 @@
             <p>Hi {{ $user->name }},</p>
             <p>Your password has been successfully reset. Below is your new temporary password:</p>
 
-            <div style="background: #C70039; color: #ffffff; display: inline-block; padding: 10px 20px;
+            <div style="background: #D50032; color: #ffffff; display: inline-block; padding: 10px 20px;
                         font-size: 18px; font-weight: bold; border-radius: 5px; margin: 20px 0;">
                 {{ $newPassword }}
             </div>
@@ -26,7 +26,7 @@
             <p>For security reasons, please log in and change your password immediately.</p>
 
             <a href="http://localhost:4200/account"
-               style="display: inline-block; background-color: #C70039;
+               style="display: inline-block; background-color: #D50032;
                       color: #ffffff !important; padding: 14px 28px; text-decoration: none;
                       font-size: 16px; font-weight: bold; border-radius: 50px; margin-top: 20px;
                       transition: all 0.3s ease-in-out; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -36,7 +36,7 @@
 
             <p>If you did not request this change,
                 <a href="mailto:support@financial-advisor.com"
-                   style="color: #C70039; text-decoration: none;">
+                   style="color: #D50032; text-decoration: none;">
                     contact support
                 </a> immediately.
             </p>
