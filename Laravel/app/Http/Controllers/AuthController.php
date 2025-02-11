@@ -10,7 +10,10 @@ use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeMail;
-use App\Notifications\ResetPasswordNotification;
+use App\Mail\ResetPasswordMail;
+use App\Mail\GoodbyeMail;
+use App\Mail\PasswordChangedMail;
+use App\Mail\EmailUpdatedMail;
 
 class AuthController extends Controller
 {
@@ -52,7 +55,7 @@ class AuthController extends Controller
         $user->categories()->createMany($categories);
 
         // Send welcome email
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        // Mail::to($user->email)->send(new WelcomeMail($user));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -108,12 +111,15 @@ class AuthController extends Controller
             'password' => Hash::make($request->new_password),
         ]);
 
+        // Send password change mail
+        // Mail::to($user->email)->send(new PasswordChangedMail($user));
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
 
     public function updateProfile(Request $request)
     {
         $user = $request->user();
+        $oldEmail = $user->email;
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
@@ -124,10 +130,17 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
+        $emailChanged = $request->has('email') && $request->email !== $oldEmail;
+
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
         ]);
+
+        // Send email change mail
+        // if ($emailChanged) {
+        //     Mail::to($user->email)->send(new EmailUpdatedMail($user, $oldEmail));
+        // }
 
         return response()->json(['message' => 'Profile updated successfully', 'user' => $user], 200);
     }
@@ -149,6 +162,8 @@ class AuthController extends Controller
         }
 
         try {
+            // Send goodbye mail
+            // Mail::to($user->email)->send(new GoodbyeMail($user));
             $user->delete();
             return response()->json(['message' => 'Account deleted successfully'], 200);
         } catch (\Exception $e) {
@@ -186,10 +201,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email not registered.'], 404);
         }
 
-        $newPassword = Str::random(6);
+        $newPassword = Str::random(8);
         $user->update(['password' => Hash::make($newPassword)]);
 
-        $user->notify(new ResetPasswordNotification($newPassword));
+        // Send password reset mail
+        // Mail::to($user->email)->send(new ResetPasswordMail($user, $newPassword));
 
         return response()->json(['message' => 'A new password has been sent to your email.'], 200);
     }
