@@ -32,6 +32,7 @@ export class RegisterComponent {
     const token = this.authService.getToken();
 
     if (token && this.authService.checkTokenExpiry()) {
+      alert("It looks like you're already logged in. Redirecting you to your dashboard.");
       this.router.navigate(['/dashboard']);
     }
   }

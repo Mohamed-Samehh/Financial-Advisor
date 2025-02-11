@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {
     this.authService.getSessionExpired().subscribe((expired) => {
       if (expired) {
-        alert('Your session has expired. Please log in again.');
+        alert('Your session has expired. Please log in again to continue.');
       }
     });
   }
