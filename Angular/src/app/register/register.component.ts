@@ -31,7 +31,7 @@ export class RegisterComponent {
   ngOnInit(): void {
     const token = this.authService.getToken();
 
-    if (token && !this.authService.checkTokenExpiry()) {
+    if (token && this.authService.checkTokenExpiry()) {
       this.router.navigate(['/dashboard']);
     }
   }
