@@ -8,7 +8,13 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+    this.authService.getSessionExpired().subscribe((expired) => {
+      if (expired) {
+        alert('Your session has expired. Please log in again.');
+      }
+    });
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot,

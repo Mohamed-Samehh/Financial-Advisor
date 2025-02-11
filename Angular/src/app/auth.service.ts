@@ -10,7 +10,7 @@ import { LoginResponse } from './login-response.model';
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8000/api';
-  private loggedIn = new BehaviorSubject<boolean>(false);
+  private sessionExpired$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -73,14 +73,9 @@ export class AuthService {
     });
   }
 
-  isLoggedIn(): Observable<boolean> {
-    return this.loggedIn.asObservable();
-  }
-
   // Store the token in local storage
   setToken(token: string) {
     localStorage.setItem('token', token);
-    this.loggedIn.next(true);
   }
 
   // Get the token from local storage
@@ -91,7 +86,10 @@ export class AuthService {
   // Remove the token from local storage
   clearToken() {
     localStorage.removeItem('token');
-    this.loggedIn.next(false);
+  }
+
+  getSessionExpired(): Observable<boolean> {
+    return this.sessionExpired$.asObservable();
   }
 
   // Check if the token is expired
@@ -106,11 +104,13 @@ export class AuthService {
       map(response => {
         if (response.expired) {
           this.clearToken();
+          this.sessionExpired$.next(true);
         }
         return !response.expired;
       }),
       catchError(() => {
         this.clearToken();
+        this.sessionExpired$.next(true);
         return new BehaviorSubject(false).asObservable();
       })
     );
