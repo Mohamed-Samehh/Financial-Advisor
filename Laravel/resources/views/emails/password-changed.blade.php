@@ -5,34 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Password Changed Successfully</title>
 </head>
-<body style="font-family: Arial, sans-serif !important; background-color: #f4f4f4 !important; margin: 0 !important; padding: 0 !important;">
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; text-align: center;">
 
-    <div style="max-width: 600px !important; margin: 30px auto !important; background: #ffffff !important; padding: 30px !important; border-radius: 10px !important; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important; text-align: center !important;">
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center;">
+        <h2 style="color: #D50032; font-size: 24px;">Password Changed Successfully</h2>
 
-        <div style="font-size: 22px !important; font-weight: bold !important; color: #333 !important; padding-bottom: 15px !important; border-bottom: 2px solid #D50032 !important;">
-            Password Changed Successfully
-        </div>
+        <p style="color: #555; font-size: 16px; line-height: 1.6;">Hi {{ $user->name }},</p>
 
-        <div style="color: #555 !important; font-size: 16px !important; line-height: 1.6 !important; padding: 20px !important;">
-            <p>Hi {{ $user->name }},</p>
-            <p>Your password has been successfully changed. If you did not request this change, please contact support immediately.</p>
+        <p style="color: #555; font-size: 16px; line-height: 1.6;">Your password has been successfully changed. If you did not request this change, please contact support immediately.</p>
 
-            <a href="mailto:support@financial-advisor.com"
-               style="display: inline-block !important; background-color: #D50032 !important;
-                      color: #ffffff !important; padding: 14px 28px !important; text-decoration: none !important;
-                      font-size: 16px !important; font-weight: bold !important; border-radius: 50px !important; margin-top: 20px !important;
-                      transition: all 0.3s ease-in-out !important; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
-                      text-align: center !important; border: none !important;">
-                Contact Support
-            </a>
+        <a href="mailto:support@financial-advisor.com" style="display: inline-block; background-color: #D50032; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 50px; margin-top: 20px; transition: all 0.3s ease-in-out; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">Contact Support</a>
 
-            <p>If you changed your password, you can ignore this email.</p>
-        </div>
+        <p style="color: #555; font-size: 16px; line-height: 1.6;">If you changed your password, you can ignore this email.</p>
 
-        <div style="margin-top: 20px !important; font-size: 14px !important; color: #888 !important; padding-top: 15px !important; border-top: 1px solid #ddd !important;">
-            &copy; {{ date('Y') }} Financial Advisor. All rights reserved.
-        </div>
-
+        <p style="color: #888; font-size: 14px; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">&copy; {{ date('Y') }} Financial Advisor. All rights reserved.</p>
     </div>
 
 </body>
