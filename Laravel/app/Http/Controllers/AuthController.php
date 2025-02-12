@@ -152,7 +152,7 @@ class AuthController extends Controller
 
         // Send email change mail
         // if ($emailChanged) {
-        //     Mail::to($user->email)->send(new EmailUpdatedMail($user, $oldEmail));
+        //     Mail::to($oldEmail)->send(new EmailUpdatedMail($user, $oldEmail));
         // }
 
         return response()->json(['message' => 'Profile updated successfully', 'user' => $user], 200);
