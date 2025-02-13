@@ -124,9 +124,4 @@ export class AuthService {
       })
     );
   }
-
-  // Handle errors sent from backend
-  handleError(error: any) {
-    console.error('API Error:', error);
-  }
 }

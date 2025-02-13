@@ -43,15 +43,12 @@ class AuthController extends Controller
 
         // Adding default categories
         $categories = [
-            ['name' => 'Rent', 'priority' => 1],
+            ['name' => 'Rent & Utilities', 'priority' => 1],
             ['name' => 'Groceries', 'priority' => 2],
-            ['name' => 'Health', 'priority' => 3],
-            ['name' => 'Utilities', 'priority' => 4],
+            ['name' => 'Shopping', 'priority' => 3],
+            ['name' => 'Social Activities & Entertainment', 'priority' => 4],
             ['name' => 'Transportation', 'priority' => 5],
-            ['name' => 'Shopping', 'priority' => 6],
-            ['name' => 'Social Activities', 'priority' => 7],
-            ['name' => 'Entertainment', 'priority' => 8],
-            ['name' => 'Other', 'priority' => 9],
+            ['name' => 'Other', 'priority' => 6],
         ];
 
         $user->categories()->createMany($categories);
