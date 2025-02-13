@@ -358,11 +358,11 @@ def analyze_expenses():
         frequency_kmeans_clustering(expenses, frequency_clustering)
 
     if len(expenses) >= 30:
-        get_association_rules(expenses, association_rules, min_support=0.2, min_confidence=0.6, min_lift=1.0)
+        get_association_rules(expenses, association_rules, min_support=0.1, min_confidence=0.3, min_lift=1.0)
     elif len(expenses) >= 20:
-        get_association_rules(expenses, association_rules, min_support=0.3, min_confidence=0.7, min_lift=1.2)
+        get_association_rules(expenses, association_rules, min_support=0.15, min_confidence=0.3, min_lift=1.0)
     elif len(expenses) >= 10:
-        get_association_rules(expenses, association_rules, min_support=0.5, min_confidence=0.8, min_lift=1.5)
+        get_association_rules(expenses, association_rules, min_support=0.25, min_confidence=0.3, min_lift=1.0)
 
     if len(expenses) >= 5 and len(expenses['category'].unique()) >= 3:
         analyze_spending_variability(expenses, smart_insights)
