@@ -164,7 +164,6 @@ class ExpenseController extends Controller
             $dailyExpenses[$dayFormatted] = $dayExpenses->sum('amount');
         }
         ksort($dailyExpenses);
-;
 
         $categoriesArray = $categories->map(function ($category) {
             return [
