@@ -160,7 +160,7 @@ class ExpenseController extends Controller
             return Carbon::parse($expense->date)->format('d');
         });
         foreach ($groupedExpenses as $day => $dayExpenses) {
-            $dayFormatted = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+            $dayFormatted = str_pad((string) $day, 2, '0', STR_PAD_LEFT); // Days to be of 2 digits
             $dailyExpenses[$dayFormatted] = $dayExpenses->sum('amount');
         }
         ksort($dailyExpenses);
