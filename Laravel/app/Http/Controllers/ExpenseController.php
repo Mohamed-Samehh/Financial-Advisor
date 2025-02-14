@@ -154,13 +154,17 @@ class ExpenseController extends Controller
 
         $remainingBudget = $monthlyBudget - $totalSpent;
 
-        $dailyExpenses = collect([0 => 0])->merge(
-            $expenses->groupBy(function ($expense) {
-                return Carbon::parse($expense->date)->format('d');
-            })->map(function ($dayExpenses) {
-                return $dayExpenses->sum('amount');
-            })->sortKeys()
-        );
+        $dailyExpenses = [];
+        $dailyExpenses['00'] = 0;
+        $groupedExpenses = $expenses->groupBy(function ($expense) {
+            return Carbon::parse($expense->date)->format('d');
+        });
+        foreach ($groupedExpenses as $day => $dayExpenses) {
+            $dayFormatted = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+            $dailyExpenses[$dayFormatted] = $dayExpenses->sum('amount');
+        }
+        ksort($dailyExpenses);
+;
 
         $categoriesArray = $categories->map(function ($category) {
             return [

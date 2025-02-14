@@ -120,8 +120,8 @@ export class AnalyzeExpensesComponent implements OnInit {
             backgroundColor: 'rgba(255,99,132,0.2)',
             fill: true,
             tension: 0.4,
-            pointRadius: window.innerWidth < 768 ? 3 : 5,
-            pointHoverRadius: window.innerWidth < 768 ? 5 : 7,
+            pointRadius: window.innerWidth < 768 ? 2 : 5,
+            pointHoverRadius: window.innerWidth < 768 ? 4 : 7,
             pointBackgroundColor: '#FF6384',
             borderWidth: 2,
           },
@@ -159,7 +159,7 @@ export class AnalyzeExpensesComponent implements OnInit {
             position: 'top',
             labels: {
               font: {
-                size: window.innerWidth < 768 ? 18 : 14,
+                size: window.innerWidth < 768 ? 16 : 14,
               }
             }
           },
@@ -168,8 +168,8 @@ export class AnalyzeExpensesComponent implements OnInit {
             mode: 'index',
             intersect: false,
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleFont: { size: window.innerWidth < 768 ? 18 : 14 },
-            bodyFont: { size: window.innerWidth < 768 ? 16 : 12 },
+            titleFont: { size: window.innerWidth < 768 ? 16 : 14 },
+            bodyFont: { size: window.innerWidth < 768 ? 14 : 12 },
             padding: 8,
           }
         },
@@ -179,12 +179,12 @@ export class AnalyzeExpensesComponent implements OnInit {
               display: true,
               text: 'Days of the Month',
               font: {
-                size: window.innerWidth < 768 ? 18 : 14,
+                size: window.innerWidth < 768 ? 16 : 14,
               }
             },
             ticks: {
               font: {
-                size: window.innerWidth < 768 ? 16 : 12,
+                size: window.innerWidth < 768 ? 14 : 12,
               }
             }
           },
@@ -193,12 +193,12 @@ export class AnalyzeExpensesComponent implements OnInit {
               display: true,
               text: 'Amount (EGP)',
               font: {
-                size: window.innerWidth < 768 ? 18 : 14,
+                size: window.innerWidth < 768 ? 16 : 14,
               }
             },
             ticks: {
               font: {
-                size: window.innerWidth < 768 ? 16 : 12,
+                size: window.innerWidth < 768 ? 14 : 12,
               }
             }
           }
@@ -254,15 +254,15 @@ export class AnalyzeExpensesComponent implements OnInit {
             position: 'top',
             labels: {
               font: {
-                size: window.innerWidth < 768 ? 18 : 14,
+                size: window.innerWidth < 768 ? 16 : 14,
               }
             }
           },
           tooltip: {
             enabled: true,
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleFont: { size: window.innerWidth < 768 ? 18 : 14 },
-            bodyFont: { size: window.innerWidth < 768 ? 16 : 12 },
+            titleFont: { size: window.innerWidth < 768 ? 16 : 14 },
+            bodyFont: { size: window.innerWidth < 768 ? 14 : 12 },
             padding: 8,
           }
         },
