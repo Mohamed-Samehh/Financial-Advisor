@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Chart } from 'chart.js/auto';
@@ -6,7 +7,7 @@ import { Chart } from 'chart.js/auto';
 @Component({
   selector: 'app-analyze-expenses',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   providers: [DecimalPipe],
   templateUrl: './analyze-expenses.component.html',
   styleUrls: ['./analyze-expenses.component.css']
@@ -15,6 +16,7 @@ export class AnalyzeExpensesComponent implements OnInit {
   analysis: any = {};
   chart: any;
   categoryChart: any;
+  selectedMonths: number = 6;
   isSpendingClusteringView: boolean = true;
   isFrequencyClusteringView: boolean = false;
   isAssociationRulesView: boolean = false;
@@ -120,8 +122,8 @@ export class AnalyzeExpensesComponent implements OnInit {
             backgroundColor: 'rgba(255,99,132,0.2)',
             fill: true,
             tension: 0.4,
-            pointRadius: window.innerWidth < 768 ? 2 : 5,
-            pointHoverRadius: window.innerWidth < 768 ? 4 : 7,
+            pointRadius: window.innerWidth < 768 ? 3 : 5,
+            pointHoverRadius: window.innerWidth < 768 ? 5 : 7,
             pointBackgroundColor: '#FF6384',
             borderWidth: 2,
           },

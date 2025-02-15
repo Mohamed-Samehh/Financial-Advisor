@@ -1,5 +1,9 @@
 from flask import Flask, request, jsonify
 import pandas as pd
+import numpy as np
+import calendar
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 from sklearn.cluster import KMeans
 from mlxtend.frequent_patterns import apriori
 from itertools import combinations
@@ -30,33 +34,89 @@ def predictive_insights(expenses):
     return None
 
 
-# Generate weights with exponential decay
-def generate_weights(length, decay_factor=0.9):
-    return [decay_factor ** (length - i - 1) for i in range(length)]
+# # Generate weights with exponential decay
+# def generate_weights(length, decay_factor=0.9):
+#     return [decay_factor ** (length - i - 1) for i in range(length)]
 
 
-# Predict spending using weighted average
-def weighted_average(distinct_all_expenses, expenses, predicted_current_month):
+# # Predict next month spending using Weighted Average method
+# def weighted_average(distinct_all_expenses, expenses, predicted_current_month):
+#     distinct_all_expenses['month'] = distinct_all_expenses['date'].dt.month
+#     distinct_all_expenses['year'] = distinct_all_expenses['date'].dt.year
+
+#     current_year = expenses['date'].max().year
+#     current_month = expenses['date'].max().month
+
+#     monthly_spending = distinct_all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
+
+#     if predicted_current_month is not None:
+#         monthly_spending = pd.concat([
+#             monthly_spending,
+#             pd.DataFrame({'year': [current_year], 'month': [current_month], 'amount': [predicted_current_month]})
+#         ], ignore_index=True)
+
+#     if len(monthly_spending) >= 2:
+#         weights = generate_weights(len(monthly_spending))
+#         weighted_avg = (monthly_spending['amount'] * weights).sum() / sum(weights)
+#         return round(weighted_avg, 2)
+
+#     return None
+
+
+# Predict next x months spending using Linear Regression
+def linear_regression(distinct_all_expenses, expenses, predicted_current_month, predictions, month_num=12, accuracy_threshold=0.5, correlation_threshold=0.5):
     distinct_all_expenses['month'] = distinct_all_expenses['date'].dt.month
     distinct_all_expenses['year'] = distinct_all_expenses['date'].dt.year
-
+    
     current_year = expenses['date'].max().year
     current_month = expenses['date'].max().month
-
+    
     monthly_spending = distinct_all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
 
-    if predicted_current_month is not None:
-        monthly_spending = pd.concat([
-            monthly_spending,
-            pd.DataFrame({'year': [current_year], 'month': [current_month], 'amount': [predicted_current_month]})
-        ], ignore_index=True)
-
     if len(monthly_spending) >= 2:
-        weights = generate_weights(len(monthly_spending))
-        weighted_avg = (monthly_spending['amount'] * weights).sum() / sum(weights)
-        return round(weighted_avg, 2)
+        if predicted_current_month is not None:
+            monthly_spending = pd.concat([
+                monthly_spending,
+                pd.DataFrame({'year': [current_year], 'month': [current_month], 'amount': [predicted_current_month]})
+            ], ignore_index=True)
 
-    return None
+            monthly_spending['time_index'] = range(1, len(monthly_spending) + 1)
+            X = monthly_spending[['time_index']]
+            y = monthly_spending['amount']
+
+            scaler = StandardScaler()
+            X_scaled = scaler.fit_transform(X)
+
+            model = LinearRegression()
+            model.fit(X_scaled, y)
+
+            y_pred = model.predict(X_scaled)
+            r2 = r2_score(y, y_pred)
+            correlation = np.corrcoef(y, y_pred)[0, 1]
+
+            if r2 >= accuracy_threshold and correlation >= correlation_threshold:
+                next_year, next_month = (current_year, current_month + 1) if current_month < 12 else (current_year + 1, 1)
+
+                next_time_index = X['time_index'].max() + 1
+                for _ in range(month_num):
+                    next_time_index_df = pd.DataFrame([[next_time_index]], columns=['time_index'])
+                    next_time_index_scaled = scaler.transform(next_time_index_df)
+                    prediction = model.predict(next_time_index_scaled)[0]
+                    
+                    predictions.append({
+                        'year': next_year,
+                        'month': calendar.month_name[next_month],
+                        'predicted_spending': round(float(prediction), 2),
+                        'accuracy': r2,
+                        'correlation': correlation
+                    })
+
+                    next_month += 1
+                    if next_month > 12:
+                        next_month = 1
+                        next_year += 1
+
+                    next_time_index += 1
 
 
 # KMenas clustering to group "expenses" based on amount spent and frequency (in the highest spending cluster)
@@ -311,6 +371,7 @@ def analyze_expenses():
 
     advice = []
     smart_insights = []
+    predictions = []
     spending_clustering = []
     frequency_clustering = []
     association_rules = []
@@ -350,7 +411,9 @@ def analyze_expenses():
         combined_categories = "', '".join(over_budget_categories['category'])
         advice.append(f"You're overspending on '{combined_categories}'. Stop spending to avoid risks.")
 
-    predicted_next_month = weighted_average(distinct_all_expenses, expenses, predicted_current_month) if len(distinct_all_expenses) >= 5 and len(expenses) >= 5 else None
+    # predicted_next_month = weighted_average(distinct_all_expenses, expenses, predicted_current_month) if len(distinct_all_expenses) >= 5 and len(expenses) >= 5 else None
+    linear_regression(distinct_all_expenses, expenses, predicted_current_month, predictions) if len(distinct_all_expenses) >= 5 and len(expenses) >= 5 else None
+    
 
     if len(expenses) >= 5:
         kmeans_clustering(expenses, smart_insights)
@@ -378,7 +441,7 @@ def analyze_expenses():
 
     result = {
         'predicted_current_month': predicted_current_month,
-        'predicted_next_month': predicted_next_month,
+        'predictions': predictions,
         'category_limits': category_limits_dict,
         'advice': advice,
         'smart_insights': smart_insights,

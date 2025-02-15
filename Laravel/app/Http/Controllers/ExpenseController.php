@@ -217,7 +217,7 @@ class ExpenseController extends Controller
             'total_spent' => $totalSpent,
             'remaining_budget' => $remainingBudget,
             'predicted_current_month' => $result['predicted_current_month'] ?? null,
-            'predicted_next_month' => $result['predicted_next_month'] ?? null,
+            'predictions' => $result['predictions'] ?? [],
             'category_limits' => $result['category_limits'] ?? [],
             'advice' => $result['advice'] ?? [],
             'smart_insights' => $result['smart_insights'] ?? [],

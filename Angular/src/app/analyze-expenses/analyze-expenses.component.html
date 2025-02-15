@@ -42,18 +42,11 @@
                 E£{{ formatNumber(analysis.total_spent) }}
               </span>
             </h5>
-            <h5 *ngIf="analysis.predicted_current_month" class="text-muted">Current Month Estimated Total:
+            <h5 *ngIf="analysis.predicted_current_month" class="text-muted">Estimated Total:
               <span
                 [ngClass]="{'text-danger': analysis.predicted_current_month > (analysis.monthly_budget - analysis.goal),
                             'text-success': analysis.predicted_current_month <= (analysis.monthly_budget - analysis.goal)}">
                 E£{{ formatNumber(analysis.predicted_current_month) }}
-              </span>
-            </h5>
-            <h5 *ngIf="analysis.predicted_next_month" class="text-muted">Next Month Estimated Total:
-              <span
-                [ngClass]="{'text-danger': analysis.predicted_next_month > analysis.predicted_current_month,
-                            'text-success': analysis.predicted_next_month <= analysis.predicted_current_month}">
-                E£{{ formatNumber(analysis.predicted_next_month) }}
               </span>
             </h5>
             <h5 class="text-muted">Remaining Allowance:
@@ -223,6 +216,41 @@
           </div>
         </li>
       </ul>
+    </div>
+  </div>
+
+  <!-- AI-Based Prediction -->
+  <div *ngIf="analysis.predictions && analysis.predictions.length" class="card shadow-lg border-0 mt-4 mb-4">
+    <div class="card-body p-4">
+      <h4 class="text-center text-muted mb-3"><b>AI-Based Prediction</b></h4>
+      <p class="text-center text-muted small mb-4">
+        This model predicts future expenses by analyzing <b>past spending patterns</b> in your financial history, forecasting up to <b>12 months</b> ahead.
+      </p>
+
+      <!-- Prediction Accuracy and Correlation -->
+      <div class="text-center text-muted mb-3">
+        <p><b>Prediction Accuracy:</b> {{ analysis.predictions[0]?.accuracy * 100 | number:'1.1-1' }}%</p>
+        <!-- <p><b>Correlation with Past Data (Scale: -1 to 1):</b> {{ analysis.predictions[0]?.correlation | number:'1.2-3' }}</p> -->
+      </div>
+
+      <!-- Month Selection -->
+      <div class="text-center text-muted mb-4">
+        <label for="monthSelect" class="me-2"><b>Show Predictions for:</b></label>
+        <select id="monthSelect" class="form-select d-inline-block w-auto" [(ngModel)]="selectedMonths">
+          <option [value]="3">3 months</option>
+          <option [value]="6">6 months</option>
+          <option [value]="9">9 months</option>
+          <option [value]="12">12 months</option>
+        </select>
+      </div>
+
+      <!-- Prediction Cards -->
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <div *ngFor="let prediction of analysis.predictions.slice(0, selectedMonths)" class="card shadow-sm p-3 text-center" style="width: 250px;">
+          <h6 class="text-muted">{{ prediction.month }}, {{ prediction.year }}</h6>
+          <p class="fs-5 fw-bold text-primary">E£{{ formatNumber(prediction.predicted_spending) }}</p>
+        </div>
+      </div>
     </div>
   </div>
 
