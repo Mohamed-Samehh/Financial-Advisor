@@ -26,8 +26,10 @@ export class CategoriesComponent implements OnInit {
   isLabelView: boolean = false;
   suggestedCategories?: any[] = [];
   lastMonthSuggested?: string | null = null;
+  firstMonthSuggested?: string | null = null;
   labeledCategories?: any[] = [];
   lastMonthLabeled?: string | null = null;
+  firstMonthLabeled?: string | null = null;
   buttonHover: boolean = false;
 
   constructor(private apiService: ApiService) {}
@@ -62,17 +64,20 @@ export class CategoriesComponent implements OnInit {
         if (res && res.suggested_priorities && res.suggested_priorities.length > 0) {
           this.suggestedCategories = res.suggested_priorities;
 
-          if (res.last_month_suggested) {
+          if (res.last_month_suggested && res.first_month_suggested) {
             this.lastMonthSuggested = res.last_month_suggested;
+            this.firstMonthSuggested = res.first_month_suggested;
           }
         } else {
           this.suggestedCategories = undefined;
           this.lastMonthSuggested = undefined;
+          this.firstMonthSuggested = undefined;
         }
       },
       error: () => {
         this.suggestedCategories = undefined;
         this.lastMonthSuggested = undefined;
+        this.firstMonthSuggested = undefined;
       }
     });
   }
@@ -81,8 +86,9 @@ export class CategoriesComponent implements OnInit {
     this.apiService.getCategoryLabels().subscribe({
       next: (res) => {
         if (res && res.labaled_categories && res.labaled_categories.length > 0) {
-          if (res.last_month_labeled) {
+          if (res.last_month_labeled && res.first_month_labeled) {
             this.lastMonthLabeled = res.last_month_labeled;
+            this.firstMonthLabeled = res.first_month_labeled;
           }
           const labelData = res.labaled_categories[0];
           this.labeledCategories = labelData.predicted_importance.map((item: any) => ({
@@ -92,11 +98,13 @@ export class CategoriesComponent implements OnInit {
         } else {
           this.labeledCategories = undefined;
           this.lastMonthLabeled = undefined;
+          this.firstMonthLabeled = undefined;
         }
       },
       error: () => {
         this.labeledCategories = undefined;
         this.lastMonthLabeled = undefined;
+        this.firstMonthLabeled = undefined;
       }
     });
   }

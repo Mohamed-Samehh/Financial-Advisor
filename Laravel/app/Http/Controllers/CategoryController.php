@@ -117,25 +117,23 @@ class CategoryController extends Controller
     {
         $user = $request->user();
 
-        $lastExpense = Expense::where('user_id', $user->id)
+        $pastExpenses = Expense::where('user_id', $user->id)
+            ->whereYear('date', '>', Carbon::now()->subYears(3)->year)
             ->whereDate('date', '<', Carbon::now()->startOfMonth())
             ->orderBy('date', 'desc')
-            ->first();
-
-        if (!$lastExpense) {
-            return response()->json(['message' => 'No expenses found for the user (excluding the current month)'], 200);
-        }
-
-        $lastExpenseYear = Carbon::parse($lastExpense->date)->year;
-        $lastExpenseMonth = Carbon::parse($lastExpense->date)->month;
-
-        $lastMonthExpenses = Expense::where('user_id', $user->id)
-            ->whereYear('date', $lastExpenseYear)
-            ->whereMonth('date', $lastExpenseMonth)
             ->get();
 
-        $categoryExpenses = $lastMonthExpenses->groupBy('category')->map(function ($expenses) {
-            return $expenses->sum('amount');
+        if ($pastExpenses->isEmpty()) {
+            return response()->json(['message' => 'No past expenses found for the user'], 200);
+        }
+
+        $firstExpense = $pastExpenses->last();
+        $lastExpense = $pastExpenses->first();
+
+        $categoryExpenses = $pastExpenses->groupBy('category')->map(function ($expenses) {
+            return $expenses->groupBy(function ($expense) {
+                return Carbon::parse($expense->date)->format('Y-m');
+            })->map->sum('amount')->avg();
         });
 
         $sortedCategories = $categoryExpenses->sortDesc();
@@ -144,9 +142,9 @@ class CategoryController extends Controller
         $priority = 1;
         $lastAmount = null;
 
-        foreach ($sortedCategories as $category => $totalAmount) {
-            if ($totalAmount !== $lastAmount) {
-                $lastAmount = $totalAmount;
+        foreach ($sortedCategories as $category => $averageAmount) {
+            if ($averageAmount !== $lastAmount) {
+                $lastAmount = $averageAmount;
             } else {
                 $priority--;
             }
@@ -154,16 +152,18 @@ class CategoryController extends Controller
             $suggestedPriorities[] = [
                 'category' => $category,
                 'suggested_priority' => $priority,
-                'total_expenses' => $totalAmount,
+                'average_expenses' => $averageAmount,
             ];
 
             $priority++;
         }
 
-        $formattedDate = Carbon::create($lastExpenseYear, $lastExpenseMonth)->format('F Y');
+        $firstMonthSuggested = Carbon::parse($firstExpense->date)->format('F Y');
+        $lastMonthSuggested = Carbon::parse($lastExpense->date)->format('F Y');
 
         return response()->json([
-            'last_month_suggested' => $formattedDate,
+            'first_month_suggested' => $firstMonthSuggested,
+            'last_month_suggested' => $lastMonthSuggested,
             'suggested_priorities' => $suggestedPriorities
         ], 200);
     }
@@ -173,24 +173,17 @@ class CategoryController extends Controller
     {
         $user = $request->user();
 
-        $lastExpense = Expense::where('user_id', $user->id)
+        $pastExpenses = Expense::where('user_id', $user->id)
+            ->whereYear('date', '>', Carbon::now()->subYears(3)->year)
             ->whereDate('date', '<', Carbon::now()->startOfMonth())
             ->orderBy('date', 'desc')
-            ->first();
-
-        if (!$lastExpense) {
-            return response()->json(['message' => 'No expenses found for the user (excluding the current month)'], 200);
-        }
-
-        $lastExpenseYear = Carbon::parse($lastExpense->date)->year;
-        $lastExpenseMonth = Carbon::parse($lastExpense->date)->month;
-
-        $lastMonthExpenses = Expense::where('user_id', $user->id)
-            ->whereYear('date', $lastExpenseYear)
-            ->whereMonth('date', $lastExpenseMonth)
             ->get();
 
-        $lastExpensesArray = $lastMonthExpenses->map(function ($expense) {
+        if ($pastExpenses->isEmpty()) {
+            return response()->json(['message' => 'No past expenses found for the user'], 200);
+        }
+
+        $pastExpensesArray = $pastExpenses->map(function ($expense) {
             return [
                 'amount' => $expense->amount,
                 'date' => $expense->date,
@@ -198,9 +191,15 @@ class CategoryController extends Controller
             ];
         })->toArray();
 
+        $firstExpenseDate = Carbon::parse($pastExpenses->last()->date);
+        $lastExpenseDate = Carbon::parse($pastExpenses->first()->date);
+
+        $firstMonthLabeled = $firstExpenseDate->format('F Y');
+        $lastMonthLabeled = $lastExpenseDate->format('F Y');
+
         $flaskPassword = "Y7!mK4@vW9#qRp$2";
         $data = [
-            'last_expenses' => $lastExpensesArray,
+            'past_expenses' => $pastExpensesArray,
             'password' => $flaskPassword,
         ];
 
@@ -215,10 +214,9 @@ class CategoryController extends Controller
             Log::error('Flask labeling failed: ' . $e->getMessage());
         }
 
-        $formattedDate = Carbon::create($lastExpenseYear, $lastExpenseMonth)->format('F Y');
-
         return response()->json([
-            'last_month_labeled' => $formattedDate,
+            'first_month_labeled' => $firstMonthLabeled,
+            'last_month_labeled' => $lastMonthLabeled,
             'labaled_categories' => $result['labaled_categories'] ?? [],
         ], 200);
     }

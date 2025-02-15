@@ -41,7 +41,11 @@
     <!-- Display Suggested Priorities -->
     <div *ngIf="!isLabelView" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7;">
       <h5 class="text-center fw-bold mb-2">Suggested Category Priorities</h5>
-      <p class="text-center text-sm mb-3">Based on your previous month expenses<br><span class="fw-semibold">{{ lastMonthSuggested }}</span></p>
+      <p class="text-center text-sm mb-3">
+        Based on your expenses from
+        <span class="fw-semibold">{{ firstMonthLabeled }}</span> to
+        <span class="fw-semibold">{{ lastMonthLabeled }}</span>
+      </p>
 
       <div *ngIf="suggestedCategories; else noSuggestedCategories" class="row row-cols-1 row-cols-md-3 g-2">
         <div *ngFor="let suggested of suggestedCategories" class="col">
@@ -52,7 +56,7 @@
               </div>
               <div class="d-flex justify-content-between">
                 <div class="text-muted">
-                  Total Expenses: <span class="fw-bold">{{ suggested.total_expenses | currency:'E£':'symbol':'1.0-0' }}</span>
+                  Average Expenses: <span class="fw-bold">{{ suggested.average_expenses | currency:'E£':'symbol':'1.0-0' }}</span>
                 </div>
                 <div class="text-primary fw-bold">
                   Priority: {{ suggested.suggested_priority }}
@@ -75,7 +79,11 @@
     <!-- Display Category Importance Labeling -->
     <div *ngIf="isLabelView" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7;">
       <h5 class="text-center fw-bold mb-2">Category Importance Labeling</h5>
-      <p class="text-center text-sm mb-3">Based on your previous month expenses<br><span class="fw-semibold">{{ lastMonthLabeled }}</span></p>
+      <p class="text-center text-sm mb-3">
+        Based on your expenses from
+        <span class="fw-semibold">{{ firstMonthLabeled }}</span> to
+        <span class="fw-semibold">{{ lastMonthLabeled }}</span>
+      </p>
 
       <div *ngIf="labeledCategories; else noLabeledCategories" class="row row-cols-1 row-cols-md-3 g-2">
         <div *ngFor="let category of labeledCategories" class="col">

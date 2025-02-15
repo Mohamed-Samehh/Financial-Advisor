@@ -226,12 +226,12 @@ def get_association_rules(expenses, association_rules, min_support=0.5, min_conf
 
 
 # Label category importance based on rules
-def Rule_Based_labeling(last_expenses, labeled_categories):
-    last_expenses['category_encoded'] = LabelEncoder().fit_transform(last_expenses['category'])
-    last_expenses['year'] = last_expenses['date'].dt.year
-    last_expenses['month'] = last_expenses['date'].dt.month
+def Rule_Based_labeling(past_expenses, labeled_categories):
+    past_expenses['category_encoded'] = LabelEncoder().fit_transform(past_expenses['category'])
+    past_expenses['year'] = past_expenses['date'].dt.year
+    past_expenses['month'] = past_expenses['date'].dt.month
 
-    category_stats = last_expenses.groupby('category').agg(
+    category_stats = past_expenses.groupby('category').agg(
         total_spent=('amount', 'sum'),
         frequency=('category', 'count'),
         consistency=('amount', 'std')
@@ -286,30 +286,38 @@ def analyze_spending_variability(expenses, smart_insights):
 
 
 # Analyze deviations in category spending trends
-# Momken ne5aleha a5er shahr bas law gebt a5er shahr etdafa3 fel "distinct_all_expenses"
 def analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights):
-        category_average = distinct_all_expenses.groupby('category')['amount'].mean()
-        current_month_average = expenses.groupby('category')['amount'].mean()
+    distinct_all_expenses['year_month'] = distinct_all_expenses['date'].dt.strftime('%Y-%m')
+    monthly_sums = distinct_all_expenses.groupby(['year_month', 'category'])['amount'].sum()
+    category_average = monthly_sums.groupby('category').mean()
 
-        deviations = (current_month_average - category_average).sort_values(ascending=False)
+    current_month_sum = expenses.groupby('category')['amount'].sum()
 
-        if not deviations.empty:
-            largest_increase_category = deviations.idxmax()
-            largest_decrease_category = deviations.idxmin()
+    if not expenses.empty:
+        days_so_far = expenses['date'].dt.day.max()
+        total_days_in_month = expenses['date'].dt.to_period('M').max().days_in_month
+        estimated_current_month = (current_month_sum / days_so_far) * total_days_in_month
+        current_month_sum = estimated_current_month
 
-            if deviations[largest_increase_category] > 0 and deviations[largest_decrease_category] < 0:
+    deviations = (current_month_sum - category_average).sort_values(ascending=False)
+
+    if not deviations.empty:
+        largest_increase_category = deviations.idxmax()
+        largest_decrease_category = deviations.idxmin()
+
+        if deviations[largest_increase_category] > 0 and deviations[largest_decrease_category] < 0:
+            smart_insights.append(
+                f"Spending on '{largest_increase_category}' increased the most, while spending on '{largest_decrease_category}' decreased the most compared to previous months."
+            )
+        else:
+            if deviations[largest_increase_category] > 0:
                 smart_insights.append(
-                    f"Spending in the '{largest_increase_category}' category increased while the '{largest_decrease_category}' category decreased significantly compared to your usual spending."
+                    f"Spending on '{largest_increase_category}' increased the most compared to previous months."
                 )
-            else:
-                if deviations[largest_increase_category] > 0:
-                    smart_insights.append(
-                        f"Spending in the '{largest_increase_category}' category increased significantly compared to your usual spending."
-                    )
-                if deviations[largest_decrease_category] < 0:
-                    smart_insights.append(
-                        f"Spending in the '{largest_decrease_category}' category decreased significantly compared to your usual spending."
-                    )
+            if deviations[largest_decrease_category] < 0:
+                smart_insights.append(
+                    f"Spending on '{largest_decrease_category}' decreased the most compared to previous months."
+                )
 
 
 # Day-of-week spending analysis to identify peak spending days
@@ -461,15 +469,15 @@ def labeling_endpoint():
     if data.get('password') != FLASK_PASSWORD:
         return jsonify({'error': 'Unauthorized'}), 401
 
-    if 'last_expenses' not in data:
-        return jsonify({'error': 'Missing required data: last_expenses'}), 400
+    if 'past_expenses' not in data:
+        return jsonify({'error': 'Missing required data: past_expenses'}), 400
 
-    last_expenses = pd.DataFrame(data['last_expenses'])
-    last_expenses['date'] = pd.to_datetime(last_expenses['date'])
+    past_expenses = pd.DataFrame(data['past_expenses'])
+    past_expenses['date'] = pd.to_datetime(past_expenses['date'])
 
     labaled_categories = []
-    if len(last_expenses) >= 5:
-        Rule_Based_labeling(last_expenses, labaled_categories)
+    if len(past_expenses) >= 5:
+        Rule_Based_labeling(past_expenses, labaled_categories)
 
     return jsonify({'labaled_categories': labaled_categories})
 
