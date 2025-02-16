@@ -227,23 +227,40 @@ def get_association_rules(expenses, association_rules, min_support=0.5, min_conf
 
 # Label category importance based on rules
 def Rule_Based_labeling(past_expenses, labeled_categories):
-    past_expenses['category_encoded'] = LabelEncoder().fit_transform(past_expenses['category'])
-    past_expenses['year'] = past_expenses['date'].dt.year
-    past_expenses['month'] = past_expenses['date'].dt.month
+    past_expenses['year_month'] = past_expenses['date'].dt.strftime('%Y-%m')
+    
+    monthly_sums = past_expenses.groupby(['year_month', 'category'])['amount'].sum()
+    category_average = monthly_sums.groupby('category').mean()
 
-    category_stats = past_expenses.groupby('category').agg(
-        total_spent=('amount', 'sum'),
-        frequency=('category', 'count'),
-        consistency=('amount', 'std')
-    )
+    monthly_frequency = past_expenses.groupby(['year_month', 'category']).size()
+    category_frequency = monthly_frequency.groupby('category').mean()
+
+    monthly_std = past_expenses.groupby(['year_month', 'category'])['amount'].std()
+    category_consistency = monthly_std.groupby('category').mean()
+
+    category_stats = pd.DataFrame({
+        'total_spent': category_average,
+        'frequency': category_frequency,
+        'consistency': category_consistency
+    })
 
     conditions = [
-        (category_stats['total_spent'] > category_stats['total_spent'].quantile(0.75)),  
-        (category_stats['frequency'] > category_stats['frequency'].quantile(0.75)),  
+        # Category is considered "Essential" if total spending is in the top 25% (high spending)
+        (category_stats['total_spent'] > category_stats['total_spent'].quantile(0.75)),
+
+        # Category is considered "Essential" if frequency of spending is in the top 25% (high usage)
+        (category_stats['frequency'] > category_stats['frequency'].quantile(0.75)),
+
+        # Category is considered "Moderate" if spending and frequency are both in the middle 50% range
         (category_stats['total_spent'].between(category_stats['total_spent'].quantile(0.25), category_stats['total_spent'].quantile(0.75))) &  
-        (category_stats['frequency'].between(category_stats['frequency'].quantile(0.25), category_stats['frequency'].quantile(0.75))),  
-        (category_stats['consistency'] < category_stats['consistency'].quantile(0.25)),  
-        (category_stats['total_spent'] > category_stats['total_spent'].quantile(0.90)) & (category_stats['frequency'] <= category_stats['frequency'].quantile(0.25))
+        (category_stats['frequency'].between(category_stats['frequency'].quantile(0.25), category_stats['frequency'].quantile(0.75))),
+
+        # Category is considered "Non-Essential" if spending consistency is low (low standard deviation)
+        (category_stats['consistency'] < category_stats['consistency'].quantile(0.25)),
+
+        # Category is considered "Essential" if total spending is extremely high (top 10%) but rarely spent on (low frequency)
+        (category_stats['total_spent'] > category_stats['total_spent'].quantile(0.90)) &  
+        (category_stats['frequency'] <= category_stats['frequency'].quantile(0.25))
     ]
 
     labels = ['Essential', 'Essential', 'Moderate', 'Non-Essential', 'Essential']
@@ -299,25 +316,25 @@ def analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights)
         estimated_current_month = (current_month_sum / days_so_far) * total_days_in_month
         current_month_sum = estimated_current_month
 
-    deviations = (current_month_sum - category_average).sort_values(ascending=False)
+        deviations = (current_month_sum - category_average).sort_values(ascending=False)
 
-    if not deviations.empty:
-        largest_increase_category = deviations.idxmax()
-        largest_decrease_category = deviations.idxmin()
+        if not deviations.empty:
+            largest_increase_category = deviations.idxmax()
+            largest_decrease_category = deviations.idxmin()
 
-        if deviations[largest_increase_category] > 0 and deviations[largest_decrease_category] < 0:
-            smart_insights.append(
-                f"Spending on '{largest_increase_category}' increased the most, while spending on '{largest_decrease_category}' decreased the most compared to previous months."
-            )
-        else:
-            if deviations[largest_increase_category] > 0:
+            if deviations[largest_increase_category] > 0 and deviations[largest_decrease_category] < 0:
                 smart_insights.append(
-                    f"Spending on '{largest_increase_category}' increased the most compared to previous months."
+                    f"Spending on '{largest_increase_category}' increased the most, while spending on '{largest_decrease_category}' decreased the most compared to your usual spending."
                 )
-            if deviations[largest_decrease_category] < 0:
-                smart_insights.append(
-                    f"Spending on '{largest_decrease_category}' decreased the most compared to previous months."
-                )
+            else:
+                if deviations[largest_increase_category] > 0:
+                    smart_insights.append(
+                        f"Spending on '{largest_increase_category}' increased the most compared to your usual spending."
+                    )
+                if deviations[largest_decrease_category] < 0:
+                    smart_insights.append(
+                        f"Spending on '{largest_decrease_category}' decreased the most compared to your usual spending."
+                    )
 
 
 # Day-of-week spending analysis to identify peak spending days
