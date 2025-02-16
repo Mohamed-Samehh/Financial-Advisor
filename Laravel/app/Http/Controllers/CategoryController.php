@@ -11,6 +11,13 @@ use Carbon\Carbon;
 
 class CategoryController extends Controller
 {
+    // Set Time Zone for Carbon
+    public function __construct()
+    {
+        Carbon::setLocale('en');
+        date_default_timezone_set('Africa/Cairo');
+    }
+    
     // Retrieve all categories for the user
     public function index(Request $request)
     {
