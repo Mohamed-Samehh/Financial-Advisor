@@ -122,78 +122,87 @@ def linear_regression(distinct_all_expenses, expenses, predicted_current_month, 
 # KMenas clustering to group "expenses" based on amount spent and frequency (in the highest spending cluster)
 def kmeans_clustering(expenses, smart_insights):
     scaler = StandardScaler()
-    expenses['normalized_amount'] = scaler.fit_transform(expenses[['amount']])
 
-    kmeans = KMeans(n_clusters=3, random_state=42)
-    clusters = kmeans.fit_predict(expenses[['normalized_amount']])
-    expenses['cluster'] = clusters
+    unique_values = expenses['amount'].nunique()
 
-    cluster_averages = expenses.groupby('cluster')['normalized_amount'].mean()
-    highest_spending_cluster = cluster_averages.idxmax()
+    if unique_values >= 3:
+        expenses['normalized_amount'] = scaler.fit_transform(expenses[['amount']])
+        kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+        clusters = kmeans.fit_predict(expenses[['normalized_amount']])
+        expenses['cluster'] = clusters
 
-    highest_cluster_data = expenses[expenses['cluster'] == highest_spending_cluster]
+        cluster_averages = expenses.groupby('cluster')['normalized_amount'].mean()
+        highest_spending_cluster = cluster_averages.idxmax()
 
-    category_counts = highest_cluster_data['category'].value_counts()
+        highest_cluster_data = expenses[expenses['cluster'] == highest_spending_cluster]
 
-    top_categories = category_counts.head(4).index.tolist()
+        category_counts = highest_cluster_data['category'].value_counts()
 
-    if top_categories:
-        combined_categories = "', '".join(top_categories)
-        smart_insights.append(f"Consider monitoring expenses in '{combined_categories}', as they show a high spending pattern.")
+        top_categories = category_counts.head(4).index.tolist()
+
+        if top_categories:
+            combined_categories = "', '".join(top_categories)
+            smart_insights.append(f"Consider monitoring expenses in '{combined_categories}', as they show a high spending pattern.")
 
 
 # KMeans clustering to group "categories" based on total spending
 def spending_kmeans_clustering(expenses, spending_clustering):
     total_spent = expenses.groupby('category')['amount'].sum().reset_index(name='total_spent')
 
-    if len(total_spent) >= 3:
+    if total_spent['total_spent'].nunique() == 1:
+        total_spent['spending_group'] = 'Moderate'
+    else:
         scaler = StandardScaler()
         total_spent['normalized_total_spent'] = scaler.fit_transform(total_spent[['total_spent']])
 
-        kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+        n_clusters = min(3, total_spent['normalized_total_spent'].nunique())
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
         total_spent['cluster'] = kmeans.fit_predict(total_spent[['normalized_total_spent']])
 
         cluster_averages = total_spent.groupby('cluster')['normalized_total_spent'].mean().sort_values(ascending=False)
         cluster_labels = {cluster: label for cluster, label in 
-                          zip(cluster_averages.index, ['High', 'Moderate', 'Low'])}
+                          zip(cluster_averages.index, ['High', 'Moderate', 'Low'][:n_clusters])}
 
         total_spent['spending_group'] = total_spent['cluster'].map(cluster_labels)
 
-        sorted_spending = total_spent.sort_values(by='spending_group', key=lambda x: x.map({'High': 1, 'Moderate': 2, 'Low': 3}))
+    sorted_spending = total_spent.sort_values(by='spending_group', key=lambda x: x.map({'High': 1, 'Moderate': 2, 'Low': 3}))
 
-        spending_clustering.append({
-            'spending_group': [
-                {'category': row['category'], 'spending_group': row['spending_group']}
-                for _, row in sorted_spending.iterrows()
-            ]
-        })
+    spending_clustering.append({
+        'spending_group': [
+            {'category': row['category'], 'spending_group': row['spending_group']}
+            for _, row in sorted_spending.iterrows()
+        ]
+    })
 
 
 # KMeans clustering to group "categories" based on frequency
 def frequency_kmeans_clustering(expenses, frequency_clustering):
     frequency = expenses.groupby('category').size().reset_index(name='count')
 
-    if len(frequency) >= 3:
+    if frequency['count'].nunique() == 1:
+        frequency['frequency_group'] = 'Moderate'
+    else:
         scaler = StandardScaler()
         frequency['normalized_count'] = scaler.fit_transform(frequency[['count']])
 
-        kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+        n_clusters = min(3, frequency['normalized_count'].nunique())
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
         frequency['cluster'] = kmeans.fit_predict(frequency[['normalized_count']])
 
         cluster_averages = frequency.groupby('cluster')['normalized_count'].mean().sort_values(ascending=False)
         cluster_labels = {cluster: label for cluster, label in 
-                          zip(cluster_averages.index, ['High', 'Moderate', 'Low'])}
+                          zip(cluster_averages.index, ['High', 'Moderate', 'Low'][:n_clusters])}
         
         frequency['frequency_group'] = frequency['cluster'].map(cluster_labels)
 
-        sorted_frequency = frequency.sort_values(by='frequency_group', key=lambda x: x.map({'High': 1, 'Moderate': 2, 'Low': 3}))
+    sorted_frequency = frequency.sort_values(by='frequency_group', key=lambda x: x.map({'High': 1, 'Moderate': 2, 'Low': 3}))
 
-        frequency_clustering.append({
-            'frequency_group': [
-                {'category': row['category'], 'frequency_group': row['frequency_group']}
-                for _, row in sorted_frequency.iterrows()
-            ]
-        })
+    frequency_clustering.append({
+        'frequency_group': [
+            {'category': row['category'], 'frequency_group': row['frequency_group']}
+            for _, row in sorted_frequency.iterrows()
+        ]
+    })
 
 
 # Generate association rules to identify category relationships
