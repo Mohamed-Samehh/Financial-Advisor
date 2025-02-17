@@ -311,39 +311,50 @@ def analyze_spending_variability(expenses, smart_insights):
                 smart_insights.append(f"Spending in '{most_variable_category}' varies the most. Keep an eye on it!")
 
 
-# Analyze deviations in category spending trends
+# Analyze deviations in spending by comparing current trends with historical averages
 def analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights):
-    distinct_all_expenses['year_month'] = distinct_all_expenses['date'].dt.strftime('%Y-%m')
-    monthly_sums = distinct_all_expenses.groupby(['year_month', 'category'])['amount'].sum()
-    category_average = monthly_sums.groupby('category').mean()
+    distinct_all_expenses['year_month'] = distinct_all_expenses['date'].dt.to_period('M')
+    distinct_all_expenses['day_of_month'] = distinct_all_expenses['date'].dt.day
 
-    current_month_sum = expenses.groupby('category')['amount'].sum()
+    historical_spending_trend = (
+        distinct_all_expenses.groupby(['year_month', 'category', 'day_of_month'])['amount'].sum()
+        .groupby(['year_month', 'category'])
+        .cumsum()
+        .groupby(['category', 'day_of_month'])
+        .mean()
+        .unstack()
+        .ffill(axis=1)
+        .stack()
+    )
 
-    if not expenses.empty:
-        days_so_far = expenses['date'].dt.day.max()
-        total_days_in_month = expenses['date'].dt.to_period('M').max().days_in_month
-        estimated_current_month = (current_month_sum / days_so_far) * total_days_in_month
-        current_month_sum = estimated_current_month
+    days_so_far = expenses['date'].dt.day.max()
+    historical_reference = (
+        historical_spending_trend[historical_spending_trend.index.get_level_values('day_of_month') == days_so_far]
+        .groupby('category')
+        .mean()
+    )
 
-        deviations = (current_month_sum - category_average).sort_values(ascending=False)
+    current_month_spending = expenses.groupby('category')['amount'].sum()
+    historical_reference = historical_reference.reindex(current_month_spending.index, fill_value=0)
+    deviations = (current_month_spending - historical_reference).sort_values(ascending=False)
 
-        if not deviations.empty:
-            largest_increase_category = deviations.idxmax()
-            largest_decrease_category = deviations.idxmin()
+    if not deviations.empty:
+        largest_increase_category = deviations.idxmax()
+        largest_decrease_category = deviations.idxmin()
 
-            if deviations[largest_increase_category] > 0 and deviations[largest_decrease_category] < 0:
+        if deviations[largest_increase_category] > 0 and deviations[largest_decrease_category] < 0:
+            smart_insights.append(
+                f"Spending on '{largest_increase_category}' increased the most, while spending on '{largest_decrease_category}' decreased the most compared to your usual spending."
+            )
+        else:
+            if deviations[largest_increase_category] > 0:
                 smart_insights.append(
-                    f"Spending on '{largest_increase_category}' increased the most, while spending on '{largest_decrease_category}' decreased the most compared to your usual spending."
+                    f"Spending on '{largest_increase_category}' increased the most compared to your usual spending."
                 )
-            else:
-                if deviations[largest_increase_category] > 0:
-                    smart_insights.append(
-                        f"Spending on '{largest_increase_category}' increased the most compared to your usual spending."
-                    )
-                if deviations[largest_decrease_category] < 0:
-                    smart_insights.append(
-                        f"Spending on '{largest_decrease_category}' decreased the most compared to your usual spending."
-                    )
+            if deviations[largest_decrease_category] < 0:
+                smart_insights.append(
+                    f"Spending on '{largest_decrease_category}' decreased the most compared to your usual spending."
+                )
 
 
 # Day-of-week spending analysis to identify peak spending days
