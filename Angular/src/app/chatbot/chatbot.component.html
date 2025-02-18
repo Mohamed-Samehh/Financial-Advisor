@@ -1,0 +1,47 @@
+<div class="container mt-5 mb-4">
+  <h2 class="text-center text-primary display-4 mb-4">AI-Chatbot</h2>
+
+  <!-- Chat Interface -->
+  <div *ngIf="messages.length > 0" class="card shadow-lg border-0 mb-4 bg-light">
+    <div class="card-body p-4" style="max-height: 400px; overflow-y: auto;">
+      <div *ngFor="let msg of messages" [ngClass]="{'text-end': msg.role === 'user', 'text-start': msg.role === 'bot'}">
+        <div class="d-inline-block p-3 mb-2 rounded shadow-sm" [ngClass]="{'bg-primary text-white': msg.role === 'user', 'bg-light text-dark': msg.role === 'bot'}">
+          {{ msg.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Box with Border -->
+  <div class="input-group mt-5 mb-4 border rounded-3 p-2">
+    <input 
+      type="text" 
+      [(ngModel)]="userMessage" 
+      class="form-control form-control-lg border-0 rounded-3" 
+      placeholder="Ask about finance, savings, investments, or anything else!" 
+      (keyup.enter)="sendMessage()">
+      
+    <button 
+      class="btn btn-primary btn-lg px-4 ms-2 rounded-3" 
+      [disabled]="loading" 
+      (click)="sendMessage()">
+        
+      <span *ngIf="!loading">Send</span>
+      
+      <span *ngIf="loading" class="d-flex align-items-center justify-content-center">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+      </span>
+      
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center rounded-3 shadow-sm">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center mt-5">
+    <small class="text-muted">Powered by OpenChat 3.5 7B</small>
+  </div>
+</div>

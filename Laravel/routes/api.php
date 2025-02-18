@@ -6,11 +6,13 @@ use App\Http\Controllers\GoalController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ChatbotController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/check-token-expiry', [AuthController::class, 'checkTokenExpiry']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/chatbot', [ChatbotController::class, 'chat']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

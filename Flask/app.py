@@ -7,7 +7,9 @@ from sklearn.metrics import r2_score
 from sklearn.cluster import KMeans
 from mlxtend.frequent_patterns import apriori
 from itertools import combinations
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
+import requests
+import json
 
 app = Flask(__name__)
 
@@ -570,6 +572,44 @@ def labeling_endpoint():
         Rule_Based_labeling(past_expenses, labaled_categories)
 
     return jsonify({'labaled_categories': labaled_categories})
+
+
+# "OpenChat 3.5 7B" API calling from https://openrouter.ai/
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_message = request.json.get("message")
+    api_key = request.json.get("api_key")
+
+    if not user_message or not api_key:
+        return jsonify({"error": "Message and API key are required"}), 400
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:4200/",
+        "X-Title": "Financial Advisor"
+    }
+
+    data = json.dumps({
+        "model": "openchat/openchat-7b:free",
+        "messages": [
+            {
+                "role": "user",
+                "content": user_message
+            }
+        ]
+    })
+
+    response = requests.post(
+        url="https://openrouter.ai/api/v1/chat/completions",
+        headers=headers,
+        data=data
+    )
+
+    if response.status_code != 200:
+        return jsonify({"error": "Failed to fetch response", "details": response.text}), response.status_code
+
+    return jsonify(response.json())
 
 
 if __name__ == '__main__':

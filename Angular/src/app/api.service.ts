@@ -17,6 +17,11 @@ export class ApiService {
     });
   }
 
+  // "OpenChat 3.5 7B" Chatbot
+  sendChatMessage(message: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/chatbot`, { message });
+  }
+
   // Budget
   getAllBudgets(): Observable<any> {
     return this.http.get(`${this.apiUrl}/budget/all`, { headers: this.getHeaders() });
