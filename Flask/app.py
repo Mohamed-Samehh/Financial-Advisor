@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 from sklearn.cluster import KMeans
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
 from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
@@ -19,16 +17,14 @@ def assign_limits(categories, allowed_spending):
 def predictive_insights(expenses):
     expenses['date'] = pd.to_datetime(expenses['date'])
     total_days_in_month = expenses['date'].dt.daysinmonth.max()
-    last_expense_day = expenses['date'].max().day
+    days_elapsed = (expenses['date'].max() - expenses['date'].min()).days + 1
 
-    if last_expense_day < 30:
-        days_elapsed = (expenses['date'].max() - expenses['date'].min()).days + 1
-        if days_elapsed > 0:
-            average_daily_spending = expenses['amount'].sum() / days_elapsed
-            remaining_days = total_days_in_month - days_elapsed
-            predicted_remaining_spending = average_daily_spending * remaining_days
-            predicted_total_spending = expenses['amount'].sum() + predicted_remaining_spending
-            return round(predicted_total_spending, 2)
+    if days_elapsed > 0:
+        average_daily_spending = expenses['amount'].sum() / days_elapsed
+        remaining_days = total_days_in_month - days_elapsed
+        predicted_remaining_spending = average_daily_spending * remaining_days
+        predicted_total_spending = expenses['amount'].sum() + predicted_remaining_spending
+        return round(predicted_total_spending, 2)
     return None
 
 
@@ -51,50 +47,6 @@ def weighted_average(all_expenses):
     return None
 
 
-# Predict spending using weighted linear regression
-def linear_regression(all_expenses):
-    all_expenses['date'] = pd.to_datetime(all_expenses['date'])
-    all_expenses['month'] = all_expenses['date'].dt.month
-    all_expenses['year'] = all_expenses['date'].dt.year
-    min_correlation = 0.6
-
-    monthly_spending = all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
-    if len(monthly_spending) >= 3:
-        monthly_spending['month_num'] = monthly_spending['year'] * 12 + monthly_spending['month']
-        X = monthly_spending[['month_num']].values
-        y = monthly_spending['amount'].values
-
-        weights = generate_weights(len(y))
-
-        model = LinearRegression()
-        model.fit(X, y, sample_weight=weights)
-
-        # Correlation r^2
-        y_pred = model.predict(X)
-        r_squared = r2_score(y, y_pred)
-
-        if r_squared < min_correlation:
-            return None
-
-        next_month_num = monthly_spending['month_num'].max() + 1
-        predicted_spending = model.predict([[next_month_num]])[0]
-
-        if predicted_spending > 0:
-            return round(predicted_spending, 2)
-    return None
-
-
-# Combine weighted average and linear regression for final prediction
-def blended_prediction(all_expenses):
-    weighted_avg = weighted_average(all_expenses)
-    linear_pred = linear_regression(all_expenses)
-    alpha=0.9 # Higher alpha means more weight to weighted average
-
-    if weighted_avg is not None and linear_pred is not None:
-        return round(alpha * weighted_avg + (1 - alpha) * linear_pred, 2)
-    return weighted_avg or linear_pred
-
-
 # Behavioral clustering using KMeans to identify spending patterns
 def kmeans_clustering(expenses, smart_insights):
     scaler = StandardScaler()
@@ -108,13 +60,14 @@ def kmeans_clustering(expenses, smart_insights):
     highest_spending_cluster = cluster_totals.idxmax()
 
     highest_cluster_data = expenses[expenses['cluster'] == highest_spending_cluster]
-    unique_categories = highest_cluster_data['category'].value_counts().index.tolist()
 
-    top_categories = unique_categories[:4]
+    category_counts = highest_cluster_data['category'].value_counts()
 
-    if len(top_categories) > 0:
-        combined_categories = ', '.join(sorted(top_categories))
-        smart_insights.append(f"Consider monitoring expenses in {combined_categories}, as they fall within the highest spending cluster.")
+    top_categories = category_counts.head(4).index.tolist()
+
+    if top_categories:
+        combined_categories = ', '.join(top_categories)
+        smart_insights.append(f"Consider monitoring expenses in {combined_categories}, as they show a high spending pattern.")
 
 
 # Analyze category spending variability
@@ -243,20 +196,18 @@ def analyze_expenses():
         combined_categories = "', '".join(over_budget_categories['category'])
         advice.append(f"You're overspending on '{combined_categories}'. Stop spending to avoid risks.")
 
-    predicted_next_month_weighted = weighted_average(all_expenses) if len(distinct_all_expenses) >= 10 else None
-    predicted_next_month_linear = linear_regression(all_expenses) if len(distinct_all_expenses) >= 10 else None
-    # predicted_next_month_linear = blended_prediction(all_expenses) if len(distinct_all_expenses) >= 10 else None
+    predicted_next_month = weighted_average(all_expenses) if len(distinct_all_expenses) >= 5 else None
 
-    if len(expenses) >= 10:
+    if len(expenses) >= 5:
         kmeans_clustering(expenses, smart_insights)
 
-    if len(expenses) >= 10 and len(expenses['category'].unique()) >= 3:
+    if len(expenses) >= 5 and len(expenses['category'].unique()) >= 3:
         analyze_spending_variability(expenses, smart_insights)
 
-    if len(expenses) >= 10 and len(distinct_all_expenses) >= 10 and len(expenses['category'].unique()) >= 3:
+    if len(expenses) >= 5 and len(distinct_all_expenses) >= 5 and len(expenses['category'].unique()) >= 3:
         analyze_spending_deviations(expenses, distinct_all_expenses, smart_insights)
 
-    if len(expenses) >= 10:
+    if len(expenses) >= 5:
         day_of_week_analysis(expenses, smart_insights)
 
     # Prepare results for API response
@@ -264,8 +215,7 @@ def analyze_expenses():
 
     result = {
         'predicted_current_month': predicted_current_month,
-        'predicted_next_month_weighted': predicted_next_month_weighted,
-        'predicted_next_month_linear': predicted_next_month_linear,
+        'predicted_next_month': predicted_next_month,
         'category_limits': category_limits_dict,
         'advice': advice,
         'smart_insights': smart_insights,
