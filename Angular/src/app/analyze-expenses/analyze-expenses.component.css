@@ -5,6 +5,21 @@
   transform: translate(-50%, -50%);
 }
 
+.custom-colored {
+  color: #0d6efd !important;
+  background-color: transparent !important;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.custom-colored:hover {
+  color: white !important;
+  background-color: #0d6efd !important;
+}
+
+.custome-size{
+  max-width: 280px;
+}
+
 #expensesChart {
   height: 700px !important;
 }
@@ -23,5 +38,29 @@
     height: 500px !important;
     width: 110% !important;
     margin-left: -5%;
+  }
+
+  @media (max-width: 992px) {
+    .custome-size {
+      max-width: 220px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .custome-size {
+      max-width: 180px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .custome-size {
+      max-width: 140px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .custome-size {
+      max-width: 340px;
+    }
   }
 }

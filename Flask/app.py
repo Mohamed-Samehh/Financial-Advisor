@@ -63,23 +63,17 @@ def predictive_insights(expenses):
 #     return None
 
 
-# Predict next x months spending using Linear Regression
-def linear_regression(distinct_all_expenses, expenses, predicted_current_month, predictions, month_num=12, accuracy_threshold=0.5, correlation_threshold=0.5):
+# Predict next x months "Total" spending using Linear Regression
+def linear_regression(distinct_all_expenses, predictions, month_num=12, accuracy_threshold=0.5, correlation_threshold=0.5):
     distinct_all_expenses['month'] = distinct_all_expenses['date'].dt.month
     distinct_all_expenses['year'] = distinct_all_expenses['date'].dt.year
     
-    current_year = expenses['date'].max().year
-    current_month = expenses['date'].max().month
+    last_year = distinct_all_expenses['date'].max().year
+    last_month = distinct_all_expenses['date'].max().month
     
     monthly_spending = distinct_all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
 
-    if len(monthly_spending) >= 2:
-        if predicted_current_month is not None:
-            monthly_spending = pd.concat([
-                monthly_spending,
-                pd.DataFrame({'year': [current_year], 'month': [current_month], 'amount': [predicted_current_month]})
-            ], ignore_index=True)
-
+    if len(monthly_spending) >= 3:
             monthly_spending['time_index'] = range(1, len(monthly_spending) + 1)
             X = monthly_spending[['time_index']]
             y = monthly_spending['amount']
@@ -95,13 +89,14 @@ def linear_regression(distinct_all_expenses, expenses, predicted_current_month, 
             correlation = np.corrcoef(y, y_pred)[0, 1]
 
             if r2 >= accuracy_threshold and correlation >= correlation_threshold:
-                next_year, next_month = (current_year, current_month + 1) if current_month < 12 else (current_year + 1, 1)
+                next_year, next_month = (last_year, last_month + 1) if last_month < 12 else (last_year + 1, 1)
 
                 next_time_index = X['time_index'].max() + 1
                 for _ in range(month_num):
                     next_time_index_df = pd.DataFrame([[next_time_index]], columns=['time_index'])
                     next_time_index_scaled = scaler.transform(next_time_index_df)
                     prediction = model.predict(next_time_index_scaled)[0]
+                    prediction = max(0, prediction)
                     
                     predictions.append({
                         'year': next_year,
@@ -109,6 +104,60 @@ def linear_regression(distinct_all_expenses, expenses, predicted_current_month, 
                         'predicted_spending': round(float(prediction), 2),
                         'accuracy': r2,
                         'correlation': correlation
+                    })
+
+                    next_month += 1
+                    if next_month > 12:
+                        next_month = 1
+                        next_year += 1
+
+                    next_time_index += 1
+
+
+# Predict next x months "Category" spending using Linear Regression
+def category_linear_regression(distinct_all_expenses, category_predictions, month_num=12, accuracy_threshold=0.5, correlation_threshold=0.5):
+    distinct_all_expenses['year'] = distinct_all_expenses['date'].dt.year
+    distinct_all_expenses['month'] = distinct_all_expenses['date'].dt.month
+
+    last_year = distinct_all_expenses['date'].max().year
+    last_month = distinct_all_expenses['date'].max().month
+
+    for category, group in distinct_all_expenses.groupby('category'):
+        monthly_spending = group.groupby(['year', 'month'])['amount'].sum().reset_index()
+
+        if len(monthly_spending) >= 3:
+            monthly_spending['time_index'] = range(1, len(monthly_spending) + 1)
+            X = monthly_spending[['time_index']]
+            y = monthly_spending['amount']
+
+            scaler = StandardScaler()
+            X_scaled = scaler.fit_transform(X)
+
+            model = LinearRegression()
+            model.fit(X_scaled, y)
+
+            y_pred = model.predict(X_scaled)
+            r2 = r2_score(y, y_pred)
+            correlation = np.corrcoef(y, y_pred)[0, 1]
+
+            if r2 >= accuracy_threshold and correlation >= correlation_threshold:
+                next_year, next_month = (last_year, last_month + 1) if last_month < 12 else (last_year + 1, 1)
+
+                next_time_index = X['time_index'].max() + 1
+                category_predictions[category] = []
+
+                for _ in range(month_num):
+                    next_time_index_df = pd.DataFrame([[next_time_index]], columns=['time_index'])
+                    next_time_index_scaled = scaler.transform(next_time_index_df)
+                    prediction = model.predict(next_time_index_scaled)[0]
+                    prediction = max(0, prediction)
+
+                    category_predictions[category].append({
+                        'year': int(next_year),
+                        'month': calendar.month_name[next_month],
+                        'predicted_spending': round(float(prediction), 2),
+                        'accuracy': float(r2),
+                        'correlation': float(correlation)
                     })
 
                     next_month += 1
@@ -417,6 +466,7 @@ def analyze_expenses():
     advice = []
     smart_insights = []
     predictions = []
+    category_predictions = {}
     spending_clustering = []
     frequency_clustering = []
     association_rules = []
@@ -457,9 +507,11 @@ def analyze_expenses():
         advice.append(f"You're overspending on '{combined_categories}'. Stop spending to avoid risks.")
 
     # predicted_next_month = weighted_average(distinct_all_expenses, expenses, predicted_current_month) if len(distinct_all_expenses) >= 5 and len(expenses) >= 5 else None
-    linear_regression(distinct_all_expenses, expenses, predicted_current_month, predictions) if len(distinct_all_expenses) >= 5 and len(expenses) >= 5 else None
     
-
+    if len(distinct_all_expenses) >= 5:
+        linear_regression(distinct_all_expenses, predictions)
+        category_linear_regression(distinct_all_expenses, category_predictions)
+    
     if len(expenses) >= 5:
         kmeans_clustering(expenses, smart_insights)
         spending_kmeans_clustering(expenses, spending_clustering)
@@ -487,6 +539,7 @@ def analyze_expenses():
     result = {
         'predicted_current_month': predicted_current_month,
         'predictions': predictions,
+        'category_predictions': category_predictions,
         'category_limits': category_limits_dict,
         'advice': advice,
         'smart_insights': smart_insights,

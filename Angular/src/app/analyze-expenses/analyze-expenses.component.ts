@@ -16,6 +16,7 @@ export class AnalyzeExpensesComponent implements OnInit {
   analysis: any = {};
   chart: any;
   categoryChart: any;
+  selectedPredictionType: string = 'Total';
   selectedMonths: number = 6;
   isSpendingClusteringView: boolean = true;
   isFrequencyClusteringView: boolean = false;
@@ -63,6 +64,18 @@ export class AnalyzeExpensesComponent implements OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  getAccuracy(): number {
+    let accuracy = this.selectedPredictionType === 'Total' 
+      ? this.analysis?.predictions?.[0]?.accuracy 
+      : this.analysis?.category_predictions?.[this.selectedPredictionType]?.[0]?.accuracy;
+  
+    return accuracy ? accuracy * 100 : 0;
+  }
+
+  getCategoryKeys(): string[] {
+    return this.analysis.category_predictions ? Object.keys(this.analysis.category_predictions) : [];
   }
 
   goToPrevView() {

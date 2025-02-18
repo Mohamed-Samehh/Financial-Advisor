@@ -227,26 +227,70 @@
         This model predicts future expenses by analyzing <b>past spending patterns</b> in your financial history, forecasting up to <b>12 months</b> ahead.
       </p>
 
-      <!-- Prediction Accuracy and Correlation -->
+      <!-- Prediction Accuracy -->
       <div class="text-center text-muted mb-3">
-        <p><b>Prediction Accuracy:</b> {{ analysis.predictions[0]?.accuracy * 100 | number:'1.1-1' }}%</p>
-        <!-- <p><b>Correlation with Past Data (Scale: -1 to 1):</b> {{ analysis.predictions[0]?.correlation | number:'1.2-3' }}</p> -->
+        <p>
+          <b>Prediction Accuracy:</b>
+          <span [ngClass]="{
+            'text-danger fw-semibold': getAccuracy() < 60,
+            'text-warning fw-semibold': getAccuracy() >= 60 && getAccuracy() < 80,
+            'text-success fw-semibold': getAccuracy() >= 80
+          }">
+            {{ getAccuracy() | number:'1.1-1' }}%
+          </span>
+        </p>
+      </div>
+
+      <!-- Prediction Type Selection -->
+      <div class="text-center text-muted mb-3">
+        <!-- Dropdown Button -->
+        <div class="dropdown d-inline-block">
+          <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="fw-semibold">Prediction for</span>&nbsp;
+            <div class="text-truncate fw-semibold custome-size">
+              {{ selectedPredictionType }}
+            </div>
+          </button>
+
+          <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+            <li>
+              <a class="dropdown-item custom-colored" href="javascript:void(0)" (click)="selectedPredictionType = 'Total'">
+                Total
+              </a>
+            </li>
+            <li *ngFor="let category of getCategoryKeys()">
+              <a class="dropdown-item custom-colored" href="javascript:void(0)" (click)="selectedPredictionType = category">
+                {{ category }}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Month Selection -->
       <div class="text-center text-muted mb-4">
-        <label for="monthSelect" class="me-2"><b>Show Predictions for:</b></label>
-        <select id="monthSelect" class="form-select d-inline-block w-auto" [(ngModel)]="selectedMonths">
-          <option [value]="3">3 months</option>
-          <option [value]="6">6 months</option>
-          <option [value]="9">9 months</option>
-          <option [value]="12">12 months</option>
-        </select>
+        <!-- Dropdown Button -->
+        <div class="dropdown d-inline-block">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="monthDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="small">Show for {{ selectedMonths }} months</span>
+          </button>
+
+          <ul class="dropdown-menu" aria-labelledby="monthDropdown">
+            <li *ngFor="let months of [3, 6, 9, 12]">
+              <a class="dropdown-item custom-colored" href="javascript:void(0)" (click)="selectedMonths = months">
+                {{ months }} months
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Prediction Cards -->
       <div class="d-flex flex-wrap justify-content-center gap-3">
-        <div *ngFor="let prediction of analysis.predictions.slice(0, selectedMonths)" class="card shadow-sm p-3 text-center" style="width: 250px;">
+        <div *ngFor="let prediction of (selectedPredictionType === 'Total' 
+                                        ? analysis.predictions 
+                                        : analysis.category_predictions?.[selectedPredictionType])?.slice(0, selectedMonths)" 
+            class="card shadow-sm p-3 text-center" style="width: 250px;">
           <h6 class="text-muted">{{ prediction.month }} {{ prediction.year }}</h6>
           <p class="fs-5 fw-bold text-primary">E£{{ formatNumber(prediction.predicted_spending) }}</p>
         </div>
@@ -254,6 +298,7 @@
     </div>
   </div>
 
+  <!-- AI-Based Analysis -->
   <div *ngIf="analysis.spending_clustering?.length || analysis.frequency_clustering?.length || analysis.association_rules?.length" class="card shadow-lg border-0 mb-4">
     <div class="card-body p-5">
       <h4 class="text-center text-muted fw-bold mb-3">AI-Based Analysis</h4>
