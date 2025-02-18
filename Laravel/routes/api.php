@@ -12,7 +12,6 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/check-token-expiry', [AuthController::class, 'checkTokenExpiry']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-Route::post('/chatbot', [ChatbotController::class, 'chat']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -46,4 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
     Route::get('/categories/suggest', [CategoryController::class, 'suggestCategoryPriorities']);
     Route::get('/categories/label', [CategoryController::class, 'labelCategories']);
+
+    Route::post('/chatbot', [ChatbotController::class, 'chat']);
 });

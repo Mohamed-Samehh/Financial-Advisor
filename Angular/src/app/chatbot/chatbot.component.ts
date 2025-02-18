@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ApiService } from '../api.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { marked } from 'marked';
 
 @Component({
   selector: 'app-chatbot',
@@ -31,7 +32,7 @@ export class ChatbotComponent {
       (response) => {
         this.loading = false;
         if (response.message) {
-          this.messages.push({ role: 'bot', content: response.message });
+          this.messages.push({ role: 'bot', content: this.formatResponse(response.message) });
         } else {
           this.messages.push({ role: 'bot', content: 'No response received.' });
         }
@@ -42,5 +43,11 @@ export class ChatbotComponent {
         console.error('Error:', error);
       }
     );
+  }
+
+  // Convert Markdown to HTML using marked.js
+  formatResponse(text: string): string {
+    const result = marked.parse(text);
+    return typeof result === 'string' ? result : '';
   }
 }

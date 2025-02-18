@@ -13,13 +13,14 @@ export class ApiService {
   getHeaders() {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
   }
 
-  // "OpenChat 3.5 7B" Chatbot
-  sendChatMessage(message: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/chatbot`, { message });
+   // Send chat message to chatbot
+   sendChatMessage(message: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/chatbot`, { message }, { headers: this.getHeaders() });
   }
 
   // Budget

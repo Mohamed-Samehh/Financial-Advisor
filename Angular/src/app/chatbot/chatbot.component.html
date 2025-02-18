@@ -1,24 +1,25 @@
 <div class="container mt-5 mb-4">
-  <h2 class="text-center text-primary display-4 mb-4">AI-Chatbot</h2>
+  <h2 class="text-center text-primary display-4 mb-4">AI Financial Chatbot</h2>
 
   <!-- Chat Interface -->
   <div *ngIf="messages.length > 0" class="card shadow-lg border-0 mb-4 bg-light">
     <div class="card-body p-4" style="max-height: 400px; overflow-y: auto;">
       <div *ngFor="let msg of messages" [ngClass]="{'text-end': msg.role === 'user', 'text-start': msg.role === 'bot'}">
-        <div class="d-inline-block p-3 mb-2 rounded shadow-sm" [ngClass]="{'bg-primary text-white': msg.role === 'user', 'bg-light text-dark': msg.role === 'bot'}">
-          {{ msg.content }}
+        <div class="d-inline-block p-3 mb-2 rounded shadow-sm" 
+             [ngClass]="{'bg-primary text-white': msg.role === 'user', 'bg-light text-dark': msg.role === 'bot'}"
+             [innerHTML]="msg.content">
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Input Box with Border -->
+  <!-- Input Box -->
   <div class="input-group mt-5 mb-4 border rounded-3 p-2">
     <input 
       type="text" 
       [(ngModel)]="userMessage" 
       class="form-control form-control-lg border-0 rounded-3" 
-      placeholder="Ask about finance, savings, investments, or anything else!" 
+      placeholder="Ask for anything!" 
       (keyup.enter)="sendMessage()">
       
     <button 
@@ -42,6 +43,6 @@
 
   <!-- Footer -->
   <div class="text-center mt-5">
-    <small class="text-muted">Powered by OpenChat 3.5</small>
+    <small class="text-muted">Powered by Dolphin3.0 Mistral</small>
   </div>
 </div>

@@ -158,14 +158,58 @@ def labeling_endpoint():
     return jsonify({'labaled_categories': labaled_categories})
 
 
-# API endpoint for calling LLM "OpenChat 3.5 7B"
+# API endpoint for calling LLM "Dolphin3.0 Mistral"
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get("message")
     api_key = request.json.get("api_key")
+    user_name = request.json.get("name")
+    budget = request.json.get("budget")
+    goal_name = request.json.get("goal_name")
+    goal_amount = request.json.get("goal_amount")
+    categories = request.json.get("categories")
+    total_spent = request.json.get("total_spent")
+    last_spent_date = request.json.get("last_spent_date")
 
     if not user_message or not api_key:
         return jsonify({"error": "Message and API key are required"}), 400
+
+    # Default values if not provided
+    user_name = user_name if user_name else "User"
+    budget_text = f"Your monthly budget is {budget} EGP." if budget else "You haven't provided a budget."
+    goal_text = f"Your goal is to save E£{goal_amount} EGP for '{goal_name}' from your monthly budget." if goal_amount else "No savings goal set."
+    spent_text = f"You've spent {total_spent} EGP so far this month." if total_spent else "No spending this month."
+
+    # Format category spending details
+    if categories:
+        category_text = "Here is a breakdown of your spending by category:\n"
+        for category in categories:
+            category_text += f"- **{category['name']}** (Priority {category['priority']}): {category['total_spent']} EGP\n"
+    else:
+        category_text = "No category spending data available."
+
+    # Construct the system prompt
+    system_prompt = (
+        f"You are a financial assistant chatbot. Your role is to provide clear and actionable financial advice, "
+        f"including budgeting, spending analysis, savings strategies, and investment insights. "
+        f"Always ensure responses are structured, easy to understand, and practical.\n\n"
+        
+        f"### System Explanation:\n"
+        f"The user sets a goal amount, which represents the amount of money that should remain at the end of the current month. "
+        f"Your task is to analyze the user's budget, spending habits, and financial goals to provide recommendations that help them achieve this target. "
+        f"Advise on spending adjustments, savings strategies, and areas where they might cut unnecessary expenses to ensure they meet their goal.\n\n"
+        
+        f"### User's Financial Overview:\n\n"
+        f"- **Name:** {user_name}\n"
+        f"- **{budget_text}**\n"
+        f"- **{goal_text}**\n"
+        f"- **{spent_text}**\n\n"
+        f"- **Last spending date:** {last_spent_date}\n\n"
+        f"{category_text}\n\n"
+        
+        f"Based on this information, provide personalized financial insights and suggestions to help the user manage their budget effectively. "
+        f"If the user asks a question unrelated to finance, don't do what is asked and respond with: 'I am a financial assistant and can only answer finance-related questions.'"
+    )
 
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -175,12 +219,10 @@ def chat():
     }
 
     data = json.dumps({
-        "model": "openchat/openchat-7b:free",
-        "messages": [
-            {
-                "role": "user",
-                "content": user_message
-            }
+        "model": "cognitivecomputations/dolphin3.0-mistral-24b:free",
+         "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message}
         ]
     })
 
