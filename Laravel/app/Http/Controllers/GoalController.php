@@ -43,7 +43,7 @@ class GoalController extends Controller
         // Validate the input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:0',
+            'target_amount' => 'required|numeric|min:1',
         ]);
 
         $goal = Goal::create([
@@ -88,7 +88,7 @@ class GoalController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:0',
+            'target_amount' => 'required|numeric|min:1',
         ]);
 
         $goal->update($validated);

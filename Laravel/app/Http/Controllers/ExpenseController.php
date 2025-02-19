@@ -36,7 +36,7 @@ class ExpenseController extends Controller
     {
         $request->validate([
             'category' => 'required|exists:categories,name',
-            'amount' => 'required|numeric',
+            'amount' => 'required|numeric|min:1',
             'date' => 'required|date',
             'description' => 'nullable|string',
         ]);
@@ -88,7 +88,7 @@ class ExpenseController extends Controller
 
         $request->validate([
             'category' => 'sometimes|exists:categories,name',
-            'amount' => 'sometimes|numeric',
+            'amount' => 'sometimes|numeric|min:1',
             'date' => 'sometimes|date',
             'description' => 'nullable|string',
         ]);

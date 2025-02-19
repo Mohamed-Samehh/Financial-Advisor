@@ -32,14 +32,14 @@ class ChatbotController extends Controller
             ->whereYear('created_at', Carbon::now()->year)
             ->whereMonth('created_at', Carbon::now()->month)
             ->first();
-        $monthlyBudget = $budget->monthly_budget;
+        $monthlyBudget = $budget->monthly_budget ?? 0;
 
         $goal = Goal::where('user_id', $user->id)
             ->whereYear('created_at', Carbon::now()->year)
             ->whereMonth('created_at', Carbon::now()->month)
             ->first();
-        $goalName = $goal->name;
-        $goalAmount = $goal->target_amount;
+        $goalName = $goal->name ?? "Unnamed Goal";
+        $goalAmount = $goal->target_amount ?? 0;
 
         $totalSpent = Expense::where('user_id', $user->id)
             ->whereYear('date', Carbon::now()->year)

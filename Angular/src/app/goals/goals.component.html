@@ -64,7 +64,7 @@
             class="form-control form-control-lg"
             placeholder="Enter the target amount"
             required
-            min="0"
+            min="1"
             #targetAmount="ngModel"
             [ngClass]="{
               'is-valid': targetAmount.valid && (targetAmount.dirty || targetAmount.touched || submitted),
@@ -73,7 +73,7 @@
           />
           <div *ngIf="targetAmount.invalid && (targetAmount.dirty || targetAmount.touched || submitted)" class="text-danger">
             <div *ngIf="targetAmount.errors?.['required']">Target Amount is required.</div>
-            <div *ngIf="targetAmount.errors?.['min']">Target Amount cannot be negative.</div>
+            <div *ngIf="targetAmount.errors?.['min']">Target Amount must be greater than 0.</div>
           </div>
         </div>
 
