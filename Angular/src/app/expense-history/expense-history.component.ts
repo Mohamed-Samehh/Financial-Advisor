@@ -28,6 +28,11 @@ export class ExpenseHistoryComponent implements OnInit {
   constructor(private apiService: ApiService, private decimalPipe: DecimalPipe) {}
 
   ngOnInit() {
+    const currentMonth = new Date().getMonth();
+    if (currentMonth === 0) {
+      this.totalPages = 2; // 2 pages only if it's January
+    }
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.loadExpenseHistory();
   }
 

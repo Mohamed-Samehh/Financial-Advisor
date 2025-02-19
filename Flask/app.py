@@ -29,21 +29,32 @@ def predictive_insights(expenses):
 
 
 # Generate weights with exponential decay
-def generate_weights(length, decay_factor=0.95):
+def generate_weights(length, decay_factor=0.9):
     return [decay_factor ** (length - i - 1) for i in range(length)]
 
 
 # Predict spending using weighted average
-def weighted_average(all_expenses):
-    all_expenses['date'] = pd.to_datetime(all_expenses['date'])
-    all_expenses['month'] = all_expenses['date'].dt.month
-    all_expenses['year'] = all_expenses['date'].dt.year
+def weighted_average(distinct_all_expenses, expenses, predicted_current_month):
+    distinct_all_expenses['date'] = pd.to_datetime(distinct_all_expenses['date'])
+    distinct_all_expenses['month'] = distinct_all_expenses['date'].dt.month
+    distinct_all_expenses['year'] = distinct_all_expenses['date'].dt.year
 
-    monthly_spending = all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
+    current_year = expenses['date'].max().year
+    current_month = expenses['date'].max().month
+
+    monthly_spending = distinct_all_expenses.groupby(['year', 'month'])['amount'].sum().reset_index()
+
+    if predicted_current_month is not None:
+        monthly_spending = pd.concat([
+            monthly_spending,
+            pd.DataFrame({'year': [current_year], 'month': [current_month], 'amount': [predicted_current_month]})
+        ], ignore_index=True)
+
     if len(monthly_spending) >= 2:
         weights = generate_weights(len(monthly_spending))
         weighted_avg = (monthly_spending['amount'] * weights).sum() / sum(weights)
         return round(weighted_avg, 2)
+
     return None
 
 
@@ -150,7 +161,19 @@ def analyze_expenses():
     goal_amount = data['goal_amount']
     total_spent = data['total_spent']
     allowed_spending = monthly_budget - goal_amount
-    distinct_all_expenses = all_expenses[~all_expenses.index.isin(expenses.index)]
+
+    expenses['date'] = pd.to_datetime(expenses['date'])
+    all_expenses['date'] = pd.to_datetime(all_expenses['date'])
+
+    # Creating a copy of 'expenses' to avoid modifying the original DataFrame (Error)
+    expenses_copy = expenses.copy()
+
+    current_year = expenses_copy['date'].max().year
+    current_month = expenses_copy['date'].max().month
+    distinct_all_expenses = all_expenses[~((all_expenses['date'].dt.year == current_year) & 
+                                        (all_expenses['date'].dt.month == current_month))].copy()
+    distinct_all_expenses['month'] = distinct_all_expenses['date'].dt.month
+    
 
     # Assign limits to categories
     expenses['priority'] = expenses['category'].map(dict(zip(categories['name'], categories['priority']))).fillna(-1)
@@ -196,7 +219,7 @@ def analyze_expenses():
         combined_categories = "', '".join(over_budget_categories['category'])
         advice.append(f"You're overspending on '{combined_categories}'. Stop spending to avoid risks.")
 
-    predicted_next_month = weighted_average(all_expenses) if len(distinct_all_expenses) >= 5 else None
+    predicted_next_month = weighted_average(distinct_all_expenses, expenses, predicted_current_month) if len(distinct_all_expenses) >= 5 and len(expenses) >= 5 else None
 
     if len(expenses) >= 5:
         kmeans_clustering(expenses, smart_insights)
