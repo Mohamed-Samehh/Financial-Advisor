@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from ml_models import linear_regression, category_linear_regression, kmeans_clustering, spending_kmeans_clustering, frequency_kmeans_clustering, get_association_rules, Rule_Based_labeling
 from business_logic import assign_limits, predictive_insights, analyze_spending_variability, analyze_spending_deviations, day_of_week_analysis
 import pandas as pd
+from datetime import datetime
 import requests
 import json
 
@@ -46,6 +47,9 @@ def analyze_expenses():
     # Assign limits to categories
     expenses['priority'] = expenses['category'].map(dict(zip(categories['name'], categories['priority']))).fillna(-1)
     category_limits = assign_limits(categories, allowed_spending)
+    goal_row = pd.DataFrame([{'name': 'Goal', 'limit': goal_amount}])
+    category_limits = pd.concat([goal_row, category_limits], ignore_index=True)
+
     category_totals = expenses.groupby('category')['amount'].sum().reset_index()
     category_totals = category_totals.merge(category_limits, left_on='category', right_on='name', how='left')
 
@@ -158,7 +162,7 @@ def labeling_endpoint():
     return jsonify({'labaled_categories': labaled_categories})
 
 
-# API endpoint for calling LLM "Dolphin3.0 Mistral"
+# API endpoint for calling LLM "Gemini Flash 2.0 Experimental"
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get("message")
@@ -169,7 +173,7 @@ def chat():
     goal_amount = request.json.get("goal_amount")
     categories = request.json.get("categories")
     total_spent = request.json.get("total_spent")
-    last_spent_date = request.json.get("last_spent_date")
+    daily_expenses = request.json.get("daily_expenses")
 
     if not user_message or not api_key:
         return jsonify({"error": "Message and API key are required"}), 400
@@ -180,7 +184,13 @@ def chat():
     goal_text = f"Your goal is to save E£{goal_amount} EGP for '{goal_name}' from your monthly budget." if goal_amount else "No savings goal set."
     spent_text = f"You've spent {total_spent} EGP so far this month." if total_spent else "No spending this month."
 
-    # Format category spending details
+    if daily_expenses:
+        daily_spending_text = "Here is a breakdown of your daily spending for the current month:\n"
+        for day, spent in daily_expenses.items():
+            daily_spending_text += f"- **{datetime.strptime(day, '%Y-%m-%d').strftime('%B %d')}:** {spent} EGP\n"
+    else:
+        daily_spending_text = "No daily spending data available."
+
     if categories:
         category_text = "Here is a breakdown of your spending by category:\n"
         for category in categories:
@@ -193,22 +203,27 @@ def chat():
         f"You are a financial assistant chatbot. Your role is to provide clear and actionable financial advice, "
         f"including budgeting, spending analysis, savings strategies, and investment insights. "
         f"Always ensure responses are structured, easy to understand, and practical.\n\n"
-        
+
         f"### System Explanation:\n"
         f"The user sets a goal amount, which represents the amount of money that should remain at the end of the current month. "
         f"Your task is to analyze the user's budget, spending habits, and financial goals to provide recommendations that help them achieve this target. "
         f"Advise on spending adjustments, savings strategies, and areas where they might cut unnecessary expenses to ensure they meet their goal.\n\n"
-        
+
         f"### User's Financial Overview:\n\n"
         f"- **Name:** {user_name}\n"
+        f"- **Nationality:** Egyptian\n"
         f"- **{budget_text}**\n"
         f"- **{goal_text}**\n"
         f"- **{spent_text}**\n\n"
-        f"- **Last spending date:** {last_spent_date}\n\n"
+        
+        f"{daily_spending_text}\n\n"
         f"{category_text}\n\n"
         
+        f"### Important Notes on Categories:\n"
+        f"Lower category priority means higher category importance, where 1 is the most important.\n\n"
+
         f"Based on this information, provide personalized financial insights and suggestions to help the user manage their budget effectively. "
-        f"If the user asks a question unrelated to finance, don't do what is asked and respond with: 'I am a financial assistant and can only answer finance-related questions.'"
+        f"If the user asks a question unrelated to finance, respond with: 'I am a financial assistant and can only answer finance-related questions.'"
     )
 
     headers = {
@@ -219,7 +234,7 @@ def chat():
     }
 
     data = json.dumps({
-        "model": "cognitivecomputations/dolphin3.0-mistral-24b:free",
+        "model": "google/gemini-2.0-flash-exp:free",
          "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}

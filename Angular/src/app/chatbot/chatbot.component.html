@@ -2,37 +2,43 @@
   <h2 class="text-center text-primary display-4 mb-4">AI Financial Chatbot</h2>
 
   <!-- Chat Interface -->
-  <div *ngIf="messages.length > 0" class="card shadow-lg border-0 mb-4 bg-light">
-    <div class="card-body p-4" style="max-height: 400px; overflow-y: auto;">
-      <div *ngFor="let msg of messages" [ngClass]="{'text-end': msg.role === 'user', 'text-start': msg.role === 'bot'}">
-        <div class="d-inline-block p-3 mb-2 rounded shadow-sm" 
-             [ngClass]="{'bg-primary text-white': msg.role === 'user', 'bg-light text-dark': msg.role === 'bot'}"
-             [innerHTML]="msg.content">
+  <div *ngIf="messages.length > 0" class="card shadow-lg border-0 mb-4 bg-light resizable-chat">
+    <div class="card-body p-4">
+      <div *ngFor="let msg of messages; let i = index" 
+          [ngClass]="{'text-end': msg.role === 'user', 'text-start': msg.role === 'bot'}"
+          [style.marginTop]="i > 0 && messages[i - 1].role !== msg.role ? '15px' : '5px'">
+        
+        <div class="message-container"
+            [ngClass]="{'user-message': msg.role === 'user', 'bot-message': msg.role === 'bot'}"
+            [innerHTML]="msg.role === 'user' ? formatMessage(msg.content) : msg.content">
         </div>
+
       </div>
     </div>
   </div>
 
   <!-- Input Box -->
-  <div class="input-group mt-5 mb-4 border rounded-3 p-2">
-    <input 
-      type="text" 
-      [(ngModel)]="userMessage" 
-      class="form-control form-control-lg border-0 rounded-3" 
-      placeholder="Ask for anything!" 
-      (keyup.enter)="sendMessage()">
-      
+  <div class="input-group mt-5 mb-3 border rounded-3 p-2 d-flex align-items-end flex-wrap">
+    <!-- (keyup.enter)="sendMessage()" -->
+    <textarea
+      [(ngModel)]="userMessage"
+      class="form-control border-0 rounded-3 p-2"
+      placeholder="Ask for anything!"
+      rows="1"
+      style="resize: none; overflow-y: hidden; min-height: 40px; height: auto; width: 85%;"
+      (input)="adjustHeight($event)">
+    </textarea>
+
     <button 
-      class="btn btn-primary btn-lg px-4 ms-2 rounded-3" 
+      class="btn btn-primary px-3 py-2 ms-2 rounded-3 d-flex align-items-center justify-content-center"
       [disabled]="loading" 
       (click)="sendMessage()">
         
       <span *ngIf="!loading">Send</span>
       
-      <span *ngIf="loading" class="d-flex align-items-center justify-content-center">
+      <span *ngIf="loading">
         <div class="spinner-border spinner-border-sm" role="status"></div>
       </span>
-      
     </button>
   </div>
 
@@ -43,6 +49,6 @@
 
   <!-- Footer -->
   <div class="text-center mt-5">
-    <small class="text-muted">Powered by Dolphin3.0 Mistral</small>
+    <small class="text-muted">Powered by Gemini Flash 2.0</small>
   </div>
 </div>

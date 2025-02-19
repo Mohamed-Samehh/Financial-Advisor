@@ -45,13 +45,16 @@ class ChatbotController extends Controller
             ->whereYear('date', Carbon::now()->year)
             ->whereMonth('date', Carbon::now()->month)
             ->sum('amount');
-
-        $lastExpense = Expense::where('user_id', $user->id)
-            ->whereYear('date', Carbon::now()->year)
-            ->whereMonth('date', Carbon::now()->month)
-            ->orderBy('date', 'desc')
-            ->first();
-            $lastSpentDate = $lastExpense ? Carbon::parse($lastExpense->date)->format('F j, Y') : "No spending this month";
+        
+        $dailyExpenses = Expense::where('user_id', $user->id)
+        ->whereYear('date', Carbon::now()->year)
+        ->whereMonth('date', Carbon::now()->month)
+        ->selectRaw('DATE(date) as day, SUM(amount) as total_spent')
+        ->groupBy('day')
+        ->orderBy('day', 'asc')
+        ->get()
+        ->mapWithKeys(fn ($expense) => [$expense->day => $expense->total_spent])
+        ->toArray();
 
         $categories = Category::where('user_id', $user->id)
         ->select('id', 'name', 'priority')
@@ -80,8 +83,7 @@ class ChatbotController extends Controller
             'goal_name' => $goalName,
             'goal_amount' => $goalAmount,
             'total_spent' => $totalSpent,
-            'last_spent_date' => $lastSpentDate,
-            'current_date' => Carbon::now()->format('F j, Y'),
+            'daily_expenses' => $dailyExpenses,
             'categories' => $categoriesArray
         ];
 
@@ -94,7 +96,7 @@ class ChatbotController extends Controller
         }
 
         $responseData = $response->json();
-        $assistantMessage = $responseData['choices'][0]['message']['content'] ?? 'No response received.';
+        $assistantMessage = $responseData['choices'][0]['message']['content'] ?? "I'm sorry, but I couldn't generate a response. Please try again or ask in a different way.";
 
         return response()->json([
             'message' => $assistantMessage

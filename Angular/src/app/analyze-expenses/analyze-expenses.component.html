@@ -198,16 +198,27 @@
 
           <!-- Right Side: Limit Value and Total Spending -->
           <div class="text-end">
-            <span
+            <span *ngIf="category.name != 'Goal'"
               [ngClass]="{
                 'text-success': categoryTotals[category.name] <= category.limit || categoryTotals[category.name] === undefined,
                 'text-danger': categoryTotals[category.name] > category.limit
               }"
               class="d-block"
             >
-              <b>{{ (category.limit / (analysis.monthly_budget - analysis.goal)) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
+              <b>{{ (category.limit / analysis.monthly_budget) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
             </span>
-            <span
+
+            <span *ngIf="category.name == 'Goal'"
+              [ngClass]="{
+                'text-success': analysis.remaining_budget >= category.limit || categoryTotals[category.name] === undefined,
+                'text-danger': analysis.remaining_budget < category.limit
+              }"
+              class="d-block"
+            >
+              <b>{{ (category.limit / analysis.monthly_budget) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
+            </span>
+
+            <span *ngIf="category.name != 'Goal'"
               class="d-block mt-1 text-muted"
               style="font-size: 14px;"
             >

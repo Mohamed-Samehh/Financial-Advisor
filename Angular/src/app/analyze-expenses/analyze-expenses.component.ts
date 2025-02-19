@@ -44,7 +44,11 @@ export class AnalyzeExpensesComponent implements OnInit {
       }
 
       if (this.analysis.category_limits) {
-        this.analysis.category_limits.sort((a: any, b: any) => b.limit - a.limit);
+        this.analysis.category_limits.sort((a: any, b: any) => {
+          if (a.name === "Goal") return -1;
+          if (b.name === "Goal") return 1;
+          return b.limit - a.limit;
+        });
       }
 
       if (this.analysis?.association_rules) {

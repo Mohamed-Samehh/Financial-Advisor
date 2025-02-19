@@ -34,7 +34,7 @@ export class ChatbotComponent {
         if (response.message) {
           this.messages.push({ role: 'bot', content: this.formatResponse(response.message) });
         } else {
-          this.messages.push({ role: 'bot', content: 'No response received.' });
+          this.messages.push({ role: 'bot', content: "I'm sorry, but I couldn't generate a response. Please try again or ask in a different way." });
         }
       },
       (error) => {
@@ -43,6 +43,26 @@ export class ChatbotComponent {
         console.error('Error:', error);
       }
     );
+
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = "40px";
+    }
+  }
+
+  adjustHeight(event: any) {
+    const textarea = event.target;
+
+    if (!textarea.value.trim()) {
+      textarea.style.height = "40px";
+    } else {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }
+
+  formatMessage(content: string): string {
+    return content.replace(/\n/g, '<br>');
   }
 
   // Convert Markdown to HTML using marked.js
