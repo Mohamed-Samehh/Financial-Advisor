@@ -72,13 +72,13 @@ def analyze_expenses():
             advice.append("You've spent more than your goal allows.")
 
             if predicted_current_month is not None and predicted_current_month > monthly_budget:
-                advice.append("You're predicted to exceed your monthly budget.")
+                advice.append("Your spending is estimated to exceed your monthly budget.")
         
         elif predicted_current_month is not None and predicted_current_month > monthly_budget:
-            advice.append("You're predicted to exceed your monthly budget.")
+            advice.append("Your spending is estimated to exceed your monthly budget.")
 
         elif predicted_current_month is not None and predicted_current_month > allowed_spending:
-            advice.append("You're predicted to spend more than your goal allows.")
+            advice.append("Your spending is estimated to be more than what your goal allows.")
 
     else:
         advice.append('No goal was set for this month.')
@@ -87,7 +87,7 @@ def analyze_expenses():
             advice.append("You've exceeded your monthly budget!")
 
         elif predicted_current_month is not None and predicted_current_month > monthly_budget:
-            advice.append("You're predicted to exceed your monthly budget.")
+            advice.append("Your spending is estimated to exceed your monthly budget.")
 
 
     over_budget_categories = category_totals[category_totals['amount'] > category_totals['limit']]

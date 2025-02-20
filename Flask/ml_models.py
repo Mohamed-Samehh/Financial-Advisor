@@ -137,7 +137,7 @@ def kmeans_clustering(expenses, smart_insights):
 
         if top_categories:
             combined_categories = "', '".join(top_categories)
-            smart_insights.append(f"Consider monitoring expenses in '{combined_categories}', as they show a high spending pattern.")
+            smart_insights.append(f"Consider monitoring expenses in '{combined_categories}', as they have the most expenses that are considered 'High'.")
 
 
 # KMeans clustering to group "categories" based on total spending
