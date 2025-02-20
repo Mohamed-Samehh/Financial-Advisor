@@ -109,3 +109,16 @@
   background-color: #fa172a;
   color: white !important;
 }
+
+/* Custom Scrollbar for Navbar */
+.navbar-collapse.menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.navbar-collapse.menu::-webkit-scrollbar-thumb {
+  background: #007bff;
+}
+
+.navbar-collapse.menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
