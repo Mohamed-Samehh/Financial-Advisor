@@ -174,7 +174,7 @@
     <div class="card-body p-4">
       <h4 class="text-center text-muted mb-3"><b>Category Limits</b></h4>
       <p class="text-center text-muted small mb-2">
-        Category limits are determined by their priority, ensuring your spending aligns with your financial goals.
+        Category limits are determined by their priority, ensuring your spending aligns with your budget.
       </p>
 
       <!-- Color Code Explanation -->
@@ -300,10 +300,9 @@
 
       <!-- Prediction Cards -->
       <div class="d-flex flex-wrap justify-content-center gap-3">
-        <div *ngFor="let prediction of (selectedPredictionType === 'Total' 
-                                        ? analysis.predictions 
-                                        : analysis.category_predictions?.[selectedPredictionType])?.slice(0, selectedMonths)" 
-            class="card shadow-sm p-3 text-center" style="width: 250px;">
+        <div class="card shadow-sm p-3 text-center" style="width: 300px;"
+        *ngFor="let prediction of (selectedPredictionType === 'Total' ? analysis.predictions 
+        : analysis.category_predictions?.[selectedPredictionType])?.slice(0, selectedMonths)">
           <h6 class="text-muted">{{ prediction.month }} {{ prediction.year }}</h6>
           <p class="fs-5 fw-bold text-primary">E£{{ formatNumber(prediction.predicted_spending) }}</p>
         </div>

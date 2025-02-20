@@ -224,7 +224,7 @@ def chat():
         f"{daily_spending_text}\n\n"
         f"{category_text}\n\n"
 
-        f"### Spending Categories:\n"
+        f"### Important Notes on Categories:\n"
         f"Lower priority values indicate higher importance, with 1 being the most critical.\n\n"
 
         f"### Response Guidelines:\n"
@@ -241,7 +241,7 @@ def chat():
     }
 
     data = json.dumps({
-        "model": "google/gemini-2.0-flash-exp:free",
+        "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
          "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
