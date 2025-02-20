@@ -2,7 +2,7 @@
   <h2 class="text-center text-primary display-4 mb-4">AI Financial Chatbot</h2>
 
   <!-- Chat Interface -->
-  <div *ngIf="messages.length > 0" class="card shadow-lg border-0 mb-4 bg-light resizable-chat">
+  <div *ngIf="messages.length > 0" class="card shadow-lg border-0 mb-4 bg-light chat">
     <div class="card-body p-4">
       <div *ngFor="let msg of messages; let i = index" 
           [ngClass]="{'text-end': msg.role === 'user', 'text-start': msg.role === 'bot'}"
@@ -32,7 +32,10 @@
     <button 
       class="btn btn-primary px-3 py-2 ms-2 rounded-3 d-flex align-items-center justify-content-center"
       [disabled]="loading" 
-      (click)="sendMessage()">
+      (click)="sendMessage()"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="CTRL+Enter">
         
       <span *ngIf="!loading"><i class="fa fa-paper-plane"></i></span>
       

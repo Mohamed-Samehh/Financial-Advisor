@@ -241,7 +241,7 @@ def chat():
     }
 
     data = json.dumps({
-        "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
+        "model": "google/gemini-2.0-flash-exp:free",
          "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}

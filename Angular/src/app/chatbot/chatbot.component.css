@@ -1,27 +1,82 @@
-.resizable-chat {
-  max-height: 400px;
-  min-height: 200px;
-  max-height: 600px;
+.chat {
+  height: auto;
+  max-height: 70vh;
   overflow-y: auto;
-  resize: vertical;
+  border-radius: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  scrollbar-width: thin;
 }
 
 .message-container {
   display: inline-block;
-  border-radius: 15px;
-  padding: 10px 15px;
+  border-radius: 20px;
+  padding: 12px 16px;
   max-width: 75%;
   word-wrap: break-word;
-  text-align: left;
+  font-size: 16px;
+  line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.2s ease-in-out;
 }
 
 .user-message {
-  background-color: var(--bs-primary) !important;
-  color: white !important;
-  direction: ltr !important;
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
+  text-align: left;
+  border-bottom-right-radius: 5px;
 }
 
 .bot-message {
-  background-color: #e3f2fd !important;
-  color: black !important;
+  background-color: #e3f2fd;
+  color: black;
+  text-align: left;
+  border-bottom-left-radius: 5px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 20px;
+}
+
+textarea {
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  transition: none;
+}
+
+textarea:focus,
+textarea:focus-visible,
+textarea:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+button {
+  transition: background 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Custom Scrollbar */
+.chat::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 10px;
+}
+
+.chat::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
