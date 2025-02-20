@@ -173,6 +173,7 @@ def chat():
     goal_amount = request.json.get("goal_amount")
     categories = request.json.get("categories")
     total_spent = request.json.get("total_spent")
+    last_day_month = request.json.get("last_day_month")
     daily_expenses = request.json.get("daily_expenses")
 
     if not user_message or not api_key:
@@ -200,30 +201,36 @@ def chat():
 
     # Construct the system prompt
     system_prompt = (
-        f"You are a financial assistant chatbot. Your role is to provide clear and actionable financial advice, "
-        f"including budgeting, spending analysis, savings strategies, and investment insights. "
-        f"Always ensure responses are structured, easy to understand, and practical.\n\n"
+        f"You are a financial assistant chatbot specializing in budgeting, spending analysis, savings strategies, and investment insights. "
+        f"All recommendations must be tailored to Egypt’s economic conditions, and all currency values should be in Egyptian Pounds (EGP). "
+        f"Your responses should be structured, practical, and easy to understand.\n\n"
 
-        f"### System Explanation:\n"
-        f"The user sets a goal amount, which represents the amount of money that should remain at the end of the current month. "
-        f"Your task is to analyze the user's budget, spending habits, and financial goals to provide recommendations that help them achieve this target. "
-        f"Advise on spending adjustments, savings strategies, and areas where they might cut unnecessary expenses to ensure they meet their goal.\n\n"
+        f"### System Purpose:\n"
+        f"The user sets a savings goal, representing the amount of money they need to have left by the end of the current month. "
+        f"Your role is to analyze their budget, spending patterns, and financial goals to help them achieve this target. "
+        f"Suggest realistic adjustments, cost-cutting strategies, and optimized savings methods based on their financial data.\n\n"
 
-        f"### User's Financial Overview:\n\n"
+        f"### Date Handling Rules:\n"
+        f"- Do not assume the current date unless explicitly provided by the user.\n"
+        f"- When analyzing recent spending trends, always refer to the **last recorded date** from the daily spending data.\n\n"
+
+        f"### User's Financial Overview:\n"
         f"- **Name:** {user_name}\n"
-        f"- **Nationality:** Egyptian\n"
-        f"- **{budget_text}**\n"
-        f"- **{goal_text}**\n"
-        f"- **{spent_text}**\n\n"
-        
+        f"- **Monthly Budget:** {budget_text}\n"
+        f"- **Savings Goal:** {goal_text}\n"
+        f"- **Total Spent This Month:** {spent_text}\n"
+        f"- **Current Budget Cycle Ends On:** {last_day_month}\n\n"
+
         f"{daily_spending_text}\n\n"
         f"{category_text}\n\n"
-        
-        f"### Important Notes on Categories:\n"
-        f"Lower category priority means higher category importance, where 1 is the most important.\n\n"
 
-        f"Based on this information, provide personalized financial insights and suggestions to help the user manage their budget effectively. "
-        f"If the user asks a question unrelated to finance, respond with: 'I am a financial assistant and can only answer finance-related questions.'"
+        f"### Spending Categories:\n"
+        f"Lower priority values indicate higher importance, with 1 being the most critical.\n\n"
+
+        f"### Response Guidelines:\n"
+        f"- Ensure all financial recommendations are aligned with Egypt’s cost of living, banking options, and inflation trends.\n"
+        f"- Provide structured, actionable insights based on the user's budget and spending behavior.\n"
+        f"- If the user asks a question unrelated to finance, respond with: 'I am a financial assistant and can only answer finance-related questions.'"
     )
 
     headers = {

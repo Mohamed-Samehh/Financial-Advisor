@@ -83,6 +83,7 @@ class ChatbotController extends Controller
             'goal_name' => $goalName,
             'goal_amount' => $goalAmount,
             'total_spent' => $totalSpent,
+            'last_day_month' => Carbon::now()->endOfMonth()->format('F j, Y'),
             'daily_expenses' => $dailyExpenses,
             'categories' => $categoriesArray
         ];

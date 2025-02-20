@@ -19,14 +19,14 @@
 
   <!-- Input Box -->
   <div class="input-group mt-5 mb-3 border rounded-3 p-2 d-flex align-items-end flex-wrap">
-    <!-- (keyup.enter)="sendMessage()" -->
     <textarea
       [(ngModel)]="userMessage"
       class="form-control border-0 rounded-3 p-2"
       placeholder="Ask for anything!"
       rows="1"
       style="resize: none; overflow-y: hidden; min-height: 40px; height: auto; width: 85%;"
-      (input)="adjustHeight($event)">
+      (input)="adjustHeight($event)"
+      (keydown)="onKeyDown($event)">
     </textarea>
 
     <button 
@@ -34,7 +34,7 @@
       [disabled]="loading" 
       (click)="sendMessage()">
         
-      <span *ngIf="!loading">Send</span>
+      <span *ngIf="!loading"><i class="fa fa-paper-plane"></i></span>
       
       <span *ngIf="loading">
         <div class="spinner-border spinner-border-sm" role="status"></div>

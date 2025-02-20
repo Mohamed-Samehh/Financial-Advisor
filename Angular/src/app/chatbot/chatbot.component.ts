@@ -61,6 +61,12 @@ export class ChatbotComponent {
     }
   }
 
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.ctrlKey && event.key === 'Enter') {
+      this.sendMessage();
+    }
+  }
+
   formatMessage(content: string): string {
     return content.replace(/\n/g, '<br>');
   }
