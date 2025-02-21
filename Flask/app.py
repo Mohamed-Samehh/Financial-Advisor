@@ -57,6 +57,7 @@ def analyze_expenses():
     smart_insights = []
     predictions = []
     category_predictions = {}
+    expenses_clustering = []
     spending_clustering = []
     frequency_clustering = []
     association_rules = []
@@ -103,7 +104,7 @@ def analyze_expenses():
         category_linear_regression(distinct_all_expenses, category_predictions)
     
     if len(expenses) >= 5:
-        kmeans_clustering(expenses, smart_insights)
+        kmeans_clustering(expenses, smart_insights, expenses_clustering)
         spending_kmeans_clustering(expenses, spending_clustering)
         frequency_kmeans_clustering(expenses, frequency_clustering)
 
@@ -133,6 +134,7 @@ def analyze_expenses():
         'category_limits': category_limits_dict,
         'advice': advice,
         'smart_insights': smart_insights,
+        'expenses_clustering': expenses_clustering,
         'spending_clustering': spending_clustering,
         'frequency_clustering': frequency_clustering,
         'association_rules': association_rules,

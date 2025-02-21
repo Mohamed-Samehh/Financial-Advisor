@@ -409,6 +409,55 @@
         </ng-template>
       </div>
 
+      <!-- Expense Clustering Section -->
+      <div *ngIf="isExpenseClusteringView">
+        <h5 class="text-center text-secondary mb-3 fw-bold">Expense-Based Grouping</h5>
+
+        <!-- Explanation message -->
+        <p class="text-center text-muted small mt-3 mb-4">
+          This model groups expenses based on <b>amount spent</b>, categorizing them into High, Moderate, and Low spending groups.
+        </p>
+
+        <!-- When there is expense clustering data -->
+        <div *ngIf="analysis.expenses_clustering?.length; else noExpenseClustering">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="bg-light">
+                <tr>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Cluster</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Total</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of analysis.expenses_clustering">
+                  <td class="fw-semibold">
+                    <span class="badge px-3 py-2" [ngClass]="{
+                      'bg-success': item.cluster.trim().toLowerCase() === 'low',
+                      'bg-warning text-dark': item.cluster.trim().toLowerCase() === 'moderate',
+                      'bg-danger': item.cluster.trim().toLowerCase() === 'high'
+                    }">
+                      {{ item.cluster }}
+                    </span>
+                  </td>
+                  <td>{{ item.total_expenses | currency:'E£':'symbol':'1.0-0' }}</td>
+                  <td>{{ item.count_of_expenses }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- When there is no expense clustering data -->
+        <ng-template #noExpenseClustering>
+          <div class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+              style="min-height: 300px; border-radius: 10px;">
+            <i class="fa fa-lock text-muted mb-3" style="font-size: 3.5rem;"></i>
+            <p class="text-muted" style="font-size: 1.2rem;">Not enough expenses entered. Add more expenses to unlock.</p>
+          </div>
+        </ng-template>
+      </div>
+
       <!-- Association Rules Section -->
       <div *ngIf="isAssociationRulesView">
         <h5 class="text-center text-secondary mb-3 fw-bold">Frequently Spent Together</h5>
@@ -465,15 +514,27 @@
         <button class="btn btn-outline-secondary px-3 py-2" (click)="goToPrevView()" [disabled]="isSpendingClusteringView">
           <i class="fa fa-arrow-left"></i>
         </button>
-        <button [ngClass]="isSpendingClusteringView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-3' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-3'" (click)="isSpendingClusteringView = true; isFrequencyClusteringView = false; isAssociationRulesView = false">
+
+        <button [ngClass]="isSpendingClusteringView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-3' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-3'" 
+          (click)="isSpendingClusteringView = true; isExpenseClusteringView = false; isFrequencyClusteringView = false; isAssociationRulesView = false">
           1
         </button>
-        <button [ngClass]="isFrequencyClusteringView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-2' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-2'" (click)="isFrequencyClusteringView = true; isSpendingClusteringView = false; isAssociationRulesView = false">
+
+        <button [ngClass]="isFrequencyClusteringView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-2' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-2'" 
+          (click)="isFrequencyClusteringView = true; isSpendingClusteringView = false; isExpenseClusteringView = false; isAssociationRulesView = false">
           2
         </button>
-        <button [ngClass]="isAssociationRulesView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-2' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-2'" (click)="isAssociationRulesView = true; isSpendingClusteringView = false; isFrequencyClusteringView = false">
+
+        <button [ngClass]="isExpenseClusteringView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-2' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-2'" 
+          (click)="isExpenseClusteringView = true; isSpendingClusteringView = false; isFrequencyClusteringView = false; isAssociationRulesView = false">
           3
         </button>
+
+        <button [ngClass]="isAssociationRulesView ? 'btn btn-primary text-white fw-bold px-3 py-2 shadow-sm rounded-pill ms-2' : 'btn btn-outline-primary px-3 py-2 rounded-pill ms-2'" 
+          (click)="isAssociationRulesView = true; isSpendingClusteringView = false; isExpenseClusteringView = false; isFrequencyClusteringView = false">
+          4
+        </button>
+
         <button class="btn btn-outline-secondary px-3 py-2 ms-3" (click)="goToNextView()" [disabled]="isAssociationRulesView">
           <i class="fa fa-arrow-right"></i>
         </button>

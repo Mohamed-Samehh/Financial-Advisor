@@ -20,6 +20,7 @@ export class AnalyzeExpensesComponent implements OnInit {
   selectedMonths: number = 6;
   isSpendingClusteringView: boolean = true;
   isFrequencyClusteringView: boolean = false;
+  isExpenseClusteringView: boolean = false;
   isAssociationRulesView: boolean = false;
   isLoading: boolean = true;
   errorMessage: string | null = null;
@@ -85,23 +86,33 @@ export class AnalyzeExpensesComponent implements OnInit {
   goToPrevView() {
     if (this.isAssociationRulesView) {
       this.isAssociationRulesView = false;
+      this.isExpenseClusteringView = true;
+    } 
+  
+    else if (this.isExpenseClusteringView) {
+      this.isExpenseClusteringView = false;
       this.isFrequencyClusteringView = true;
-    }
-
+    } 
+  
     else if (this.isFrequencyClusteringView) {
       this.isFrequencyClusteringView = false;
       this.isSpendingClusteringView = true;
     }
   }
-
+  
   goToNextView() {
     if (this.isSpendingClusteringView) {
       this.isSpendingClusteringView = false;
       this.isFrequencyClusteringView = true;
-    }
-
+    } 
+  
     else if (this.isFrequencyClusteringView) {
       this.isFrequencyClusteringView = false;
+      this.isExpenseClusteringView = true;
+    } 
+  
+    else if (this.isExpenseClusteringView) {
+      this.isExpenseClusteringView = false;
       this.isAssociationRulesView = true;
     }
   }

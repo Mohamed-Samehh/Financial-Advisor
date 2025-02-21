@@ -114,8 +114,8 @@ def category_linear_regression(distinct_all_expenses, category_predictions, mont
                     next_time_index += 1
 
 
-# KMenas clustering to group "expenses" based on amount spent and frequency (in the highest spending cluster)
-def kmeans_clustering(expenses, smart_insights):
+# KMenas clustering to group "expenses" based on amount spent
+def kmeans_clustering(expenses, smart_insights, expenses_clustering=[]):
     scaler = StandardScaler()
 
     unique_values = expenses['amount'].nunique()
@@ -126,13 +126,25 @@ def kmeans_clustering(expenses, smart_insights):
         clusters = kmeans.fit_predict(expenses[['normalized_amount']])
         expenses['cluster'] = clusters
 
+        cluster_totals = expenses.groupby('cluster')['amount'].sum().astype(float)
+        cluster_counts = expenses['cluster'].value_counts().astype(int)
         cluster_averages = expenses.groupby('cluster')['normalized_amount'].mean()
-        highest_spending_cluster = cluster_averages.idxmax()
+        highest_spending_cluster = int(cluster_averages.idxmax())
+        lowest_spending_cluster = int(cluster_averages.idxmin())
+
+        for cluster_id, total in cluster_totals.items():
+            count = int(cluster_counts[cluster_id])
+            if cluster_id == highest_spending_cluster:
+                category = "High"
+            elif cluster_id == lowest_spending_cluster:
+                category = "Low"
+            else:
+                category = "Moderate"
+            
+            expenses_clustering.append({"cluster": category, "count_of_expenses": count, "total_expenses": float(total),})
 
         highest_cluster_data = expenses[expenses['cluster'] == highest_spending_cluster]
-
         category_counts = highest_cluster_data['category'].value_counts()
-
         top_categories = category_counts.head(4).index.tolist()
 
         if top_categories:

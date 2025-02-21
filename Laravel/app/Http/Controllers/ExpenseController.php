@@ -229,6 +229,7 @@ class ExpenseController extends Controller
             'category_limits' => $result['category_limits'] ?? [],
             'advice' => $result['advice'] ?? [],
             'smart_insights' => $result['smart_insights'] ?? [],
+            'expenses_clustering' => $result['expenses_clustering'] ?? [],
             'spending_clustering' => $result['spending_clustering'] ?? [],
             'frequency_clustering' => $result['frequency_clustering'] ?? [],
             'association_rules'=> $result['association_rules'] ?? [],
