@@ -20,7 +20,9 @@ class GoalController extends Controller
     {
         $user = $request->user();
 
-        $goals = Goal::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $goals = Goal::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json(['goals' => $goals], 200);
     }

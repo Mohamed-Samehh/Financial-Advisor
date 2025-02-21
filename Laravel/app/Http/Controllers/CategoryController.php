@@ -125,7 +125,6 @@ class CategoryController extends Controller
         $user = $request->user();
 
         $pastExpenses = Expense::where('user_id', $user->id)
-            ->whereYear('date', '>', Carbon::now()->subYears(3)->year)
             ->whereDate('date', '<', Carbon::now()->startOfMonth())
             ->orderBy('date', 'desc')
             ->get();
@@ -181,7 +180,6 @@ class CategoryController extends Controller
         $user = $request->user();
 
         $pastExpenses = Expense::where('user_id', $user->id)
-            ->whereYear('date', '>', Carbon::now()->subYears(3)->year)
             ->whereDate('date', '<', Carbon::now()->startOfMonth())
             ->orderBy('date', 'desc')
             ->get();
