@@ -140,6 +140,9 @@ export class UserProfileComponent implements OnInit {
           this.submittedPassword = false;
           this.updatePasswordForm.reset();
           this.loadingUpdatePassword = false;
+          this.isCurrentPasswordFilled = false;
+          this.isNewPasswordFilled = false;
+          this.isConfirmPasswordFilled = false;
         },
         error: (err) => {
           this.updatePasswordError = err.error?.message || 'Current password is incorrect.';
