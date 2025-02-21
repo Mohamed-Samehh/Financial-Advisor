@@ -56,6 +56,38 @@ class ExpenseController extends Controller
         ], 201);
     }
 
+    // Store multiple expenses at once
+    public function storeMany(Request $request)
+    {
+        $request->validate([
+            'expenses' => 'required|array|min:1',
+            'expenses.*.category' => 'required|exists:categories,name',
+            'expenses.*.amount' => 'required|numeric|min:1',
+            'expenses.*.date' => 'required|date',
+            'expenses.*.description' => 'nullable|string',
+        ]);
+
+        $user = $request->user();
+        $createdExpenses = [];
+
+        foreach ($request->expenses as $expenseData) {
+            $category = Category::where('name', $expenseData['category'])->first();
+
+            $createdExpenses[] = Expense::create([
+                'user_id' => $user->id,
+                'category' => $category->name,
+                'amount' => $expenseData['amount'],
+                'description' => $expenseData['description'] ?? null,
+                'date' => $expenseData['date'],
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Expenses added successfully',
+            'expenses' => $createdExpenses
+        ], 201);
+    }
+
     // Show the current month's expenses
     public function show(Request $request)
     {

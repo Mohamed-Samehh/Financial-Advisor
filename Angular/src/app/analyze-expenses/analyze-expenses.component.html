@@ -244,10 +244,10 @@
       <div class="text-center text-muted mb-3">
         <p>
           <b>Prediction Accuracy:</b>
-          <span [ngClass]="{
-            'text-danger fw-semibold': getAccuracy() < 60,
-            'text-warning fw-semibold': getAccuracy() >= 60 && getAccuracy() < 80,
-            'text-success fw-semibold': getAccuracy() >= 80
+          <span class="fw-semibold" [ngClass]="{
+            'text-danger': getAccuracy() < 60,
+            'text-warning': getAccuracy() >= 60 && getAccuracy() < 80,
+            'text-success': getAccuracy() >= 80
           }">
             {{ getAccuracy() | number:'1.1-1' }}%
           </span>
