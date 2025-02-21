@@ -5,10 +5,13 @@ import pandas as pd
 from datetime import datetime
 import requests
 import json
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
-FLASK_PASSWORD = "Y7!mK4@vW9#qRp$2" # Require a password as a layer of security
+load_dotenv()
+FLASK_PASSWORD = os.getenv("FLASK_PASSWORD")
 
 # API endpoint responsible for the whole analyzing
 @app.route('/analysis', methods=['POST'])
@@ -167,6 +170,9 @@ def labeling_endpoint():
 # API endpoint for calling LLM "Gemini Flash 2.0 Experimental"
 @app.route('/chat', methods=['POST'])
 def chat():
+    if request.json.get('password') != FLASK_PASSWORD:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
     user_message = request.json.get("message")
     api_key = request.json.get("api_key")
     user_name = request.json.get("name")

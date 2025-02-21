@@ -195,15 +195,15 @@ class ExpenseController extends Controller
             ];
         })->toArray();
 
-        $flaskPassword = "Y7!mK4@vW9#qRp$2"; // Require a password as a layer of security
+        $flaskPassword = env('flaskPassword');
         $data = [
+            'password' => $flaskPassword,
             'expenses' => $expensesArray,
             'all_expenses' => $allExpensesArray,
             'categories' => $categoriesArray,
             'monthly_budget' => $monthlyBudget,
             'goal_amount' => $goalAmount,
             'total_spent' => $totalSpent,
-            'password' => $flaskPassword,
         ];
 
         // Call Flask API for analysis

@@ -24,6 +24,7 @@ class ChatbotController extends Controller
     {
         $userMessage = $request->input('message');
         $apiKey = env('OPENROUTER_API_KEY');
+        $flaskPassword = env('flaskPassword');
 
         $user = $request->user();
         $name = $user->name;
@@ -78,6 +79,7 @@ class ChatbotController extends Controller
         $chatbotData = [
             'message' => $userMessage,
             'api_key' => $apiKey,
+            'password' => $flaskPassword,
             'name' => $name,
             'budget' => $monthlyBudget,
             'goal_name' => $goalName,

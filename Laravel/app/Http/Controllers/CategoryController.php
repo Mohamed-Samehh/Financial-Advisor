@@ -204,7 +204,7 @@ class CategoryController extends Controller
         $firstMonthLabeled = $firstExpenseDate->format('F Y');
         $lastMonthLabeled = $lastExpenseDate->format('F Y');
 
-        $flaskPassword = "Y7!mK4@vW9#qRp$2";
+        $flaskPassword = env('flaskPassword');
         $data = [
             'past_expenses' => $pastExpensesArray,
             'password' => $flaskPassword,
