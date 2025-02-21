@@ -425,7 +425,7 @@
               <thead class="bg-light">
                 <tr>
                   <th class="py-3 text-uppercase text-secondary fw-bold">Cluster</th>
-                  <th class="py-3 text-uppercase text-secondary fw-bold">Total</th>
+                  <th class="py-3 text-uppercase text-secondary fw-bold">Average</th>
                   <th class="py-3 text-uppercase text-secondary fw-bold">Count</th>
                 </tr>
               </thead>
@@ -440,7 +440,7 @@
                       {{ item.cluster }}
                     </span>
                   </td>
-                  <td>{{ item.total_expenses | currency:'E£':'symbol':'1.0-0' }}</td>
+                  <td>{{ item.average_expenses | currency:'E£':'symbol':'1.0-0' }}</td>
                   <td>{{ item.count_of_expenses }}</td>
                 </tr>
               </tbody>

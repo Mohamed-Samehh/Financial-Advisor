@@ -120,36 +120,41 @@ def kmeans_clustering(expenses, smart_insights, expenses_clustering=[]):
 
     unique_values = expenses['amount'].nunique()
 
-    if unique_values >= 3:
+    if unique_values == 1:
+        expenses['cluster'] = 0
+        expenses['cluster_label'] = 'Moderate'
+    else:
         expenses['normalized_amount'] = scaler.fit_transform(expenses[['amount']])
-        kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
-        clusters = kmeans.fit_predict(expenses[['normalized_amount']])
-        expenses['cluster'] = clusters
 
-        cluster_totals = expenses.groupby('cluster')['amount'].sum().astype(float)
-        cluster_counts = expenses['cluster'].value_counts().astype(int)
-        cluster_averages = expenses.groupby('cluster')['normalized_amount'].mean()
-        highest_spending_cluster = int(cluster_averages.idxmax())
-        lowest_spending_cluster = int(cluster_averages.idxmin())
+        n_clusters = min(3, unique_values)
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+        expenses['cluster'] = kmeans.fit_predict(expenses[['normalized_amount']])
 
-        for cluster_id, total in cluster_totals.items():
-            count = int(cluster_counts[cluster_id])
-            if cluster_id == highest_spending_cluster:
-                category = "High"
-            elif cluster_id == lowest_spending_cluster:
-                category = "Low"
-            else:
-                category = "Moderate"
-            
-            expenses_clustering.append({"cluster": category, "count_of_expenses": count, "total_expenses": float(total),})
+        cluster_averages = expenses.groupby('cluster')['normalized_amount'].mean().sort_values(ascending=False)
 
-        highest_cluster_data = expenses[expenses['cluster'] == highest_spending_cluster]
-        category_counts = highest_cluster_data['category'].value_counts()
-        top_categories = category_counts.head(4).index.tolist()
+        cluster_labels = {cluster: label for cluster, label in 
+                          zip(cluster_averages.index, ['High', 'Moderate', 'Low'][:n_clusters])}
 
-        if top_categories:
-            combined_categories = "', '".join(top_categories)
-            smart_insights.append(f"Consider monitoring expenses in '{combined_categories}', as they have the most expenses that are considered 'High'.")
+        expenses['cluster_label'] = expenses['cluster'].map(cluster_labels)
+
+    for cluster_label in ['High', 'Moderate', 'Low']:
+        cluster_data = expenses[expenses['cluster_label'] == cluster_label]
+        if not cluster_data.empty:
+            average_expenses = cluster_data['amount'].mean()
+            count_expenses = cluster_data.shape[0]
+            expenses_clustering.append({
+                'cluster': cluster_label,
+                'count_of_expenses': count_expenses,
+                'average_expenses': float(average_expenses),
+            })
+
+    highest_spending_cluster = expenses[expenses['cluster_label'] == 'High']
+    category_counts = highest_spending_cluster['category'].value_counts()
+    top_categories = category_counts.head(4).index.tolist()
+
+    if top_categories:
+        combined_categories = "', '".join(top_categories)
+        smart_insights.append(f"Consider monitoring expenses in '{combined_categories}', as they have the most expenses that are considered 'High'.")
 
 
 # KMeans clustering to group "categories" based on total spending

@@ -42,6 +42,7 @@
                 'is-invalid': email.invalid && (email.dirty || email.touched || submitted)
               }"
               placeholder="Enter your email"
+              style="background-image: none !important;"
             />
           </div>
           <div *ngIf="email.invalid && (email.dirty || email.touched || submitted)" class="text-danger">
