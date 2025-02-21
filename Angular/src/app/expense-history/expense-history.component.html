@@ -9,11 +9,19 @@
 
   <!-- Content is shown only after loading is finished -->
   <div *ngIf="!isLoading">
-    <div *ngIf="message" class="alert" [ngClass]="{'alert-success': message.type === 'success', 'alert-danger': message.type === 'error'}" role="alert">
+    <div *ngIf="message" class="alert alert-danger" role="alert">
       {{ message.text }}
     </div>
 
+    <div *ngIf="!isLoading && !hasExpenseHistory()" 
+      class="d-flex flex-column justify-content-center align-items-center text-center mt-5"
+      style="min-height: 150px; background-color: #f1f5f9; border-radius: 10px; border: 1px solid #d1dbe5;">
+        <i class="fa fa-folder-open text-secondary mb-3" style="font-size: 3rem;"></i>
+        <h5 class="text-secondary">No expense history recorded yet.</h5>
+    </div>
+
     <div class="row mt-5">
+      <h3 class="text-center text-secondary mb-3">{{ getCurrentPageYear() }}</h3>
       <div class="col-md-12 mt-4">
         <div *ngFor="let monthYear of getMonthsForCurrentPage(); let i = index" class="card mb-4 shadow-lg border-0">
 
@@ -31,7 +39,9 @@
                 Total: E£{{ formatNumber(totalExpensesByMonth[monthYear]) }} &nbsp;
               </span>
               <span *ngIf="!totalExpensesByMonth[monthYear]">
-                No expenses made &nbsp;
+                <span *ngIf="isCurrentMonth(monthYear)">Tracking ongoing 🚀 &nbsp;</span>
+                <span *ngIf="isFutureMonth(monthYear)">Plan ahead 📅 &nbsp;</span>
+                <span *ngIf="!isFutureMonth(monthYear) && !isCurrentMonth(monthYear)">Nothing recorded 📂 &nbsp;</span>
               </span>
               <i class="fa fa-sort text-dark"></i>
             </div>
@@ -104,7 +114,11 @@
 
               <!-- No Data Template -->
               <ng-template #noData>
-                <p class="text-muted">No expenses made this month.</p>
+                <p class="text-muted">
+                  <span *ngIf="isCurrentMonth(monthYear)">Current month - Expenses are not displayed.</span>
+                  <span *ngIf="isFutureMonth(monthYear)">Upcoming month - No expenses recorded yet.</span>
+                  <span *ngIf="!isFutureMonth(monthYear) && !isCurrentMonth(monthYear)">No expenses recorded for this month.</span>
+                </p>
               </ng-template>
             </div>
           </div>
