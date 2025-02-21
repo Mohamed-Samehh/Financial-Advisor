@@ -206,7 +206,7 @@
                 }"
                 class="d-block"
               >
-                <b>{{ (category.limit / analysis.monthly_budget) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
+                <b>{{ (category.limit / analysis.monthly_budget) * 100 | number: '1.1-1' }}% ≈ {{ formatNumber(category.limit) }}</b>
               </span>
 
               <span *ngIf="category.name == 'Goal'"
@@ -216,7 +216,7 @@
                 }"
                 class="d-block"
               >
-                <b>{{ (category.limit / analysis.monthly_budget) * 100 | number: '1.0-0' }}% ≈ {{ formatNumber(category.limit) }}</b>
+                <b>{{ (category.limit / analysis.monthly_budget) * 100 | number: '1.1-1' }}% ≈ {{ formatNumber(category.limit) }}</b>
               </span>
 
               <span *ngIf="category.name != 'Goal'"
