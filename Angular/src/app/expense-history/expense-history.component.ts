@@ -17,7 +17,7 @@ export class ExpenseHistoryComponent implements OnInit {
   budgetByMonth: { [key: string]: any } = {};
   goalByMonth: { [key: string]: any } = {};
   sortedMonths: string[] = [];
-  message: { text: string; type: 'error' } | null = null;
+  message: { text: string; } | null = null;
   isLoading = true;
   currentPage = 1;
   totalPages = 1;
@@ -55,7 +55,7 @@ export class ExpenseHistoryComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching data:', err);
-        this.message = { text: 'Failed to load data. Please try again.', type: 'error' };
+        this.message = { text: 'Failed to load data. Please try again.' };
         this.isLoading = false;
       }
     });

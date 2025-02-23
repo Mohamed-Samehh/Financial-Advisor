@@ -18,7 +18,7 @@ export class RegisterComponent {
     password: '',
     password_confirmation: ''
   };
-  message: { text: string; type: 'success' | 'error' } | null = null;
+  message: { text: string; } | null = null;
   submitted = false;
   isLoading = false;
   showPassword: boolean = false;
@@ -53,7 +53,6 @@ export class RegisterComponent {
       this.authService.register(this.form).subscribe(
         (res) => {
           this.authService.setToken(res.token);
-          this.message = { text: 'Registration successful! Redirecting to dashboard...', type: 'success' };
           this.router.navigate(['/dashboard']).then(() => {
             this.isLoading = false;
             window.location.reload();
@@ -62,12 +61,12 @@ export class RegisterComponent {
         (err) => {
           this.isLoading = false;
           this.message = err.error?.error === 'The email is already registered.'
-            ? { text: 'This email is already registered. Please use a different one.', type: 'error' }
-            : { text: 'Error occurred during registration. Please try again.', type: 'error' };
+            ? { text: 'This email is already registered. Please use a different one.' }
+            : { text: 'Error occurred during registration. Please try again.' };
         }
       );
     } else {
-      this.message = { text: 'Please fill out the form correctly.', type: 'error' };
+      this.message = { text: 'Please fill out the form correctly.' };
     }
   }
 

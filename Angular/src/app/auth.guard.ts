@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
     return this.authService.checkTokenExpiry().pipe(
       map(isValid => {
         if (!isValid) {
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login']).then(() => window.location.reload());
         }
         return isValid;
       })

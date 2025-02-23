@@ -45,8 +45,10 @@ export class LoginComponent {
         (res) => {
           this.loginError = '';
           this.authService.setToken(res.token);
-          this.loading = false;
-          this.router.navigate(['/dashboard']).then(() => window.location.reload());
+          this.router.navigate(['/dashboard']).then(() => {
+            this.loading = false;
+            window.location.reload();
+          });
         },
         (err) => {
           this.loading = false;
