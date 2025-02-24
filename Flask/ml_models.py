@@ -140,12 +140,14 @@ def kmeans_clustering(expenses, smart_insights, expenses_clustering=[]):
     for cluster_label in ['High', 'Moderate', 'Low']:
         cluster_data = expenses[expenses['cluster_label'] == cluster_label]
         if not cluster_data.empty:
-            average_expenses = cluster_data['amount'].mean()
+            min_expenses = cluster_data['amount'].min()
+            max_expenses = cluster_data['amount'].max()
             count_expenses = cluster_data.shape[0]
             expenses_clustering.append({
                 'cluster': cluster_label,
                 'count_of_expenses': count_expenses,
-                'average_expenses': float(average_expenses),
+                'min_expenses': float(min_expenses),
+                'max_expenses': float(max_expenses),
             })
 
     highest_spending_cluster = expenses[expenses['cluster_label'] == 'High']
