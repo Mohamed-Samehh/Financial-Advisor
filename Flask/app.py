@@ -217,7 +217,7 @@ def chat():
         f"The user sets a savings goal, representing the amount of money they need to have left by the end of the current month. "
         f"Your role is to analyze their budget, spending patterns, and financial goals to help them achieve this target. "
         f"Suggest realistic adjustments, cost-cutting strategies, and optimized savings methods based on their financial data.\n"
-        f"Additionally, provide information on banking options in Egypt, including savings accounts, interest rates, certificates of deposit (CDs), and investment plans.\n\n"
+        f"Additionally, if the user's goal involves saving funds for investment, provide information on banking options in Egypt, including savings accounts, interest rates, certificates of deposit (CDs), and investment plans.\n\n"
 
         f"### Date Handling Rules:\n"
         f"- Do not assume the current date unless explicitly provided by the user.\n"
@@ -234,9 +234,10 @@ def chat():
         f"{category_text}\n\n"
 
         f"### Banking Data:\n"
-        f"- Provide details on savings and investment accounts offered by Egyptian banks.\n"
-        f"- Compare interest rates on savings accounts and fixed deposits.\n"
-        f"- Offer insights on available certificates of deposit (CDs), their interest rates, and terms.\n\n"
+        f"- This section will only be provided if explicitly requested by the user or if their goal involves saving funds for investment.\n"
+        f"- Offer detailed information on savings and investment accounts available at Egyptian banks.\n"
+        f"- Compare interest rates for savings accounts, fixed deposits, and other savings options.\n"
+        f"- Provide insights into certificates of deposit (CDs), including their interest rates, terms, and conditions.\n\n"
 
         f"### Important Notes on Categories:\n"
         f"Lower priority values indicate higher importance, with 1 being the most critical.\n\n"
