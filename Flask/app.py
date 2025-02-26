@@ -256,6 +256,9 @@ def chat():
         "X-Title": "Financial Advisor"
     }
 
+    # Option 1 (Gemini Flash 2.0 Experimental): google/gemini-2.0-flash-exp:free
+    # Option 2 (Gemini Flash Lite 2.0 Preview): google/gemini-2.0-flash-lite-preview-02-05:free
+    # Option 3 (Dolphin3.0 Mistral 24B): cognitivecomputations/dolphin3.0-mistral-24b:free
     data = json.dumps({
         "model": "google/gemini-2.0-flash-exp:free",
          "messages": [
