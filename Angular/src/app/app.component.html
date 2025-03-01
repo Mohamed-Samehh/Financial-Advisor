@@ -9,49 +9,73 @@
     </button>
     <div class="navbar-collapse menu" [ngClass]="{'show': isNavbarVisible}">
       <div class="menu-overlay" *ngIf="isNavbarVisible" (click)="toggleNavbar()"></div>
-      <a class="navbar-brand ms-4" routerLink="/">
+      <a class="navbar-brand ms-4" routerLink="/" (click)="closeNavbar()">
         Financial Advisor
       </a>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active"><i class="fas fa-compass"></i>&nbsp; Dashboard</a>
+          <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-compass"></i>&nbsp; Dashboard
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active"><i class="fas fa-wallet"></i>&nbsp; Budget</a>
+          <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-wallet"></i>&nbsp; Budget
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/goal']" routerLinkActive="active"><i class="fas fa-bullseye"></i>&nbsp; Goal</a>
+          <a class="nav-link" [routerLink]="['/goal']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-bullseye"></i>&nbsp; Goal
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/categories']" routerLinkActive="active"><i class="fas fa-list"></i>&nbsp; Categories</a>
+          <a class="nav-link" [routerLink]="['/categories']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-list"></i>&nbsp; Categories
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active"><i class="fas fa-receipt"></i>&nbsp; Expenses</a>
+          <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-receipt"></i>&nbsp; Expenses
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/analyze']" routerLinkActive="active"><i class="fas fa-chart-pie"></i>&nbsp; Analyze</a>
+          <a class="nav-link" [routerLink]="['/analyze']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-chart-pie"></i>&nbsp; Analyze
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/chat']" routerLinkActive="active"><i class="fa-solid fa-robot"></i>&nbsp; Chat</a>
+          <a class="nav-link" [routerLink]="['/chat']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fa-solid fa-robot"></i>&nbsp; Chat
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/invest']" routerLinkActive="active"><i class="fas fa-chart-line"></i>&nbsp; Invest</a>
+          <a class="nav-link" [routerLink]="['/invest']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-chart-line"></i>&nbsp; Invest
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/history']" routerLinkActive="active"><i class="fas fa-history"></i>&nbsp; History</a>
+          <a class="nav-link" [routerLink]="['/history']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-history"></i>&nbsp; History
+          </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" [routerLink]="['/account']" routerLinkActive="active"><i class="fas fa-user-cog"></i>&nbsp; Account</a>
+          <a class="nav-link" [routerLink]="['/account']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-user-cog"></i>&nbsp; Account
+          </a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active"><i class="fas fa-sign-in-alt"></i>&nbsp; Login</a>
+          <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-sign-in-alt"></i>&nbsp; Login
+          </a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link" [routerLink]="['/register']" routerLinkActive="active"><i class="fas fa-user-edit"></i>&nbsp; Register</a>
+          <a class="nav-link" [routerLink]="['/register']" routerLinkActive="active" (click)="closeNavbar()">
+            <i class="fas fa-user-edit"></i>&nbsp; Register
+          </a>
         </li>
       </ul>
       <div class="logout-section" *ngIf="isLoggedIn">
-        <a class="nav-link logout-button" href="javascript:void(0)" (click)="logout()">Logout</a>
+        <a class="nav-link logout-button" href="javascript:void(0)" (click)="logout(); closeNavbar()">Logout</a>
       </div>
     </div>
   </div>

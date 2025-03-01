@@ -33,6 +33,10 @@ export class AppComponent implements OnInit {
     this.isNavbarVisible = !this.isNavbarVisible;
   }
 
+  closeNavbar() {
+    this.isNavbarVisible = false;
+  }
+
   logout() {
     this.clearToken();
     this.router.navigate(['/login']);
