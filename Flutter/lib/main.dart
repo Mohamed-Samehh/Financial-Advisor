@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'services/auth_service.dart';
+import 'services/api_service.dart';
 import 'router.dart';
 
 void main() {
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthService())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthService()),
+        Provider(create: (_) => ApiService()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -30,7 +34,9 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Widget child; // Content from routed screens
+
+  const HomeScreen({super.key, required this.child});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -58,10 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_isLoggedIn) {
       final isValid = await authService.checkTokenExpiry();
       if (!isValid) {
-        context.go('/login'); // Redirect if the token is expired
+        context.go('/login');
       }
     } else {
-      context.go('/login'); // Redirect if the token is null
+      context.go('/login');
     }
   }
 
@@ -123,9 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildNavItem(Icons.list, 'Categories', '/categories'),
                 _buildNavItem(Icons.receipt, 'Expenses', '/expenses'),
                 _buildNavItem(Icons.pie_chart, 'Analyze', '/analyze'),
-                _buildNavItem(Icons.smart_toy, 'Chat', '/chat'),
-                _buildNavItem(Icons.trending_up, 'Invest', '/invest'),
-                _buildNavItem(Icons.history, 'History', '/history'),
                 _buildNavItem(Icons.account_circle, 'Account', '/account'),
               ],
               if (!_isLoggedIn) ...[
@@ -145,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: const RouterOutlet(),
+      body: widget.child, // Display the routed screen content
     );
   }
 
@@ -158,14 +161,5 @@ class _HomeScreenState extends State<HomeScreen> {
         context.go(route);
       },
     );
-  }
-}
-
-class RouterOutlet extends StatelessWidget {
-  const RouterOutlet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
