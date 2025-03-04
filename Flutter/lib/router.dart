@@ -2,6 +2,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
 // import 'screens/dashboard_screen.dart';
 // import 'screens/budget_screen.dart';
 // import 'screens/goals_screen.dart';
@@ -48,10 +49,10 @@ final GoRouter router = GoRouter(
     //   builder: (context, state) => const UserProfileScreen(),
     // ),
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-    // GoRoute(
-    //   path: '/register',
-    //   builder: (context, state) => const RegisterScreen(),
-    // ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
+    ),
     // GoRoute(
     //   path: '/:path(.*)', // Wildcard for 404
     //   builder: (context, state) => const NotFoundScreen(),

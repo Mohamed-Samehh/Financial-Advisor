@@ -139,10 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 16),
                     if (loginError.isNotEmpty && !loading)
-                      Text(
-                        loginError,
-                        style: const TextStyle(color: Colors.red),
-                      ),
+                      AlertMessage(message: loginError, isError: true),
                     if (!showForgotPassword) ...[
                       Form(
                         key: _formKey,
@@ -217,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Don't have an account? "),
+                                const Text("Don't have an account?"),
                                 TextButton(
                                   onPressed: () => context.go('/register'),
                                   child: const Text('Create Account'),
@@ -230,14 +227,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                     if (showForgotPassword) ...[
                       if (forgotPasswordMessage.isNotEmpty)
-                        Text(
-                          forgotPasswordMessage,
-                          style: const TextStyle(color: Colors.green),
+                        AlertMessage(
+                          message: forgotPasswordMessage,
+                          isError: false,
                         ),
                       if (forgotPasswordError.isNotEmpty)
-                        Text(
-                          forgotPasswordError,
-                          style: const TextStyle(color: Colors.red),
+                        AlertMessage(
+                          message: forgotPasswordError,
+                          isError: true,
                         ),
                       TextFormField(
                         decoration: const InputDecoration(
@@ -287,6 +284,55 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AlertMessage extends StatelessWidget {
+  final String message;
+  final bool isError;
+
+  const AlertMessage({super.key, required this.message, required this.isError});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isError ? Colors.red[50] : Colors.green[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isError ? Colors.red : Colors.green,
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isError ? Icons.error_outline : Icons.check_circle_outline,
+            color: isError ? Colors.red : Colors.green,
+            size: 24,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: isError ? Colors.red[900] : Colors.green[900],
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
