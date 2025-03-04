@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError  } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
-import { LoginResponse } from './login-response.model';
+
+interface LoginResponse {
+  token: string;
+}
 
 @Injectable({
   providedIn: 'root'
