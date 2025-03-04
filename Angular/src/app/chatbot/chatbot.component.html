@@ -9,8 +9,8 @@
           [style.marginTop]="i > 0 && messages[i - 1].role !== msg.role ? '15px' : '5px'">
         
         <div class="message-container"
-            [ngClass]="{'user-message': msg.role === 'user', 'bot-message': msg.role === 'bot'}"
-            [innerHTML]="msg.role === 'user' ? formatMessage(msg.content) : msg.content">
+            [ngClass]="{'user-message': msg.role === 'user', 'bot-message': msg.role === 'bot', 'thinking-dots': msg.content === ''}"
+            [innerHTML]="msg.role === 'user' ? formatMessage(msg.content) : (msg.content === '' ? '' : msg.content)">
         </div>
 
       </div>

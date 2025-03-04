@@ -80,3 +80,35 @@ button:active {
 .chat::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+
+/* Add styles for thinking dots */
+.thinking-dots {
+  background-color: #e3f2fd;
+  color: #444;
+  padding: 10px 14px;
+  border-radius: 15px;
+  display: inline-block;
+  font-size: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes dots {
+  0% { content: ''; opacity: 0; }
+  25% { content: '.'; opacity: 1; }
+  50% { content: '..'; opacity: 1; }
+  75% { content: '...'; opacity: 1; }
+  100% { content: '...'; opacity: 1; }
+}
+
+.thinking-dots::after {
+  content: '...';
+  display: inline-block;
+  width: 22px;
+  text-align: left;
+  font-size: 18px;
+  animation: dots 1.5s infinite ease-in-out;
+  font-weight: 700;
+  letter-spacing: 1px;
+}

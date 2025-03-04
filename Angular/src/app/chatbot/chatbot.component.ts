@@ -27,10 +27,12 @@ export class ChatbotComponent {
     this.userMessage = '';
     
     this.loading = true;
+    this.messages.push({ role: 'bot', content: '' });
 
     this.apiService.sendChatMessage(messageToSend).subscribe(
       (response) => {
         this.loading = false;
+        this.messages = this.messages.filter(msg => msg.content !== '');
         if (response.message) {
           this.messages.push({ role: 'bot', content: this.formatResponse(response.message) });
         } else {
@@ -39,6 +41,7 @@ export class ChatbotComponent {
       },
       (error) => {
         this.loading = false;
+        this.messages = this.messages.filter(msg => msg.content !== '');
         this.errorMessage = 'Failed to get a response. Please try again.';
         console.error('Error:', error);
       }
