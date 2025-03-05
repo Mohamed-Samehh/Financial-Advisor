@@ -1044,7 +1044,6 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
     final firstDay = spendingDays.isNotEmpty ? spendingDays.first : 0;
     final lastDay = spendingDays.isNotEmpty ? spendingDays.last : 0;
 
-    // Get the line chart data and calculate the minimum remaining budget
     final lineBarsData = _getLineChartData();
     final remainingBudgetSpots =
         lineBarsData[0].spots; // Red line (remaining budget)
@@ -1055,11 +1054,8 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                 .reduce((a, b) => a < b ? a : b)
             : 0.0;
     final maxBudget = analysis['monthly_budget']?.toDouble() ?? 1000;
-    final minY =
-        minRemainingBudget < 0
-            ? minRemainingBudget * 1.2
-            : 0.0; // Allow negative values with some padding
-    final maxY = maxBudget * 1.2; // Keep the maxY as before
+    final minY = minRemainingBudget < 0 ? minRemainingBudget * 1.2 : 0.0;
+    final maxY = maxBudget * 1.2;
 
     return _buildCard(
       title: 'Remaining Budget Over Days',
@@ -1077,9 +1073,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: screenWidth < 400 ? 50 : 60,
-                          interval:
-                              (maxY - minY) /
-                              4, // Adjust interval based on new range
+                          interval: (maxY - minY) / 4,
                           getTitlesWidget:
                               (value, meta) => Padding(
                                 padding: const EdgeInsets.only(right: 4),
@@ -1137,14 +1131,12 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                     lineBarsData: lineBarsData,
                     minX: spendingDays.isNotEmpty ? spendingDays.first : 0,
                     maxX: spendingDays.isNotEmpty ? spendingDays.last : 1,
-                    minY: minY, // Dynamically set to show negative values
+                    minY: minY,
                     maxY: maxY,
                     gridData: FlGridData(
                       show: true,
                       drawVerticalLine: true,
-                      horizontalInterval:
-                          (maxY - minY) /
-                          4, // Adjust grid lines based on new range
+                      horizontalInterval: (maxY - minY) / 4,
                       verticalInterval: null,
                       getDrawingHorizontalLine:
                           (value) =>
