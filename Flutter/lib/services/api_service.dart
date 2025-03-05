@@ -1,16 +1,12 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static String get _apiUrl {
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8000/api'; // Android emulator
-    } else {
-      return 'http://localhost:8000/api'; // Web or other platforms
-    }
-  }
+  static final String _apiUrl = 'http://localhost:8000/api';
+
+  // 'http://10.0.2.2:8000/api' Android emulator and make sure to run "php artisan serve --host=0.0.0.0 --port=8000"
+  // 'http://localhost:8000/api' Web or other platforms
 
   Future<Map<String, String>> _getHeaders() async {
     final prefs = await SharedPreferences.getInstance();

@@ -39,6 +39,8 @@ dependencies:
   go_router: ^14.0.1    # Navigation
   shared_preferences: ^2.2.2  # Local storage for token
   font_awesome_flutter: ^10.7.0  # Icons similar to FontAwesome
+  fl_chart: ^0.68.0  # For Pie and Line charts
+  device_preview: ^1.2.0  # For previewing the app on different devices
 
 dev_dependencies:
   flutter_test:

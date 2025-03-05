@@ -18,7 +18,7 @@
           'alert-success': message.type === 'success',
           'alert-danger': message.type === 'error'
         }" role="alert">
-        <strong>{{ message.type === 'success' ? 'Success!' : 'Error!' }}</strong> {{ message.text }}
+        <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
         <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
       </div>
 

@@ -13,6 +13,7 @@ class Navbar extends StatelessWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 4,
+      automaticallyImplyLeading: false,
       flexibleSpace: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -118,6 +119,14 @@ class Navbar extends StatelessWidget {
                     'Analyze',
                     '/analyze',
                   ),
+                  _buildNavItem(context, Icons.smart_toy, 'Chat', '/chat'),
+                  _buildNavItem(
+                    context,
+                    Icons.trending_up,
+                    'Invest',
+                    '/invest',
+                  ),
+                  _buildNavItem(context, Icons.history, 'History', '/history'),
                   _buildNavItem(
                     context,
                     Icons.account_circle,

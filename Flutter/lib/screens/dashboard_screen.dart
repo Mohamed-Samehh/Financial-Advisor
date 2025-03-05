@@ -148,6 +148,39 @@ class DashboardScreen extends StatelessWidget {
                           ),
                           _buildCard(
                             context,
+                            icon: Icons.smart_toy,
+                            gradient: const LinearGradient(
+                              colors: [Colors.blue, Colors.blueAccent],
+                            ),
+                            title: 'Chat with AI',
+                            subtitle:
+                                'Get instant financial advice, insights, and tips with our AI chatbot.',
+                            route: '/chat',
+                          ),
+                          _buildCard(
+                            context,
+                            icon: Icons.trending_up,
+                            gradient: const LinearGradient(
+                              colors: [Colors.green, Colors.teal],
+                            ),
+                            title: 'Invest',
+                            subtitle:
+                                'Explore bank certificates to grow your savings.',
+                            route: '/invest',
+                          ),
+                          _buildCard(
+                            context,
+                            icon: Icons.history,
+                            gradient: const LinearGradient(
+                              colors: [Colors.grey, Colors.blueGrey],
+                            ),
+                            title: 'Expense History',
+                            subtitle:
+                                'Review and reflect on your past expenses.',
+                            route: '/history',
+                          ),
+                          _buildCard(
+                            context,
                             icon: Icons.account_circle,
                             gradient: const LinearGradient(
                               colors: [Colors.blue, Colors.blueAccent],

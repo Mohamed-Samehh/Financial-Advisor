@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'services/auth_service.dart';
 import 'services/api_service.dart';
@@ -7,12 +9,18 @@ import 'router.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()),
-        Provider(create: (_) => ApiService()),
-      ],
-      child: const MyApp(),
+    DevicePreview(
+      // Wrap the app with DevicePreview for device previewing
+      enabled:
+          !kReleaseMode, // Ensure DevicePreview is only enabled in development mode
+      builder:
+          (context) => MultiProvider(
+            providers: [
+              ChangeNotifierProvider(create: (_) => AuthService()),
+              Provider(create: (_) => ApiService()),
+            ],
+            child: const MyApp(),
+          ),
     ),
   );
 }
@@ -129,6 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildNavItem(Icons.list, 'Categories', '/categories'),
                 _buildNavItem(Icons.receipt, 'Expenses', '/expenses'),
                 _buildNavItem(Icons.pie_chart, 'Analyze', '/analyze'),
+                _buildNavItem(Icons.smart_toy, 'Chat', '/chat'),
+                _buildNavItem(Icons.trending_up, 'Invest', '/invest'),
+                _buildNavItem(Icons.history, 'History', '/history'),
                 _buildNavItem(Icons.account_circle, 'Account', '/account'),
               ],
               if (!_isLoggedIn) ...[

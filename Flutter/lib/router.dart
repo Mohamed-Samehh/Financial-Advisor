@@ -5,11 +5,14 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/budget_screen.dart';
-// import 'screens/goals_screen.dart';
-// import 'screens/categories_screen.dart';
-// import 'screens/expenses_screen.dart';
-// import 'screens/analyze_expenses_screen.dart';
+import 'screens/goal_screen.dart';
+import 'screens/categories_screen.dart';
+import 'screens/expenses_screen.dart';
+import 'screens/analyze_expenses_screen.dart';
+// import 'screens/invest_screen.dart';
+// import 'screens/chatbot_screen.dart';
 // import 'screens/user_profile_screen.dart';
+// import 'screens/expense_history_screen.dart';
 // import 'screens/not_found_screen.dart';
 import 'services/auth_service.dart';
 
@@ -22,19 +25,25 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const DashboardScreen(),
     ),
     GoRoute(path: '/budget', builder: (context, state) => const BudgetScreen()),
-    // GoRoute(path: '/goal', builder: (context, state) => const GoalsScreen()),
+    GoRoute(path: '/goal', builder: (context, state) => const GoalScreen()),
+    GoRoute(
+      path: '/categories',
+      builder: (context, state) => const CategoriesScreen(),
+    ),
+    GoRoute(
+      path: '/expenses',
+      builder: (context, state) => const ExpensesScreen(),
+    ),
+    GoRoute(
+      path: '/analyze',
+      builder: (context, state) => const AnalyzeExpensesScreen(),
+    ),
+    // GoRoute(path: '/invest', builder: (context, state) => const InvestScreen()),
     // GoRoute(
-    //   path: '/categories',
-    //   builder: (context, state) => const CategoriesScreen(),
+    //   path: '/history',
+    //   builder: (context, state) => const ExpenseHistoryScreen(),
     // ),
-    // GoRoute(
-    //   path: '/expenses',
-    //   builder: (context, state) => const ExpensesScreen(),
-    // ),
-    // GoRoute(
-    //   path: '/analyze',
-    //   builder: (context, state) => const AnalyzeExpensesScreen(),
-    // ),
+    // GoRoute(path: '/chat', builder: (context, state) => const ChatbotScreen()),
     // GoRoute(
     //   path: '/account',
     //   builder: (context, state) => const UserProfileScreen(),

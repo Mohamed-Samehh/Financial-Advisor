@@ -3,17 +3,17 @@ import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../screens/navbar.dart';
 
-class BudgetScreen extends StatefulWidget {
-  const BudgetScreen({super.key});
+class GoalScreen extends StatefulWidget {
+  const GoalScreen({super.key});
 
   @override
-  _BudgetScreenState createState() => _BudgetScreenState();
+  _GoalScreenState createState() => _GoalScreenState();
 }
 
-class _BudgetScreenState extends State<BudgetScreen> {
+class _GoalScreenState extends State<GoalScreen> {
   final _formKey = GlobalKey<FormState>();
-  Map<String, dynamic> budget = {'id': null, 'monthly_budget': null};
   Map<String, dynamic> goal = {'id': null, 'name': '', 'target_amount': null};
+  Map<String, dynamic> budget = {'id': null, 'monthly_budget': null};
   String? message;
   String? messageType; // 'success' or 'error'
   bool isLoading = true;
@@ -37,11 +37,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       budgetResponse['budget']['monthly_budget'].toString(),
                 }
                 : {'id': null, 'monthly_budget': null};
-        if (budget['id'] != null) {
-          _loadGoal();
-        } else {
-          isLoading = false;
-        }
+        _loadGoal();
       });
     } catch (e) {
       print('Failed to load budget: $e');
@@ -87,30 +83,58 @@ class _BudgetScreenState extends State<BudgetScreen> {
         messageType = null;
       });
       final apiService = Provider.of<ApiService>(context, listen: false);
+      final targetAmount = double.parse(goal['target_amount']);
+      final monthlyBudget =
+          budget['monthly_budget'] != null
+              ? double.parse(budget['monthly_budget'])
+              : null;
+
+      if (monthlyBudget == null) {
+        setState(() {
+          message = 'Please set a budget before setting a goal.';
+          messageType = 'error';
+          isLoading = false;
+        });
+        return;
+      }
+
+      if (targetAmount >= monthlyBudget) {
+        setState(() {
+          message = 'Goal cannot be equal to or more than the budget.';
+          messageType = 'error';
+          isLoading = false;
+        });
+        return;
+      }
+
       try {
-        if (budget['id'] != null) {
-          final response = await apiService.updateBudget({
-            'monthly_budget': double.parse(budget['monthly_budget']),
-          }, budget['id']);
+        if (goal['id'] != null) {
+          final response = await apiService.updateGoal({
+            'name': goal['name'],
+            'target_amount': targetAmount,
+          }, goal['id']);
           setState(() {
-            budget = {
-              'id': response['budget']['id'],
-              'monthly_budget': response['budget']['monthly_budget'].toString(),
+            goal = {
+              'id': response['goal']['id'],
+              'name': response['goal']['name'],
+              'target_amount': response['goal']['target_amount'].toString(),
             };
-            message = 'Budget updated successfully!';
+            message = 'Goal updated successfully!';
             messageType = 'success';
             isLoading = false;
           });
         } else {
-          final response = await apiService.addBudget({
-            'monthly_budget': double.parse(budget['monthly_budget']),
+          final response = await apiService.addGoal({
+            'name': goal['name'],
+            'target_amount': targetAmount,
           });
           setState(() {
-            budget = {
-              'id': response['budget']['id'],
-              'monthly_budget': response['budget']['monthly_budget'].toString(),
+            goal = {
+              'id': response['goal']['id'],
+              'name': response['goal']['name'],
+              'target_amount': response['goal']['target_amount'].toString(),
             };
-            message = 'Budget set successfully!';
+            message = 'Goal set successfully!';
             messageType = 'success';
             isLoading = false;
           });
@@ -118,13 +142,11 @@ class _BudgetScreenState extends State<BudgetScreen> {
       } catch (e) {
         setState(() {
           message =
-              'Error ${budget['id'] != null ? 'updating' : 'adding'} budget. Please try again.';
+              'Error ${goal['id'] != null ? 'updating' : 'adding'} goal. Please try again.';
           messageType = 'error';
           isLoading = false;
         });
-        print(
-          'Failed to ${budget['id'] != null ? 'update' : 'add'} budget: $e',
-        );
+        print('Failed to ${goal['id'] != null ? 'update' : 'add'} goal: $e');
       }
     } else {
       setState(() {
@@ -134,38 +156,23 @@ class _BudgetScreenState extends State<BudgetScreen> {
     }
   }
 
-  void _deleteBudget(int budgetId) async {
+  void _deleteGoal(int goalId) async {
     setState(() => isLoading = true);
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    try {
-      await apiService.deleteBudget(budgetId);
-      if (goal['id'] != null) {
-        await _deleteGoal(goal['id']);
-      }
-      setState(() {
-        budget = {'id': null, 'monthly_budget': null};
-        message = 'Budget deleted successfully!';
-        messageType = 'success';
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        message = 'Error deleting budget. Please try again.';
-        messageType = 'error';
-        isLoading = false;
-      });
-      print('Failed to delete budget: $e');
-    }
-  }
-
-  Future<void> _deleteGoal(int goalId) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     try {
       await apiService.deleteGoal(goalId);
       setState(() {
         goal = {'id': null, 'name': '', 'target_amount': null};
+        message = 'Goal deleted successfully!';
+        messageType = 'success';
+        isLoading = false;
       });
     } catch (e) {
+      setState(() {
+        message = 'Error deleting goal. Please try again.';
+        messageType = 'error';
+        isLoading = false;
+      });
       print('Failed to delete goal: $e');
     }
   }
@@ -204,13 +211,13 @@ class _BudgetScreenState extends State<BudgetScreen> {
               child: Column(
                 children: [
                   Icon(
-                    Icons.account_balance_wallet,
+                    Icons.track_changes,
                     size: 80,
                     color: Colors.white.withOpacity(0.9),
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Manage Your Budget',
+                    'Set Your Financial Goal',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -227,7 +234,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Set and track your monthly budget with ease.',
+                    'Define your financial targets clearly.',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
@@ -255,7 +262,27 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         ],
                       ),
                     ),
-                  if (!isLoading) ...[
+                  if (!isLoading && budget['id'] == null)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFD1DBE5)),
+                      ),
+                      child: const Column(
+                        children: [
+                          Icon(Icons.lock, size: 48, color: Colors.grey),
+                          SizedBox(height: 12),
+                          Text(
+                            'No budget set! Please set a budget before setting a goal.',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (!isLoading && budget['id'] != null) ...[
                     Card(
                       elevation: 8,
                       shape: RoundedRectangleBorder(
@@ -289,7 +316,39 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                 children: [
                                   TextFormField(
                                     decoration: InputDecoration(
-                                      labelText: 'Monthly Budget',
+                                      labelText: 'Goal Name',
+                                      labelStyle: const TextStyle(
+                                        color: Colors.blueGrey,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blueAccent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      filled: true,
+                                      fillColor: Colors.blue.withOpacity(0.05),
+                                    ),
+                                    initialValue: goal['name'],
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Goal Name is required';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) => goal['name'] = value,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Target Amount',
                                       labelStyle: const TextStyle(
                                         color: Colors.blueGrey,
                                       ),
@@ -316,21 +375,20 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                     ),
                                     keyboardType: TextInputType.number,
                                     initialValue:
-                                        budget['monthly_budget']?.toString() ??
-                                        '',
+                                        goal['target_amount']?.toString() ?? '',
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Monthly Budget is required';
+                                        return 'Target Amount is required';
                                       }
                                       final numValue = double.tryParse(value);
                                       if (numValue == null || numValue <= 0) {
-                                        return 'Monthly Budget must be greater than 0';
+                                        return 'Target Amount must be greater than 0';
                                       }
                                       return null;
                                     },
                                     onChanged:
                                         (value) =>
-                                            budget['monthly_budget'] = value,
+                                            goal['target_amount'] = value,
                                   ),
                                   const SizedBox(height: 16),
                                   Container(
@@ -359,9 +417,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        budget['id'] != null
-                                            ? 'Update Budget'
-                                            : 'Set Budget',
+                                        goal['id'] != null
+                                            ? 'Update Goal'
+                                            : 'Set Goal',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
@@ -379,7 +437,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                     ),
                     const SizedBox(height: 24),
                     const Text(
-                      'Your Budget:',
+                      'Your Goal:',
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.blueGrey,
@@ -387,9 +445,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    if (budget['id'] == null)
+                    if (goal['id'] == null)
                       const Text(
-                        'No budget set for this month.',
+                        'No goal set for this month.',
                         style: TextStyle(color: Colors.grey),
                         textAlign: TextAlign.center,
                       )
@@ -409,18 +467,23 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'This Month\'s Budget: E£${_formatNumber(budget['monthly_budget'])}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
-                                fontSize: 16,
+                            Flexible(
+                              child: Text(
+                                '${goal['name']}: save E£${_formatNumber(goal['target_amount'])} by the end of this month',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueGrey,
+                                  fontSize: 16,
+                                ),
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteBudget(budget['id']),
+                              onPressed: () => _deleteGoal(goal['id']),
                             ),
                           ],
                         ),
@@ -436,7 +499,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
   }
 }
 
-// Reusing AlertMessage with dismiss functionality
+// Reusing AlertMessage from BudgetScreen
 class AlertMessage extends StatelessWidget {
   final String message;
   final bool isError;
