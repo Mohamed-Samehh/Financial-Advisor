@@ -475,9 +475,42 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Green: Within limit | Red: Exceeded limit',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Green:',
+                      style: TextStyle(fontSize: 14, color: Colors.green[600]),
+                    ),
+                    TextSpan(
+                      text: ' Within limit',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              const Text(
+                ' | ',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Red:',
+                      style: TextStyle(fontSize: 14, color: Colors.red[600]),
+                    ),
+                    TextSpan(
+                      text: ' Exceeded limit',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           ...(analysis['category_limits'] as List)
@@ -1409,9 +1442,42 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        const Text(
-          'Green: Under control | Red: Critical',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Green:',
+                    style: TextStyle(fontSize: 14, color: Colors.green[600]),
+                  ),
+                  TextSpan(
+                    text: ' Under control',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            const Text(
+              ' | ',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Red:',
+                    style: TextStyle(fontSize: 14, color: Colors.red[600]),
+                  ),
+                  TextSpan(
+                    text: ' Critical',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     );

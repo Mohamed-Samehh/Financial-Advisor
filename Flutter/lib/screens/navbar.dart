@@ -25,7 +25,7 @@ class Navbar extends StatelessWidget {
       ),
       title: Row(
         children: [
-          AnimatedLogo(), // Replaced Image.asset with AnimatedLogo widget
+          AnimatedLogo(),
           const SizedBox(width: 12),
           const Text(
             'Financial Advisor',
@@ -220,7 +220,6 @@ class Navbar extends StatelessWidget {
   }
 }
 
-// New widget to animate the logo
 class AnimatedLogo extends StatefulWidget {
   @override
   _AnimatedLogoState createState() => _AnimatedLogoState();
