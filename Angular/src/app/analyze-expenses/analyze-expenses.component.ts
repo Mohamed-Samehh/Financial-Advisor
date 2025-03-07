@@ -276,11 +276,11 @@ export class AnalyzeExpensesComponent implements OnInit {
             '#FF6384', // Soft Coral
             '#36A2EB', // Sky Blue
             '#FFCE56', // Warm Yellow
-            '#4BC0C0', // Teal
             '#9966FF', // Amethyst Purple
             '#FF9F40', // Tangerine
             '#66BB6A', // Emerald Green
             '#FF8A65', // Peach
+            '#4BC0C0', // Teal
             '#9575CD', // Lavender Purple
             '#D4E157', // Lime
             '#EF5350', // Bright Red
@@ -293,11 +293,11 @@ export class AnalyzeExpensesComponent implements OnInit {
             '#FF6384', // Soft Coral
             '#36A2EB', // Sky Blue
             '#FFCE56', // Warm Yellow
-            '#4BC0C0', // Teal
             '#9966FF', // Amethyst Purple
             '#FF9F40', // Tangerine
             '#66BB6A', // Emerald Green
             '#FF8A65', // Peach
+            '#4BC0C0', // Teal
             '#9575CD', // Lavender Purple
             '#D4E157', // Lime
             '#EF5350', // Bright Red

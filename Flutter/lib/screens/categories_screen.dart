@@ -751,7 +751,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    'This option is not available for you yet.',
+                                    'This feature is not available for you yet.',
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey[600],
@@ -994,7 +994,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    'This option is not available for you yet.',
+                                    'This feature is not available for you yet.',
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey[600],

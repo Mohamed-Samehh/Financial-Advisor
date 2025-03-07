@@ -280,7 +280,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
               child:
                   analysis['monthly_budget'] == null
                       ? _buildLocked(
-                        'Eexpense summary is currently not available.',
+                        'Eexpense summary is not available for you yet.',
                       )
                       : _buildExpenseSummary(),
             ),
@@ -312,7 +312,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
               width: double.infinity,
               child:
                   analysis['monthly_budget'] == null
-                      ? _buildLocked('Insights are currently not available.')
+                      ? _buildLocked('Insights are not available for you yet.')
                       : (analysis['smart_insights']?.isEmpty ?? true)
                       ? _buildLocked(
                         'No insights available yet. Add more expenses!',
@@ -357,7 +357,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
       child:
           analysis['monthly_budget'] == null
               ? _buildLocked(
-                'Expense categories analysis is currently not available.',
+                'Expense categories analysis is not available for you yet.',
               )
               : categoryTotals.isEmpty
               ? _buildLocked('No expenses recorded yet.')
@@ -1093,7 +1093,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
       child:
           analysis['monthly_budget'] == null
               ? _buildLocked(
-                'Remaining balance analysis is currently not available.',
+                'Remaining balance analysis is not available for you yet.',
               )
               : SizedBox(
                 height: chartHeight,
@@ -1589,8 +1589,14 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
       // Blue line (goal limit)
       LineChartBarData(
         spots: [
-          FlSpot(remainingBudgetSpots.first.x, analysis['goal'].toDouble()),
-          FlSpot(remainingBudgetSpots.last.x, analysis['goal'].toDouble()),
+          FlSpot(
+            remainingBudgetSpots.first.x,
+            analysis['goal']?.toDouble() ?? 0.0,
+          ),
+          FlSpot(
+            remainingBudgetSpots.last.x,
+            analysis['goal']?.toDouble() ?? 0.0,
+          ),
         ],
         isCurved: false,
         color: Colors.blue,
@@ -1616,11 +1622,11 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
         spots: [
           FlSpot(
             remainingBudgetSpots.first.x,
-            analysis['monthly_budget'].toDouble(),
+            analysis['monthly_budget']?.toDouble() ?? 0.0,
           ),
           FlSpot(
             remainingBudgetSpots.last.x,
-            analysis['monthly_budget'].toDouble(),
+            analysis['monthly_budget']?.toDouble() ?? 0.0,
           ),
         ],
         isCurved: false,
@@ -1650,11 +1656,11 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
       Color(0xFFFF6384), // Soft Coral
       Color(0xFF36A2EB), // Sky Blue
       Color(0xFFFFCE56), // Warm Yellow
-      Color(0xFF4BC0C0), // Teal
       Color(0xFF9966FF), // Amethyst Purple
       Color(0xFFFF9F40), // Tangerine
       Color(0xFF66BB6A), // Emerald Green
       Color(0xFFFF8A65), // Peach
+      Color(0xFF4BC0C0), // Teal
       Color(0xFF9575CD), // Lavender Purple
       Color(0xFFD4E157), // Lime
       Color(0xFFEF5350), // Bright Red
