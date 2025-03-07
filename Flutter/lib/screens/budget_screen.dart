@@ -411,7 +411,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'This Month\'s Budget: E£${_formatNumber(budget['monthly_budget'])}',
+                              'Current Month\'s Budget: E£${_formatNumber(budget['monthly_budget'])}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blueGrey,

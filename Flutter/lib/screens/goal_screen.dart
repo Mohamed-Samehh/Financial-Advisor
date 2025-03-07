@@ -471,7 +471,7 @@ class _GoalScreenState extends State<GoalScreen> {
                           children: [
                             Flexible(
                               child: Text(
-                                '${goal['name']}: save E£${_formatNumber(goal['target_amount'])} by the end of this month',
+                                'Current Month\'s Goal: E£${_formatNumber(goal['target_amount'])}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.blueGrey,
