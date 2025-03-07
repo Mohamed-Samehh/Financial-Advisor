@@ -268,7 +268,7 @@ class DashboardScreen extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: const Color(0xFF1E3A8A),
+                  color: const Color(0xFF2563EB),
                   fontSize: 18,
                 ),
                 textAlign: TextAlign.center,

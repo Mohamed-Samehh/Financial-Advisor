@@ -251,6 +251,7 @@ export class AnalyzeExpensesComponent implements OnInit {
 
     const categoryMap = new Map<string, number>();
 
+    // Calculate total expense for each category
     expenses.forEach((expense: any) => {
       if (categoryMap.has(expense.category)) {
         categoryMap.set(expense.category, categoryMap.get(expense.category)! + expense.amount);
@@ -266,6 +267,8 @@ export class AnalyzeExpensesComponent implements OnInit {
     const categories = Array.from(categoryMap.keys());
     const amounts = Array.from(categoryMap.values());
 
+    // Calculate the total sum of all expenses
+    const totalExpenses = amounts.reduce((acc, amount) => acc + amount, 0);
     this.categoryChart = new Chart(ctx, {
       type: 'pie',
       data: {
@@ -326,6 +329,12 @@ export class AnalyzeExpensesComponent implements OnInit {
             titleFont: { size: window.innerWidth < 768 ? 16 : 14 },
             bodyFont: { size: window.innerWidth < 768 ? 14 : 12 },
             padding: 8,
+            callbacks: {
+              label: function (tooltipItem: any) {
+                const percentage = ((tooltipItem.raw / totalExpenses) * 100).toFixed(1);
+                return `${percentage}%`;
+              }
+            }
           }
         },
         animation: {

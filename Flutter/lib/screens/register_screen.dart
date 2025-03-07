@@ -104,10 +104,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   child: Column(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.person_add,
                         size: 80,
-                        color: Colors.white,
+                        color: Colors.white.withOpacity(0.9),
                       ),
                       const SizedBox(height: 20),
                       const Text(
