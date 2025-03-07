@@ -149,7 +149,7 @@ export class AnalyzeExpensesComponent implements OnInit {
             borderColor: '#FF6384',
             backgroundColor: 'rgba(255,99,132,0.2)',
             fill: true,
-            tension: 0.4,
+            tension: 0, // Non-curved lines
             pointRadius: window.innerWidth < 768 ? 3 : 5,
             pointHoverRadius: window.innerWidth < 768 ? 5 : 7,
             pointBackgroundColor: '#FF6384',
@@ -272,8 +272,40 @@ export class AnalyzeExpensesComponent implements OnInit {
         labels: categories,
         datasets: [{
           data: amounts,
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
-          hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+          backgroundColor: [
+            '#FF6384', // Soft Coral
+            '#36A2EB', // Sky Blue
+            '#FFCE56', // Warm Yellow
+            '#4BC0C0', // Teal
+            '#9966FF', // Amethyst Purple
+            '#FF9F40', // Tangerine
+            '#66BB6A', // Emerald Green
+            '#FF8A65', // Peach
+            '#9575CD', // Lavender Purple
+            '#D4E157', // Lime
+            '#EF5350', // Bright Red
+            '#26C6DA', // Cyan
+            '#FFB300', // Amber
+            '#8D6E63', // Warm Brown
+            '#EC407A', // Pink
+          ],
+          hoverBackgroundColor: [
+            '#FF6384', // Soft Coral
+            '#36A2EB', // Sky Blue
+            '#FFCE56', // Warm Yellow
+            '#4BC0C0', // Teal
+            '#9966FF', // Amethyst Purple
+            '#FF9F40', // Tangerine
+            '#66BB6A', // Emerald Green
+            '#FF8A65', // Peach
+            '#9575CD', // Lavender Purple
+            '#D4E157', // Lime
+            '#EF5350', // Bright Red
+            '#26C6DA', // Cyan
+            '#FFB300', // Amber
+            '#8D6E63', // Warm Brown
+            '#EC407A', // Pink
+          ],
         }]
       },
       options: {

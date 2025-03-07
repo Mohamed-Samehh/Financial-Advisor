@@ -979,7 +979,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: const FaIcon(FontAwesomeIcons.arrowLeft, size: 24),
+                icon: const FaIcon(Icons.chevron_left, size: 24),
                 onPressed: isSpendingClusteringView ? null : _goToPrevView,
                 color: isSpendingClusteringView ? Colors.grey : Colors.blue,
               ),
@@ -1016,7 +1016,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                 });
               }),
               IconButton(
-                icon: const FaIcon(FontAwesomeIcons.arrowRight, size: 24),
+                icon: const FaIcon(Icons.chevron_right, size: 24),
                 onPressed: isAssociationRulesView ? null : _goToNextView,
                 color: isAssociationRulesView ? Colors.grey : Colors.blue,
               ),
@@ -1153,7 +1153,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                     ),
                     lineTouchData: LineTouchData(
                       enabled: true,
-                      touchSpotThreshold: 20,
+                      touchSpotThreshold: 5,
                       touchTooltipData: LineTouchTooltipData(
                         tooltipRoundedRadius: 8,
                         tooltipPadding: const EdgeInsets.all(8),
@@ -1261,18 +1261,11 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                         }).toList();
                       },
                       handleBuiltInTouches: true,
-                      touchCallback: (
-                        FlTouchEvent event,
-                        LineTouchResponse? touchResponse,
-                      ) {
-                        if (event is FlTapUpEvent &&
-                            touchResponse != null &&
-                            touchResponse.lineBarSpots != null) {
-                          print(
-                            'Touched at: ${touchResponse.lineBarSpots!.map((spot) => "x: ${spot.x}, y: ${spot.y}, barIndex: ${spot.barIndex}").join(", ")}',
-                          );
-                        }
-                      },
+                      touchCallback:
+                          (
+                            FlTouchEvent event,
+                            LineTouchResponse? touchResponse,
+                          ) {},
                     ),
                   ),
                 ),
@@ -1528,7 +1521,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
       // Red line (remaining budget)
       LineChartBarData(
         spots: remainingBudgetSpots,
-        isCurved: true,
+        isCurved: false,
         color: Colors.pink,
         barWidth: 4,
         dotData: FlDotData(show: true),
@@ -1623,12 +1616,21 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
 
   Color _getPieColor(int index) {
     const colors = [
-      Color(0xFFFF6384),
-      Color(0xFF36A2EB),
-      Color(0xFFFFCE56),
-      Color(0xFF4BC0C0),
-      Color(0xFF9966FF),
-      Color(0xFFFF9F40),
+      Color(0xFFFF6384), // Soft Coral
+      Color(0xFF36A2EB), // Sky Blue
+      Color(0xFFFFCE56), // Warm Yellow
+      Color(0xFF4BC0C0), // Teal
+      Color(0xFF9966FF), // Amethyst Purple
+      Color(0xFFFF9F40), // Tangerine
+      Color(0xFF66BB6A), // Emerald Green
+      Color(0xFFFF8A65), // Peach
+      Color(0xFF9575CD), // Lavender Purple
+      Color(0xFFD4E157), // Lime
+      Color(0xFFEF5350), // Bright Red
+      Color(0xFF26C6DA), // Cyan
+      Color(0xFFFFB300), // Amber
+      Color(0xFF8D6E63), // Warm Brown
+      Color(0xFFEC407A), // Pink
     ];
     return colors[index % colors.length];
   }
