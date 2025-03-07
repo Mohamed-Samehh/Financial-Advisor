@@ -374,13 +374,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 SizedBox(
-                                                  width: 20, // Smaller width
-                                                  height: 20, // Smaller height
+                                                  width: 20,
+                                                  height: 20,
                                                   child:
                                                       CircularProgressIndicator(
                                                         color: Colors.white,
-                                                        strokeWidth:
-                                                            2, // Thinner stroke
+                                                        strokeWidth: 2,
                                                       ),
                                                 ),
                                                 const SizedBox(width: 8),

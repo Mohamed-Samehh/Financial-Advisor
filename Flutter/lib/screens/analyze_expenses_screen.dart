@@ -664,54 +664,85 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            alignment: WrapAlignment.center,
-            children:
-                ((selectedPredictionType == 'Total'
-                            ? analysis['predictions']
-                            : analysis['category_predictions']?[selectedPredictionType]) ??
-                        [])
-                    .take(selectedMonths)
-                    .map<Widget>(
-                      (prediction) => SizedBox(
-                        width:
-                            MediaQuery.of(context).size.width < 400 ? 180 : 200,
-                        child: Card(
-                          elevation: 6,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                Text(
-                                  '${prediction['month']} ${prediction['year']}',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 16,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+          LayoutBuilder(
+            builder: (context, constraints) {
+              double screenWidth = MediaQuery.of(context).size.width;
+              int itemsPerRow;
+
+              if (screenWidth < 600) {
+                itemsPerRow = 2;
+              } else {
+                itemsPerRow = 3;
+              }
+
+              var predictions =
+                  ((selectedPredictionType == 'Total'
+                              ? analysis['predictions']
+                              : analysis['category_predictions']?[selectedPredictionType]) ??
+                          [])
+                      .take(selectedMonths)
+                      .toList();
+
+              List<Widget> rows = [];
+              for (int i = 0; i < predictions.length; i += itemsPerRow) {
+                var chunk =
+                    predictions
+                        .skip(i)
+                        .take(itemsPerRow)
+                        .map<Widget>(
+                          (prediction) => Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 8,
+                              ),
+                              child: Card(
+                                elevation: 6,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'E£${_formatNumber(prediction['predicted_spending'].toDouble())}',
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        '${prediction['month']} ${prediction['year']}',
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 16,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'E£${_formatNumber(prediction['predicted_spending'].toDouble())}',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    )
-                    .toList(),
+                        )
+                        .toList();
+
+                while (chunk.length < itemsPerRow) {
+                  chunk.add(Expanded(child: Container()));
+                }
+
+                rows.add(Row(children: chunk));
+              }
+
+              return Column(children: rows);
+            },
           ),
         ],
       ),

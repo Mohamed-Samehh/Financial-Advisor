@@ -26,7 +26,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   bool isEditing = false;
   int? editingExpenseId;
   List<String> categories = [];
-  String sortKey = 'date'; // 'date' or 'amount'
+  String sortKey = 'date'; // Sorting based on 'date' or 'amount'
   int currentPage = 1;
   final int itemsPerPage = 8;
   List<Map<String, dynamic>> paginatedExpenses = [];
@@ -42,7 +42,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     final year = today.year;
     final month = today.month;
     minDate = '$year-${month.toString().padLeft(2, '0')}-01';
-    maxDate = _setLastDayOfMonth(month - 1, year); // Month is 0-indexed in Dart
+    maxDate = _setLastDayOfMonth(month - 1, year); // Month is 0-indexed
     _loadExpenses();
     _loadCategories();
   }

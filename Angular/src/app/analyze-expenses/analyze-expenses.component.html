@@ -299,12 +299,14 @@
       </div>
 
       <!-- Prediction Cards -->
-      <div class="d-flex flex-wrap justify-content-center gap-3">
-        <div class="card shadow-sm p-3 text-center" style="width: 300px;"
-        *ngFor="let prediction of (selectedPredictionType === 'Total' ? analysis.predictions 
-        : analysis.category_predictions?.[selectedPredictionType])?.slice(0, selectedMonths)">
-          <h6 class="text-muted">{{ prediction.month }} {{ prediction.year }}</h6>
-          <p class="fs-5 fw-bold text-primary">E£{{ formatNumber(prediction.predicted_spending) }}</p>
+      <div class="row justify-content-center g-3">
+        <div class="col-6 col-md-4" 
+             *ngFor="let prediction of (selectedPredictionType === 'Total' ? analysis.predictions 
+             : analysis.category_predictions?.[selectedPredictionType])?.slice(0, selectedMonths)">
+          <div class="card shadow p-4 text-center h-100 rounded-3">
+            <div class="text-muted fs-6">{{ prediction.month }} {{ prediction.year }}</div>
+            <p class="fs-5 fw-semibold text-primary">E£{{ formatNumber(prediction.predicted_spending) }}</p>
+          </div>
         </div>
       </div>
     </div>

@@ -54,7 +54,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const RegisterScreen(),
     ),
     // GoRoute(
-    //   path: '/:path(.*)', // Wildcard for 404
+    //   path: '/:path(.*)',
     //   builder: (context, state) => const NotFoundScreen(),
     // ),
   ],

@@ -562,28 +562,23 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               Center(
                                 child: LayoutBuilder(
                                   builder: (context, constraints) {
-                                    // Calculate number of columns based on screen width
                                     final screenWidth =
                                         MediaQuery.of(context).size.width;
-                                    const minCardWidth =
-                                        150.0; // Minimum width for a card
+                                    const minCardWidth = 150.0;
                                     final crossAxisCount = (screenWidth /
                                             minCardWidth)
                                         .floor()
-                                        .clamp(2, 4); // Min 2, Max 4 columns
-
-                                    // Dynamic maxWidth to fit cards comfortably
+                                        .clamp(2, 3);
                                     final maxGridWidth =
                                         minCardWidth * crossAxisCount +
-                                        (crossAxisCount - 1) *
-                                            12; // 12 is crossAxisSpacing
+                                        (crossAxisCount - 1) * 12;
 
                                     return ConstrainedBox(
                                       constraints: BoxConstraints(
                                         maxWidth:
                                             maxGridWidth > screenWidth
                                                 ? screenWidth - 32
-                                                : maxGridWidth, // 32 for padding
+                                                : maxGridWidth,
                                       ),
                                       child: GridView.builder(
                                         shrinkWrap: true,
@@ -594,8 +589,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                               maxCrossAxisExtent: minCardWidth,
                                               crossAxisSpacing: 12,
                                               mainAxisSpacing: 12,
-                                              childAspectRatio:
-                                                  0.85, // Kept as is for mobile look
+                                              childAspectRatio: 0.85,
                                             ),
                                         itemCount: suggestedCategories!.length,
                                         itemBuilder: (context, index) {
@@ -820,7 +814,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                     final crossAxisCount = (screenWidth /
                                             minCardWidth)
                                         .floor()
-                                        .clamp(2, 4);
+                                        .clamp(2, 3);
                                     final maxGridWidth =
                                         minCardWidth * crossAxisCount +
                                         (crossAxisCount - 1) * 12;
