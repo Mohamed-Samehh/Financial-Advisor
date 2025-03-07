@@ -46,15 +46,14 @@
 .navbar-collapse.menu {
   position: fixed;
   top: 0;
-  left: -250px;
-  width: 250px;
+  left: -300px;
+  width: 300px;
   height: 100%;
   background: linear-gradient(45deg, #010b1f, #0f1d36);
   z-index: 9999;
   transition: left 0.3s ease-in-out;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 20px;
 }
 
 .navbar-collapse.menu.show {
@@ -121,4 +120,39 @@
 
 .navbar-collapse.menu::-webkit-scrollbar-track {
   background: #f1f1f1;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.diff_font {
+  font-size: 22px;
+  font-weight: normal;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #ffffffb3;
+  margin-top: 4px;
+}
+
+.navbar-collapse.menu .navbar-brand {
+  padding: 16px;
+  min-height: 60px;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-left: 0;
+}
+
+.navbar-divider {
+  border: 0;
+  border-top: 1px solid #A0A0A0;
+  margin: 0;
+  width: 100%;
 }

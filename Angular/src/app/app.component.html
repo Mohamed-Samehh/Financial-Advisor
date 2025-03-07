@@ -10,67 +10,71 @@
     <div class="navbar-collapse menu" [ngClass]="{'show': isNavbarVisible}">
       <div class="menu-overlay" *ngIf="isNavbarVisible" (click)="toggleNavbar()"></div>
       <a class="navbar-brand ms-4" routerLink="/" (click)="closeNavbar()">
-        Financial Advisor
+        <div class="brand-text">
+          <span class="diff_font">Financial Advisor</span>
+          <span class="subtitle">Your Money, Your Way</span>
+        </div>
       </a>
+      <hr class="navbar-divider" />
       <ul class="navbar-nav ms-auto">
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-compass"></i>&nbsp; Dashboard
+            <i class="fas fa-compass"></i>  Dashboard
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/budget']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-wallet"></i>&nbsp; Budget
+            <i class="fas fa-wallet"></i>  Budget
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/goal']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-bullseye"></i>&nbsp; Goal
+            <i class="fas fa-bullseye"></i>  Goal
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/categories']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-list"></i>&nbsp; Categories
+            <i class="fas fa-list"></i>  Categories
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/expenses']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-receipt"></i>&nbsp; Expenses
+            <i class="fas fa-receipt"></i>  Expenses
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/analyze']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-chart-pie"></i>&nbsp; Analyze
+            <i class="fas fa-chart-pie"></i>  Analyze
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/chat']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fa-solid fa-robot"></i>&nbsp; Chat
+            <i class="fa-solid fa-robot"></i>  Chat
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/invest']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-chart-line"></i>&nbsp; Invest
+            <i class="fas fa-chart-line"></i>  Invest
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/history']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-history"></i>&nbsp; History
+            <i class="fas fa-history"></i>  History
           </a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" [routerLink]="['/account']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-user-cog"></i>&nbsp; Account
+            <i class="fas fa-user-cog"></i>  Account
           </a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
           <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-sign-in-alt"></i>&nbsp; Login
+            <i class="fas fa-sign-in-alt"></i>  Login
           </a>
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn">
           <a class="nav-link" [routerLink]="['/register']" routerLinkActive="active" (click)="closeNavbar()">
-            <i class="fas fa-user-edit"></i>&nbsp; Register
+            <i class="fas fa-user-edit"></i>  Register
           </a>
         </li>
       </ul>

@@ -25,7 +25,7 @@ class Navbar extends StatelessWidget {
       ),
       title: Row(
         children: [
-          Image.asset('assets/logo.png', height: 40),
+          AnimatedLogo(), // Replaced Image.asset with AnimatedLogo widget
           const SizedBox(width: 12),
           const Text(
             'Financial Advisor',
@@ -216,6 +216,56 @@ class Navbar extends StatelessWidget {
       tileColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       hoverColor: Colors.white.withOpacity(0.1),
+    );
+  }
+}
+
+// New widget to animate the logo
+class AnimatedLogo extends StatefulWidget {
+  @override
+  _AnimatedLogoState createState() => _AnimatedLogoState();
+}
+
+class _AnimatedLogoState extends State<AnimatedLogo>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _animation = Tween<double>(begin: 0, end: -10).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        _controller.forward();
+      }
+    });
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _animation.value),
+          child: Image.asset('assets/logo.png', height: 40),
+        );
+      },
     );
   }
 }
