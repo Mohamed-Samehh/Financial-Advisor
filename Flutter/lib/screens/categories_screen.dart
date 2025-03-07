@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../screens/navbar.dart';
 
@@ -105,8 +106,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           firstMonthLabeled = response['first_month_labeled'];
           lastMonthLabeled = response['last_month_labeled'];
           if (suggestedCategories == null || suggestedCategories!.isEmpty) {
-            isLabelView =
-                true; // Default to label view if no suggested categories
+            isLabelView = true;
           }
         });
       } else {
@@ -449,6 +449,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           Text(
                             'Loading...',
                             style: TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
@@ -474,9 +475,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           ),
                           child: const Row(
                             children: [
-                              FaIcon(FontAwesomeIcons.arrowLeft, size: 16),
+                              Padding(
+                                padding: EdgeInsets.only(top: 3),
+                                child: FaIcon(
+                                  FontAwesomeIcons.arrowLeft,
+                                  size: 16,
+                                ),
+                              ),
                               SizedBox(width: 8),
-                              Text('Suggested Priorities'),
+                              Text('Suggestions'),
                             ],
                           ),
                         ),
@@ -495,9 +502,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           ),
                           child: const Row(
                             children: [
-                              Text('Importance Labeling'),
+                              Text('Importance'),
                               SizedBox(width: 8),
-                              FaIcon(FontAwesomeIcons.arrowRight, size: 16),
+                              Padding(
+                                padding: EdgeInsets.only(top: 3),
+                                child: FaIcon(
+                                  FontAwesomeIcons.arrowRight,
+                                  size: 16,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -509,93 +522,245 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF7F7F7),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                            ),
+                          ],
                         ),
                         child: Column(
                           children: [
                             const Text(
                               'Suggested Category Priorities',
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blueGrey,
                               ),
                             ),
                             if (firstMonthSuggested != null &&
                                 lastMonthSuggested != null)
-                              Text(
-                                'Based on your expenses from $firstMonthSuggested to $lastMonthSuggested',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Based on your average monthly expenses from $firstMonthSuggested to $lastMonthSuggested',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blueGrey.withOpacity(0.7),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                             if (suggestedCategories != null &&
                                 suggestedCategories!.isNotEmpty)
-                              GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      crossAxisSpacing: 8,
-                                      mainAxisSpacing: 8,
-                                      childAspectRatio: 0.8,
-                                    ),
-                                itemCount: suggestedCategories!.length,
-                                itemBuilder: (context, index) {
-                                  final category = suggestedCategories![index];
-                                  return Card(
-                                    elevation: 2,
-                                    color: Colors.white,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            category['category'],
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Avg: E£${category['average_expenses'].toStringAsFixed(0)}',
-                                            style: const TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Priority: ${category['suggested_priority']}',
-                                            style: const TextStyle(
-                                              color: Colors.blue,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                              Center(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    // Calculate number of columns based on screen width
+                                    final screenWidth =
+                                        MediaQuery.of(context).size.width;
+                                    const minCardWidth =
+                                        150.0; // Minimum width for a card
+                                    final crossAxisCount = (screenWidth /
+                                            minCardWidth)
+                                        .floor()
+                                        .clamp(2, 4); // Min 2, Max 4 columns
+
+                                    // Dynamic maxWidth to fit cards comfortably
+                                    final maxGridWidth =
+                                        minCardWidth * crossAxisCount +
+                                        (crossAxisCount - 1) *
+                                            12; // 12 is crossAxisSpacing
+
+                                    return ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            maxGridWidth > screenWidth
+                                                ? screenWidth - 32
+                                                : maxGridWidth, // 32 for padding
                                       ),
-                                    ),
-                                  );
-                                },
+                                      child: GridView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        gridDelegate:
+                                            SliverGridDelegateWithMaxCrossAxisExtent(
+                                              maxCrossAxisExtent: minCardWidth,
+                                              crossAxisSpacing: 12,
+                                              mainAxisSpacing: 12,
+                                              childAspectRatio:
+                                                  0.85, // Kept as is for mobile look
+                                            ),
+                                        itemCount: suggestedCategories!.length,
+                                        itemBuilder: (context, index) {
+                                          final category =
+                                              suggestedCategories![index];
+                                          return AnimatedContainer(
+                                            duration: const Duration(
+                                              milliseconds: 300,
+                                            ),
+                                            curve: Curves.easeOutCubic,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.blueGrey
+                                                      .withOpacity(0.15),
+                                                  blurRadius: 6,
+                                                  offset: const Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                // Header with Category Name
+                                                Container(
+                                                  width: double.infinity,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 12,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.blueAccent
+                                                            .withOpacity(0.9),
+                                                        Colors.blue.withOpacity(
+                                                          0.7,
+                                                        ),
+                                                      ],
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end:
+                                                          Alignment
+                                                              .bottomCenter,
+                                                    ),
+                                                    borderRadius:
+                                                        const BorderRadius.vertical(
+                                                          top: Radius.circular(
+                                                            16,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    category['category'],
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                // Body with Details
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .monetization_on,
+                                                              size: 16,
+                                                              color:
+                                                                  Colors.green,
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 4,
+                                                            ),
+                                                            Text(
+                                                              'E£${NumberFormat('#,##0').format(category['average_expenses'].toInt())}',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color:
+                                                                    Colors
+                                                                        .grey[800],
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 6,
+                                                        ),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4,
+                                                              ),
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                Colors
+                                                                    .blue[100],
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  12,
+                                                                ),
+                                                          ),
+                                                          child: Text(
+                                                            'Priority: ${category['suggested_priority']}',
+                                                            style: const TextStyle(
+                                                              fontSize: 11,
+                                                              color:
+                                                                  Colors
+                                                                      .blueAccent,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
                               )
                             else
-                              const Column(
+                              Column(
                                 children: [
                                   Icon(
                                     Icons.lock,
                                     size: 48,
-                                    color: Colors.grey,
+                                    color: Colors.grey.withOpacity(0.5),
                                   ),
-                                  SizedBox(height: 12),
+                                  const SizedBox(height: 12),
                                   Text(
                                     'This option is not available for you yet.',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: Colors.grey,
+                                      color: Colors.grey[600],
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -609,86 +774,236 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF7F7F7),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                            ),
+                          ],
                         ),
                         child: Column(
                           children: [
                             const Text(
                               'Category Importance Labeling',
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blueGrey,
                               ),
                             ),
                             if (firstMonthLabeled != null &&
                                 lastMonthLabeled != null)
-                              Text(
-                                'Based on your expenses from $firstMonthLabeled to $lastMonthLabeled',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Based on your average monthly expenses from $firstMonthLabeled to $lastMonthLabeled',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blueGrey.withOpacity(0.7),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                             if (labeledCategories != null &&
                                 labeledCategories!.isNotEmpty)
-                              GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      crossAxisSpacing: 8,
-                                      mainAxisSpacing: 8,
-                                      childAspectRatio: 0.8,
-                                    ),
-                                itemCount: labeledCategories!.length,
-                                itemBuilder: (context, index) {
-                                  final category = labeledCategories![index];
-                                  return Card(
-                                    elevation: 2,
-                                    color: Colors.white,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            category['category'],
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Importance: ${category['predicted_importance']}',
-                                            style: const TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
+                              Center(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final screenWidth =
+                                        MediaQuery.of(context).size.width;
+                                    const minCardWidth = 150.0;
+                                    final crossAxisCount = (screenWidth /
+                                            minCardWidth)
+                                        .floor()
+                                        .clamp(2, 4);
+                                    final maxGridWidth =
+                                        minCardWidth * crossAxisCount +
+                                        (crossAxisCount - 1) * 12;
+
+                                    return ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            maxGridWidth > screenWidth
+                                                ? screenWidth - 32
+                                                : maxGridWidth,
                                       ),
-                                    ),
-                                  );
-                                },
+                                      child: GridView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        gridDelegate:
+                                            SliverGridDelegateWithMaxCrossAxisExtent(
+                                              maxCrossAxisExtent: minCardWidth,
+                                              crossAxisSpacing: 12,
+                                              mainAxisSpacing: 12,
+                                              childAspectRatio: 0.85,
+                                            ),
+                                        itemCount: labeledCategories!.length,
+                                        itemBuilder: (context, index) {
+                                          final category =
+                                              labeledCategories![index];
+                                          return AnimatedContainer(
+                                            duration: const Duration(
+                                              milliseconds: 300,
+                                            ),
+                                            curve: Curves.easeOutCubic,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.blueGrey
+                                                      .withOpacity(0.15),
+                                                  blurRadius: 6,
+                                                  offset: const Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  width: double.infinity,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 12,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.blueAccent
+                                                            .withOpacity(0.9),
+                                                        Colors.blue.withOpacity(
+                                                          0.7,
+                                                        ),
+                                                      ],
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end:
+                                                          Alignment
+                                                              .bottomCenter,
+                                                    ),
+                                                    borderRadius:
+                                                        const BorderRadius.vertical(
+                                                          top: Radius.circular(
+                                                            16,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    category['category'],
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            const Icon(
+                                                              Icons.star,
+                                                              size: 16,
+                                                              color:
+                                                                  Colors.amber,
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 4,
+                                                            ),
+                                                            Text(
+                                                              'Importance',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color:
+                                                                    Colors
+                                                                        .grey[800],
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 6,
+                                                        ),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4,
+                                                              ),
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                Colors
+                                                                    .blue[100],
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  12,
+                                                                ),
+                                                          ),
+                                                          child: Text(
+                                                            '${category['predicted_importance']}',
+                                                            style: const TextStyle(
+                                                              fontSize: 11,
+                                                              color:
+                                                                  Colors
+                                                                      .blueAccent,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
                               )
                             else
-                              const Column(
+                              Column(
                                 children: [
                                   Icon(
                                     Icons.lock,
                                     size: 48,
-                                    color: Colors.grey,
+                                    color: Colors.grey.withOpacity(0.5),
                                   ),
-                                  SizedBox(height: 12),
+                                  const SizedBox(height: 12),
                                   Text(
                                     'This option is not available for you yet.',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: Colors.grey,
+                                      color: Colors.grey[600],
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -920,7 +1235,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                     padding: const EdgeInsets.all(8),
                                     decoration: const BoxDecoration(
                                       color: Colors.blue,
-                                      shape: BoxShape.circle,
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(8),
+                                      ),
                                     ),
                                     child: Row(
                                       children: [

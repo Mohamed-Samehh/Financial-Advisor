@@ -375,6 +375,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                           Text(
                             'Loading...',
                             style: TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),

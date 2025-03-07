@@ -3,25 +3,23 @@
   <h2 class="text-center display-4 text-primary mb-5">Dashboard</h2>
 
   <!-- Card Container -->
-  <div class="card shadow-lg border-0 rounded-4 mb-5" style="background: linear-gradient(135deg, #f8f9fa, #e2e8f0);">
+  <div class="card-container p-4 bg-glass rounded-4 mb-5" style="background: rgba(241, 247, 255, 0.8);">
     <div class="card-body p-5">
       <!-- Welcome Section -->
       <div class="text-center mb-5">
-        <h5 class="text-uppercase text-primary mb-3">Welcome to Your Financial Advisor!</h5>
-        <p class="fs-5 text-muted">Track, manage, and analyze your finances effortlessly. Let's achieve your financial goals together.</p>
+        <h5 class="text-uppercase text-primary mb-3 fw-bold">Welcome to Your Financial Advisor!</h5>
+        <p class="fs-5 text-muted fw-light">Track, manage, and analyze your finances effortlessly. Let's achieve your financial goals together.</p>
       </div>
 
       <!-- Navigation Grid -->
       <div class="row g-4 justify-content-center">
         <!-- Manage Budget -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-primary mt-4 mb-3 mx-auto">
-                <i class="fas fa-wallet display-5"></i>
-              </div>
-              <h6 class="fw-bold text-primary">Manage Budget</h6>
-              <p class="small text-muted">Plan your monthly budget effectively.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-wallet display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Manage Budget</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Plan your monthly budget effectively.</p>
               <a [routerLink]="['/budget']" class="stretched-link"></a>
             </div>
           </div>
@@ -29,13 +27,11 @@
 
         <!-- Manage Goal -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-success mt-4 mb-3 mx-auto">
-                <i class="fas fa-bullseye display-5"></i>
-              </div>
-              <h6 class="fw-bold text-success">Manage Goal</h6>
-              <p class="small text-muted">Define your financial targets clearly.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-bullseye display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Manage Goal</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Define your financial targets clearly.</p>
               <a [routerLink]="['/goal']" class="stretched-link"></a>
             </div>
           </div>
@@ -43,13 +39,11 @@
 
         <!-- Manage Categories -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-secondary mt-4 mb-3 mx-auto">
-                <i class="fas fa-list display-5"></i>
-              </div>
-              <h6 class="fw-bold text-secondary">Manage Categories</h6>
-              <p class="small text-muted">Organize and prioritize your categories effectively.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-list display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Manage Categories</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Organize and prioritize your categories effectively.</p>
               <a [routerLink]="['/categories']" class="stretched-link"></a>
             </div>
           </div>
@@ -57,13 +51,11 @@
 
         <!-- Track Expenses -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-warning mt-4 mb-3 mx-auto">
-                <i class="fas fa-receipt display-5"></i>
-              </div>
-              <h6 class="fw-bold text-warning">Track Expenses</h6>
-              <p class="small text-muted">Monitor and categorize your daily expenses.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-receipt display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Track Expenses</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Monitor and categorize your daily expenses.</p>
               <a [routerLink]="['/expenses']" class="stretched-link"></a>
             </div>
           </div>
@@ -71,13 +63,11 @@
 
         <!-- Analyze Expenses -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-info mt-4 mb-3 mx-auto">
-                <i class="fas fa-chart-pie display-5"></i>
-              </div>
-              <h6 class="fw-bold text-info">Analyze Expenses</h6>
-              <p class="small text-muted">Gain insights with visual expense analysis.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-chart-pie display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Analyze Expenses</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Gain insights with visual expense analysis.</p>
               <a [routerLink]="['/analyze']" class="stretched-link"></a>
             </div>
           </div>
@@ -85,13 +75,11 @@
 
         <!-- Chat with AI -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-primary mt-4 mb-3 mx-auto">
-                <i class="fa-solid fa-robot display-5"></i>
-              </div>
-              <h6 class="fw-bold text-primary">Chat with AI</h6>
-              <p class="small text-muted">Get instant financial advice, insights, and tips with our AI chatbot.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fa-solid fa-robot display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Chat with AI</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Get instant financial advice, insights, and tips with our AI chatbot.</p>
               <a [routerLink]="['/chat']" class="stretched-link"></a>
             </div>
           </div>
@@ -99,13 +87,11 @@
 
         <!-- Invest -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-success mt-4 mb-3 mx-auto">
-                <i class="fas fa-chart-line display-5"></i>
-              </div>
-              <h6 class="fw-bold text-success">Invest</h6>
-              <p class="small text-muted">Explore bank certificates to grow your savings.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-chart-line display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Invest</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Explore bank certificates to grow your savings.</p>
               <a [routerLink]="['/invest']" class="stretched-link"></a>
             </div>
           </div>
@@ -113,13 +99,11 @@
 
         <!-- Expense History -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-primary mt-4 mb-3 mx-auto">
-                <i class="fas fa-history display-5"></i>
-              </div>
-              <h6 class="fw-bold text-primary">Expense History</h6>
-              <p class="small text-muted">Review and reflect on your past expenses.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-history display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Expense History</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Review and reflect on your past expenses.</p>
               <a [routerLink]="['/history']" class="stretched-link"></a>
             </div>
           </div>
@@ -127,13 +111,11 @@
 
         <!-- Profile -->
         <div class="col-md-4">
-          <div class="card card-effect h-100 border-0 shadow-sm rounded-3 position-relative">
-            <div class="card-body text-center p-4">
-              <div class="text-secondary mt-4 mb-3 mx-auto">
-                <i class="fas fa-user-cog display-5"></i>
-              </div>
-              <h6 class="fw-bold text-secondary">Account</h6>
-              <p class="small text-muted">Update your account information or password.</p>
+          <div class="card h-100 border-0 rounded-4 position-relative glass-card" style="background-color: white;">
+            <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+              <i class="fas fa-user-cog display-4 mb-4" style="color: #3B82F6;"></i>
+              <h6 class="fw-normal fs-5 text-dark mb-2" style="font-family: 'Poppins', sans-serif; color: #1E3A8A;">Account</h6>
+              <p class="text-muted small fw-light" style="font-family: 'Poppins', sans-serif;">Update your account information or password.</p>
               <a [routerLink]="['/account']" class="stretched-link"></a>
             </div>
           </div>

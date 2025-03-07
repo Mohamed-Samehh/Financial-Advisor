@@ -255,6 +255,7 @@ class _GoalScreenState extends State<GoalScreen> {
                           Text(
                             'Loading...',
                             style: TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),

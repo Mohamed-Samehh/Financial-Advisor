@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'services/auth_service.dart';
 import 'services/api_service.dart';
 import 'router.dart';
@@ -35,6 +36,69 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+        // Apply Poppins font globally
+        textTheme: TextTheme(
+          displayLarge: GoogleFonts.poppins(
+            fontSize: 32,
+            fontWeight: FontWeight.w700,
+          ),
+          displayMedium: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
+          displaySmall: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+          ),
+          headlineLarge: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
+          headlineMedium: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          headlineSmall: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w300,
+          ),
+          titleLarge: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+          titleMedium: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          titleSmall: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+          bodyLarge: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+          bodyMedium: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w300,
+          ),
+          bodySmall: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w300,
+          ),
+          labelLarge: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          labelMedium: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          ),
+          labelSmall: GoogleFonts.poppins(
+            fontSize: 10,
+            fontWeight: FontWeight.w300,
+          ),
+        ),
       ),
       routerConfig: router,
     );

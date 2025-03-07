@@ -8,6 +8,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Builder(
@@ -29,17 +30,19 @@ class DashboardScreen extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.fromLTRB(16, 40, 16, 40),
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.blue, Colors.blueAccent],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
+                    color: Colors.blue,
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(30),
                     ),
                   ),
                   child: Column(
                     children: [
+                      Icon(
+                        Icons.home,
+                        size: 80,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                      const SizedBox(height: 20),
                       const Text(
                         'Your Financial Dashboard',
                         style: TextStyle(
@@ -62,12 +65,6 @@ class DashboardScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 18, color: Colors.white70),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20),
-                      Icon(
-                        Icons.account_balance_wallet,
-                        size: 80,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
                     ],
                   ),
                 ),
@@ -79,29 +76,26 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Explore Your Tools',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey,
-                        ),
+                        style: Theme.of(context).textTheme.headlineLarge
+                            ?.copyWith(color: const Color(0xFF4682A9)),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 20),
                       GridView.count(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
+                        crossAxisCount: 1,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 0.85,
+                        childAspectRatio: 1.6,
                         children: [
                           _buildCard(
                             context,
                             icon: Icons.account_balance_wallet,
-                            gradient: const LinearGradient(
-                              colors: [Colors.blue, Colors.blueAccent],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Manage Budget',
                             subtitle: 'Plan your monthly budget effectively.',
                             route: '/budget',
@@ -109,9 +103,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.track_changes,
-                            gradient: const LinearGradient(
-                              colors: [Colors.green, Colors.teal],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Manage Goal',
                             subtitle: 'Define your financial targets clearly.',
                             route: '/goal',
@@ -119,9 +112,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.list,
-                            gradient: const LinearGradient(
-                              colors: [Colors.grey, Colors.blueGrey],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Categories',
                             subtitle: 'Organize your categories effectively.',
                             route: '/categories',
@@ -129,9 +121,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.receipt,
-                            gradient: const LinearGradient(
-                              colors: [Colors.orange, Colors.deepOrange],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Track Expenses',
                             subtitle: 'Monitor your daily expenses.',
                             route: '/expenses',
@@ -139,9 +130,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.pie_chart,
-                            gradient: const LinearGradient(
-                              colors: [Colors.cyan, Colors.teal],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Analyze Expenses',
                             subtitle: 'Gain visual insights.',
                             route: '/analyze',
@@ -149,9 +139,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.smart_toy,
-                            gradient: const LinearGradient(
-                              colors: [Colors.blue, Colors.blueAccent],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Chat with AI',
                             subtitle:
                                 'Get instant financial advice, insights, and tips with our AI chatbot.',
@@ -160,9 +149,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.trending_up,
-                            gradient: const LinearGradient(
-                              colors: [Colors.green, Colors.teal],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Invest',
                             subtitle:
                                 'Explore bank certificates to grow your savings.',
@@ -171,9 +159,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.history,
-                            gradient: const LinearGradient(
-                              colors: [Colors.grey, Colors.blueGrey],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Expense History',
                             subtitle:
                                 'Review and reflect on your past expenses.',
@@ -182,9 +169,8 @@ class DashboardScreen extends StatelessWidget {
                           _buildCard(
                             context,
                             icon: Icons.account_circle,
-                            gradient: const LinearGradient(
-                              colors: [Colors.blue, Colors.blueAccent],
-                            ),
+                            color: const Color(0xFFEFF6FF),
+                            accentColor: const Color(0xFF1D4ED8),
                             title: 'Account',
                             subtitle: 'Manage your profile.',
                             route: '/account',
@@ -216,7 +202,8 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildCard(
     BuildContext context, {
     required IconData icon,
-    required LinearGradient gradient,
+    required Color color,
+    required Color accentColor,
     required String title,
     required String subtitle,
     required String route,
@@ -227,27 +214,38 @@ class DashboardScreen extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(16),
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: accentColor.withOpacity(0.2), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
+              color: accentColor.withOpacity(0.1),
+              blurRadius: 12,
               offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.white.withOpacity(0.8),
+              blurRadius: 12,
+              offset: const Offset(-2, -2),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 50, color: Colors.white),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: accentColor.withOpacity(0.1),
+              ),
+              child: Icon(icon, size: 40, color: const Color(0xFF2563EB)),
+            ),
             const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: const Color(0xFF1E3A8A),
               ),
               textAlign: TextAlign.center,
             ),
@@ -256,9 +254,8 @@ class DashboardScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withOpacity(0.9),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: const Color(0xFF64748B),
                 ),
                 textAlign: TextAlign.center,
               ),
