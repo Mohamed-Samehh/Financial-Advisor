@@ -82,7 +82,7 @@ class DashboardScreen extends StatelessWidget {
                             ?.copyWith(color: const Color(0xFF4682A9)),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 34),
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final double screenWidth = constraints.maxWidth;
