@@ -3,9 +3,6 @@
   overflow-y: auto;
   border-radius: 15px;
   padding: 10px;
-  background: #f8f9fa;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  scrollbar-width: thin;
 }
 
 .message-container {

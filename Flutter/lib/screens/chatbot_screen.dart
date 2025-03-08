@@ -425,10 +425,6 @@ class ChatbotScreenState extends State<ChatbotScreen>
                     ),
                   ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Powered by Gemini Flash 2.0',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
               ],
             ),
           ),
