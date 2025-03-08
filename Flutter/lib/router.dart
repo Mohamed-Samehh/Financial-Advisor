@@ -9,8 +9,8 @@ import 'screens/goal_screen.dart';
 import 'screens/categories_screen.dart';
 import 'screens/expenses_screen.dart';
 import 'screens/analyze_expenses_screen.dart';
+import 'screens/chatbot_screen.dart';
 // import 'screens/invest_screen.dart';
-// import 'screens/chatbot_screen.dart';
 // import 'screens/user_profile_screen.dart';
 // import 'screens/expense_history_screen.dart';
 import 'screens/not_found_screen.dart';
@@ -38,12 +38,12 @@ final GoRouter router = GoRouter(
       path: '/analyze',
       builder: (context, state) => const AnalyzeExpensesScreen(),
     ),
+    GoRoute(path: '/chat', builder: (context, state) => const ChatbotScreen()),
     // GoRoute(path: '/invest', builder: (context, state) => const InvestScreen()),
     // GoRoute(
     //   path: '/history',
     //   builder: (context, state) => const ExpenseHistoryScreen(),
     // ),
-    // GoRoute(path: '/chat', builder: (context, state) => const ChatbotScreen()),
     // GoRoute(
     //   path: '/account',
     //   builder: (context, state) => const UserProfileScreen(),
