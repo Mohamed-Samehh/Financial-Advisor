@@ -998,7 +998,6 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                                   color: Colors.white,
                                   fontSize: 16,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
                             Padding(
@@ -1009,17 +1008,19 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                                 range,
                                 style: const TextStyle(fontSize: 16),
                                 overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
+                                maxLines: 1,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                              child: Text(
-                                item['count_of_expenses'].toString(),
-                                style: const TextStyle(fontSize: 16),
-                                textAlign: TextAlign.center,
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                child: Text(
+                                  item['count_of_expenses'].toString(),
+                                  style: const TextStyle(fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
                           ];
@@ -1075,7 +1076,6 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                                   child: Text(
                                     (entry.key + 1).toString(),
                                     style: const TextStyle(fontSize: 16),
-                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                                 Padding(
@@ -1086,7 +1086,6 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                                     rule['antecedents'][0] ?? 'No antecedent',
                                     style: const TextStyle(fontSize: 16),
                                     overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                                 Padding(
@@ -1097,32 +1096,34 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                                     rule['consequents'][0] ?? 'No consequent',
                                     style: const TextStyle(fontSize: 16),
                                     overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        (rule['confidence'] as num) >= 0.7
-                                            ? Colors.green
-                                            : (rule['confidence'] as num) >= 0.4
-                                            ? Colors.orange
-                                            : Colors.red,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    rule['confidence'] != null
-                                        ? '${((rule['confidence'] as num) * 100).toStringAsFixed(0)}%'
-                                        : 'N/A',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
+                                Center(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 8,
                                     ),
-                                    textAlign: TextAlign.center,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          (rule['confidence'] as num) >= 0.7
+                                              ? Colors.green
+                                              : (rule['confidence'] as num) >=
+                                                  0.4
+                                              ? Colors.orange
+                                              : Colors.red,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      rule['confidence'] != null
+                                          ? '${((rule['confidence'] as num) * 100).toStringAsFixed(0)}%'
+                                          : 'N/A',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
                               ];
