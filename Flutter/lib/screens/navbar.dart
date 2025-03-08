@@ -209,7 +209,7 @@ class Navbar extends StatelessWidget {
         ),
       ),
       onTap: () {
-        Navigator.pop(context);
+        Scaffold.of(context).closeDrawer();
         context.go(route);
       },
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
