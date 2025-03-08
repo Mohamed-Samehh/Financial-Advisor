@@ -1156,7 +1156,8 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 50,
+                          reservedSize: 80,
+                          interval: 1,
                           getTitlesWidget: (value, meta) {
                             final day = value.toInt();
                             if (value == firstDay || value == lastDay) {
@@ -1201,7 +1202,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                       show: true,
                       drawVerticalLine: true,
                       horizontalInterval: (maxY - minY) / 4,
-                      verticalInterval: null,
+                      verticalInterval: 1,
                       getDrawingHorizontalLine:
                           (value) =>
                               FlLine(color: Colors.grey[200], strokeWidth: 0.5),
