@@ -40,7 +40,6 @@ class _GoalScreenState extends State<GoalScreen> {
         _loadGoal();
       });
     } catch (e) {
-      print('Failed to load budget: $e');
       setState(() => isLoading = false);
     }
   }
@@ -62,7 +61,6 @@ class _GoalScreenState extends State<GoalScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print('Failed to load goal: $e');
       setState(() => isLoading = false);
     }
   }
@@ -146,7 +144,6 @@ class _GoalScreenState extends State<GoalScreen> {
           messageType = 'error';
           isLoading = false;
         });
-        print('Failed to ${goal['id'] != null ? 'update' : 'add'} goal: $e');
       }
     } else {
       setState(() {
@@ -173,7 +170,6 @@ class _GoalScreenState extends State<GoalScreen> {
         messageType = 'error';
         isLoading = false;
       });
-      print('Failed to delete goal: $e');
     }
   }
 

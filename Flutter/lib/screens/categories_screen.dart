@@ -53,7 +53,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         categories = [];
         isLoading = false;
       });
-      print('Failed to load categories: $e');
     }
   }
 
@@ -83,7 +82,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         firstMonthSuggested = null;
         lastMonthSuggested = null;
       });
-      print('Failed to load suggested categories: $e');
     }
   }
 
@@ -122,7 +120,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         firstMonthLabeled = null;
         lastMonthLabeled = null;
       });
-      print('Failed to load labeled categories: $e');
     }
   }
 
@@ -186,7 +183,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           message = 'An error occurred while updating the category.';
           messageType = 'error';
         });
-        print('Failed to update category: $e');
       }
     }
   }
@@ -242,7 +238,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           message = 'An error occurred while adding the category.';
           messageType = 'error';
         });
-        print('Failed to add category: $e');
       }
     }
   }
@@ -334,7 +329,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             message = 'An error occurred while deleting the category.';
             messageType = 'error';
           });
-          print('Failed to delete category: $e');
         }
       } else {
         setState(() {

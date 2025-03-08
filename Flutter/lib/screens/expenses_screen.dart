@@ -80,7 +80,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         expenses = [];
         isLoading = false;
       });
-      print('Error fetching expenses: $e');
     }
   }
 
@@ -93,7 +92,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       });
     } catch (e) {
       setState(() => categories = []);
-      print('Error fetching categories: $e');
     }
   }
 
@@ -222,7 +220,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           messageType = 'error';
           isLoading = false;
         });
-        print('Failed to ${isEditing ? 'update' : 'add'} expense: $e');
       }
     } else {
       setState(() {
@@ -282,7 +279,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         messageType = 'error';
         isLoading = false;
       });
-      print('Failed to delete expense: $e');
     }
   }
 

@@ -44,7 +44,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
         }
       });
     } catch (e) {
-      print('Failed to load budget: $e');
       setState(() => isLoading = false);
     }
   }
@@ -66,7 +65,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print('Failed to load goal: $e');
       setState(() => isLoading = false);
     }
   }
@@ -122,9 +120,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
           messageType = 'error';
           isLoading = false;
         });
-        print(
-          'Failed to ${budget['id'] != null ? 'update' : 'add'} budget: $e',
-        );
       }
     } else {
       setState(() {
@@ -154,20 +149,16 @@ class _BudgetScreenState extends State<BudgetScreen> {
         messageType = 'error';
         isLoading = false;
       });
-      print('Failed to delete budget: $e');
     }
   }
 
   Future<void> _deleteGoal(int goalId) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    try {
-      await apiService.deleteGoal(goalId);
-      setState(() {
-        goal = {'id': null, 'name': '', 'target_amount': null};
-      });
-    } catch (e) {
-      print('Failed to delete goal: $e');
-    }
+
+    await apiService.deleteGoal(goalId);
+    setState(() {
+      goal = {'id': null, 'name': '', 'target_amount': null};
+    });
   }
 
   @override
