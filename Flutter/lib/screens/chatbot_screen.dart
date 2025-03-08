@@ -183,7 +183,7 @@ class ChatbotScreenState extends State<ChatbotScreen>
                                     Icon(
                                       Icons.chat_bubble_outline,
                                       size: 60,
-                                      color: Colors.blue.withOpacity(0.7),
+                                      color: Colors.blue.withValues(alpha: 0.7),
                                     ),
                                     const SizedBox(height: 16),
                                     Text(
