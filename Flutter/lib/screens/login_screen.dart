@@ -345,13 +345,14 @@ class LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-                                  Row(
+                                  Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Text(
                                         "Don't have an account?",
                                         style: TextStyle(color: Colors.grey),
                                       ),
+                                      const SizedBox(height: 2.0),
                                       TextButton(
                                         onPressed:
                                             () => context.go('/register'),

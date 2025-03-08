@@ -426,13 +426,14 @@ class RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                Row(
+                                Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const Text(
                                       'Already have an account?',
                                       style: TextStyle(color: Colors.grey),
                                     ),
+                                    const SizedBox(height: 2.0),
                                     TextButton(
                                       onPressed: () => context.go('/login'),
                                       child: const Text(
