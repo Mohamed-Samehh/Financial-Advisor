@@ -1405,7 +1405,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
     final predictedCurrentMonth = analysis['predicted_current_month'];
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'Total Spent: E£${_formatNumber(totalSpent.toDouble())}',
@@ -1414,6 +1414,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                 totalSpent > monthlyBudget * 0.75 ? Colors.red : Colors.green,
             fontSize: 18,
           ),
+          textAlign: TextAlign.center,
         ),
         if (predictedCurrentMonth != null)
           Text(
@@ -1425,6 +1426,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                       : Colors.green,
               fontSize: 18,
             ),
+            textAlign: TextAlign.center,
           ),
         Text(
           'Remaining Allowance: E£${_formatNumber((remainingBudget - goal).toDouble())}',
@@ -1435,6 +1437,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                     : Colors.green,
             fontSize: 18,
           ),
+          textAlign: TextAlign.center,
         ),
         Text(
           'Remaining Budget: E£${_formatNumber(remainingBudget.toDouble())}',
@@ -1445,10 +1448,11 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                     : Colors.green,
             fontSize: 18,
           ),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RichText(
               text: TextSpan(
@@ -1463,6 +1467,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                   ),
                 ],
               ),
+              textAlign: TextAlign.center,
             ),
             const Text(
               ' | ',
@@ -1481,6 +1486,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                   ),
                 ],
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
