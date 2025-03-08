@@ -40,7 +40,7 @@ class DashboardScreen extends StatelessWidget {
                       Icon(
                         Icons.explore,
                         size: 80,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withAlpha(230),
                       ),
                       const SizedBox(height: 20),
                       const Text(
@@ -239,15 +239,15 @@ class DashboardScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: accentColor.withOpacity(0.2), width: 1),
+            border: Border.all(color: accentColor.withAlpha(51), width: 1),
             boxShadow: [
               BoxShadow(
-                color: accentColor.withOpacity(0.1),
+                color: accentColor.withAlpha(25),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
               BoxShadow(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withAlpha(204),
                 blurRadius: 12,
                 offset: const Offset(-2, -2),
               ),
@@ -260,7 +260,7 @@ class DashboardScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: accentColor.withOpacity(0.1),
+                  color: accentColor.withAlpha(25),
                 ),
                 child: Icon(icon, size: 40, color: const Color(0xFF2563EB)),
               ),

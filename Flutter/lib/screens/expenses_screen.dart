@@ -428,7 +428,12 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                     ),
                                     value:
                                         form['category'].isEmpty
@@ -474,7 +479,12 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                     ),
                                     keyboardType: TextInputType.number,
                                     initialValue:
@@ -510,7 +520,12 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                       suffixIcon: IconButton(
                                         icon: const Icon(
                                           Icons.calendar_today,
@@ -547,7 +562,12 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                     ),
                                     maxLength: 100,
                                     maxLines: 2,
@@ -618,7 +638,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withAlpha(25),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -670,7 +690,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withAlpha(25),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -855,7 +875,7 @@ class AlertMessage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
