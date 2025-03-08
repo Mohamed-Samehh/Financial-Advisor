@@ -399,7 +399,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                                   color: Colors.white,
                                   shadows: [
                                     Shadow(
-                                      color: Colors.black.withOpacity(0.3),
+                                      color: Colors.black.withAlpha(76),
                                       blurRadius: 2,
                                     ),
                                   ],
@@ -1309,7 +1309,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                           }
                           return TouchedSpotIndicatorData(
                             FlLine(
-                              color: Colors.pink.withOpacity(0.5),
+                              color: Colors.pink.withAlpha(127),
                               strokeWidth: 2,
                             ),
                             FlDotData(
@@ -1623,10 +1623,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
         color: Colors.pink,
         barWidth: 4,
         dotData: FlDotData(show: true),
-        belowBarData: BarAreaData(
-          show: true,
-          color: Colors.pink.withOpacity(0.2),
-        ),
+        belowBarData: BarAreaData(show: true, color: Colors.pink.withAlpha(51)),
       ),
       // Black line (zero line)
       LineChartBarData(

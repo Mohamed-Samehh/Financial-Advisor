@@ -519,7 +519,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withAlpha(25),
                               spreadRadius: 2,
                               blurRadius: 8,
                             ),
@@ -545,7 +545,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.blueGrey.withOpacity(0.7),
+                                      color: Colors.blueGrey.withAlpha(178),
                                     ),
                                   ),
                                 ],
@@ -601,7 +601,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.blueGrey
-                                                      .withOpacity(0.15),
+                                                      .withAlpha(38),
                                                   blurRadius: 6,
                                                   offset: const Offset(0, 3),
                                                 ),
@@ -621,9 +621,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                                     gradient: LinearGradient(
                                                       colors: [
                                                         Colors.blueAccent
-                                                            .withOpacity(0.9),
-                                                        Colors.blue.withOpacity(
-                                                          0.7,
+                                                            .withAlpha(230),
+                                                        Colors.blue.withAlpha(
+                                                          179,
                                                         ),
                                                       ],
                                                       begin:
@@ -741,7 +741,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   Icon(
                                     Icons.lock,
                                     size: 48,
-                                    color: Colors.grey.withOpacity(0.5),
+                                    color: Colors.grey.withAlpha(127),
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
@@ -765,7 +765,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withAlpha(25),
                               spreadRadius: 2,
                               blurRadius: 8,
                             ),
@@ -791,7 +791,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.blueGrey.withOpacity(0.7),
+                                      color: Colors.blueGrey.withAlpha(178),
                                     ),
                                   ),
                                 ],
@@ -847,7 +847,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.blueGrey
-                                                      .withOpacity(0.15),
+                                                      .withAlpha(38),
                                                   blurRadius: 6,
                                                   offset: const Offset(0, 3),
                                                 ),
@@ -866,9 +866,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                                     gradient: LinearGradient(
                                                       colors: [
                                                         Colors.blueAccent
-                                                            .withOpacity(0.9),
-                                                        Colors.blue.withOpacity(
-                                                          0.7,
+                                                            .withAlpha(230),
+                                                        Colors.blue.withAlpha(
+                                                          179,
                                                         ),
                                                       ],
                                                       begin:
@@ -1037,7 +1037,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue.withOpacity(0.05),
+                                    fillColor: Color.fromRGBO(
+                                      33,
+                                      150,
+                                      243,
+                                      0.05,
+                                    ),
                                   ),
                                   initialValue:
                                       isAdding ? addForm['name'] : form['name'],
@@ -1074,7 +1079,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue.withOpacity(0.05),
+                                    fillColor: Color.fromRGBO(
+                                      33,
+                                      150,
+                                      243,
+                                      0.05,
+                                    ),
                                   ),
                                   keyboardType: TextInputType.number,
                                   initialValue:
@@ -1213,7 +1223,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withAlpha(25),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -1341,7 +1351,7 @@ class AlertMessage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
