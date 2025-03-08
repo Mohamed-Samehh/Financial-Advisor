@@ -83,6 +83,13 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/banks/NBE.png
+    - assets/banks/Banque Misr.png
+    - assets/banks/CIB.png
+    - assets/banks/QNB.png
+    - assets/banks/Al Baraka.png
+    - assets/banks/HSBC.png
+    - assets/banks/AIB.png
     - assets/not-found image.jpg
 
   # To add assets to your application, add an assets section, like this:

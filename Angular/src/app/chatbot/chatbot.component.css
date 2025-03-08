@@ -1,6 +1,5 @@
 .chat {
-  height: auto;
-  max-height: 70vh;
+  height: auto; /* No fixed height, grows with content */
   overflow-y: auto;
   border-radius: 15px;
   padding: 10px;
@@ -81,7 +80,7 @@ button:active {
   background: #f1f1f1;
 }
 
-/* Add styles for thinking dots */
+/* Thinking dots styling */
 .thinking-dots {
   background-color: #e3f2fd;
   color: #444;
@@ -111,4 +110,12 @@ button:active {
   animation: dots 1.5s infinite ease-in-out;
   font-weight: 700;
   letter-spacing: 1px;
+}
+
+/* Placeholder styling */
+.placeholder-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 300px);
 }

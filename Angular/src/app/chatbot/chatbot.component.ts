@@ -36,14 +36,19 @@ export class ChatbotComponent {
         if (response.message) {
           this.messages.push({ role: 'bot', content: this.formatResponse(response.message) });
         } else {
-          this.messages.push({ role: 'bot', content: "I'm sorry, but I couldn't generate a response. Please try again or ask in a different way." });
+          this.messages.push({ 
+            role: 'bot', 
+            content: "I'm sorry, but I couldn't generate a response. Please try again or ask in a different way." 
+          });
         }
+        this.scrollToBottom();
       },
       (error) => {
         this.loading = false;
         this.messages = this.messages.filter(msg => msg.content !== '');
         this.errorMessage = 'Failed to get a response. Please try again.';
         console.error('Error:', error);
+        this.scrollToBottom();
       }
     );
 
@@ -78,5 +83,14 @@ export class ChatbotComponent {
   formatResponse(text: string): string {
     const result = marked.parse(text);
     return typeof result === 'string' ? result : '';
+  }
+
+  scrollToBottom(): void {
+    setTimeout(() => {
+      const chat = document.querySelector('.chat');
+      if (chat) {
+        chat.scrollTop = chat.scrollHeight;
+      }
+    }, 0);
   }
 }
