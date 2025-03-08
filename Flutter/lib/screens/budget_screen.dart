@@ -71,10 +71,12 @@ class BudgetScreenState extends State<BudgetScreen> {
 
   String _formatNumber(String? value) {
     if (value == null || value.isEmpty) return '0';
-    return value.replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]},',
-    );
+    double numValue = double.tryParse(value) ?? 0;
+    double dividedValue = numValue / 1000;
+    if (dividedValue % 1 == 0) {
+      return '${dividedValue.toInt()}k';
+    }
+    return '${dividedValue.toStringAsFixed(2)}k';
   }
 
   void _submit() async {
@@ -406,13 +408,18 @@ class BudgetScreenState extends State<BudgetScreen> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'Current Month\'s Budget: E£${_formatNumber(budget['monthly_budget'])}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
-                                fontSize: 16,
+                            Flexible(
+                              child: Text(
+                                'Current Month\'s Budget: E£${_formatNumber(budget['monthly_budget'])}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueGrey,
+                                  fontSize: 16,
+                                ),
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             IconButton(

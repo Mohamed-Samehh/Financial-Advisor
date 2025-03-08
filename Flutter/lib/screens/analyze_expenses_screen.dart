@@ -791,10 +791,11 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             const Text(
               'Spending-Based Grouping',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.blueGrey,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             const Text(
@@ -848,10 +849,11 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             const Text(
               'Frequency-Based Grouping',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.blueGrey,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             const Text(
@@ -906,10 +908,11 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             const Text(
               'Expense-Based Grouping',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.blueGrey,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             const Text(
@@ -969,10 +972,11 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             const Text(
               'Frequently Spent Together',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.blueGrey,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             const Text(
