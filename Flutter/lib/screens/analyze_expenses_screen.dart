@@ -275,7 +275,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
         children: [
           _buildCard(
             title: 'Expense Summary',
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
               child:
                   analysis['monthly_budget'] == null
@@ -288,7 +288,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
           if (analysis['advice']?.isNotEmpty ?? false)
             _buildCard(
               title: 'Warnings',
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
                 child: Column(
                   children:
@@ -308,7 +308,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             ),
           _buildCard(
             title: 'Insights',
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
               child:
                   analysis['monthly_budget'] == null
@@ -1487,7 +1487,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
   Widget _buildListItem(String title, String content, Color borderColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

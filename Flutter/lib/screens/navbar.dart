@@ -221,6 +221,8 @@ class Navbar extends StatelessWidget {
 }
 
 class AnimatedLogo extends StatefulWidget {
+  const AnimatedLogo({super.key});
+
   @override
   _AnimatedLogoState createState() => _AnimatedLogoState();
 }

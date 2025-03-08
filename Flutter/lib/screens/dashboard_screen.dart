@@ -211,8 +211,8 @@ class DashboardScreen extends StatelessWidget {
             child: FloatingActionButton(
               onPressed: () => context.go('/expenses'),
               backgroundColor: Colors.blue,
-              child: const Icon(Icons.add, color: Colors.white),
               tooltip: 'Add Expense',
+              child: const Icon(Icons.add, color: Colors.white),
             ),
           ),
         ],

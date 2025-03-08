@@ -484,11 +484,13 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                     initialValue:
                                         form['amount']?.toString() ?? '',
                                     validator: (value) {
-                                      if (value == null || value.isEmpty)
+                                      if (value == null || value.isEmpty) {
                                         return 'Amount is required.';
+                                      }
                                       final numValue = double.tryParse(value);
-                                      if (numValue == null || numValue <= 0)
+                                      if (numValue == null || numValue <= 0) {
                                         return 'Amount must be greater than 0.';
+                                      }
                                       return null;
                                     },
                                     onChanged:

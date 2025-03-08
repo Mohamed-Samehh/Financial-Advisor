@@ -1048,8 +1048,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   initialValue:
                                       isAdding ? addForm['name'] : form['name'],
                                   validator: (value) {
-                                    if (value == null || value.isEmpty)
+                                    if (value == null || value.isEmpty) {
                                       return 'Category name is required.';
+                                    }
                                     return null;
                                   },
                                   onChanged:
@@ -1089,11 +1090,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                           ?.toString() ??
                                       '',
                                   validator: (value) {
-                                    if (value == null || value.isEmpty)
+                                    if (value == null || value.isEmpty) {
                                       return 'Priority is required.';
+                                    }
                                     final numValue = int.tryParse(value);
-                                    if (numValue == null || numValue <= 0)
+                                    if (numValue == null || numValue <= 0) {
                                       return 'Priority must be greater than 0.';
+                                    }
                                     return null;
                                   },
                                   onChanged:
