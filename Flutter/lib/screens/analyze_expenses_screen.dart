@@ -280,7 +280,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
               child:
                   analysis['monthly_budget'] == null
                       ? _buildLocked(
-                        'Eexpense summary is not available for you yet.',
+                        'Expense summary is not available for you yet.',
                       )
                       : _buildExpenseSummary(),
             ),
