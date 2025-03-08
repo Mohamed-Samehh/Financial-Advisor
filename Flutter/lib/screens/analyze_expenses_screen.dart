@@ -1771,7 +1771,7 @@ class AlertMessage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.white.withAlpha(230),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),

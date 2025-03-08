@@ -380,7 +380,11 @@ class CategoriesScreenState extends State<CategoriesScreen> {
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.list, size: 80, color: Colors.white),
+                  Icon(
+                    Icons.list,
+                    size: 80,
+                    color: Colors.white.withAlpha(230),
+                  ),
                   const SizedBox(height: 20),
                   const Text(
                     'Manage Categories',

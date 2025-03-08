@@ -330,7 +330,11 @@ class ExpensesScreenState extends State<ExpensesScreen> {
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.receipt, size: 80, color: Colors.white),
+                  Icon(
+                    Icons.receipt,
+                    size: 80,
+                    color: Colors.white.withAlpha(230),
+                  ),
                   const SizedBox(height: 20),
                   const Text(
                     'Track Your Expenses',

@@ -111,7 +111,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       Icon(
                         Icons.person_add,
                         size: 80,
-                        color: Colors.white.withAlpha(230), // tet7at f kolo
+                        color: Colors.white.withAlpha(230),
                       ),
                       const SizedBox(height: 20),
                       const Text(
