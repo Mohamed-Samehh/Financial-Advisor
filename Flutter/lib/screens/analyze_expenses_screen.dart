@@ -428,6 +428,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                   ),
                   const SizedBox(height: 16),
                   Wrap(
+                    alignment: WrapAlignment.center,
                     spacing: 8,
                     runSpacing: 8,
                     children:
@@ -454,6 +455,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                                   fontSize: screenWidth < 400 ? 12 : 14,
                                   color: Colors.grey[800],
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           );
@@ -805,43 +807,60 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             ),
             const SizedBox(height: 16),
             (analysis['spending_clustering']?.isNotEmpty ?? false)
-                ? _buildTable(
-                  headers: ['Category', 'Spending'],
-                  rows:
-                      (analysis['spending_clustering'][0]['spending_group']
-                              as List)
-                          .map(
-                            (item) => [
-                              Text(
-                                item['category'],
-                                style: const TextStyle(fontSize: 16),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      item['spending_group'] == 'Low'
-                                          ? Colors.green
-                                          : item['spending_group'] == 'Moderate'
-                                          ? Colors.orange
-                                          : Colors.red,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  item['spending_group'],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
+                ? ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth:
+                        MediaQuery.of(context).size.width > 600
+                            ? MediaQuery.of(context).size.width * 0.95
+                            : double.infinity,
+                  ),
+                  child: _buildTable(
+                    headers: ['Category', 'Spending'],
+                    columnSpacing: 30,
+                    rows:
+                        (analysis['spending_clustering'][0]['spending_group']
+                                as List)
+                            .map(
+                              (item) => [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    item['category'],
+                                    style: const TextStyle(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                          .toList(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        item['spending_group'] == 'Low'
+                                            ? Colors.green
+                                            : item['spending_group'] ==
+                                                'Moderate'
+                                            ? Colors.orange
+                                            : Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    item['spending_group'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            )
+                            .toList(),
+                  ),
                 )
                 : _buildLocked('Not enough expenses entered.'),
           ],
@@ -863,44 +882,60 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             ),
             const SizedBox(height: 16),
             (analysis['frequency_clustering']?.isNotEmpty ?? false)
-                ? _buildTable(
-                  headers: ['Category', 'Frequency'],
-                  rows:
-                      (analysis['frequency_clustering'][0]['frequency_group']
-                              as List)
-                          .map(
-                            (item) => [
-                              Text(
-                                item['category'],
-                                style: const TextStyle(fontSize: 16),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      item['frequency_group'] == 'Low'
-                                          ? Colors.green
-                                          : item['frequency_group'] ==
-                                              'Moderate'
-                                          ? Colors.orange
-                                          : Colors.red,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  item['frequency_group'],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
+                ? ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth:
+                        MediaQuery.of(context).size.width > 600
+                            ? MediaQuery.of(context).size.width * 0.95
+                            : double.infinity,
+                  ),
+                  child: _buildTable(
+                    headers: ['Category', 'Frequency'],
+                    columnSpacing: 30,
+                    rows:
+                        (analysis['frequency_clustering'][0]['frequency_group']
+                                as List)
+                            .map(
+                              (item) => [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    item['category'],
+                                    style: const TextStyle(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                          .toList(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        item['frequency_group'] == 'Low'
+                                            ? Colors.green
+                                            : item['frequency_group'] ==
+                                                'Moderate'
+                                            ? Colors.orange
+                                            : Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    item['frequency_group'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            )
+                            .toList(),
+                  ),
                 )
                 : _buildLocked('Not enough expenses entered.'),
           ],
@@ -922,49 +957,74 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             ),
             const SizedBox(height: 16),
             (analysis['expenses_clustering']?.isNotEmpty ?? false)
-                ? _buildTable(
-                  headers: ['Spending Group', 'Range', 'Count'],
-                  rows:
-                      (analysis['expenses_clustering'] as List).map((item) {
-                        final range =
-                            item['min_expenses'] == item['max_expenses']
-                                ? 'E£${_formatNumber(item['min_expenses'].toDouble())}'
-                                : 'E£${_formatNumber(item['min_expenses'].toDouble())} - ${_formatNumber(item['max_expenses'].toDouble())}';
-                        return [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color:
-                                  item['cluster'].trim().toLowerCase() == 'low'
-                                      ? Colors.green
-                                      : item['cluster'].trim().toLowerCase() ==
-                                          'moderate'
-                                      ? Colors.orange
-                                      : Colors.red,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              item['cluster'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+                ? ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth:
+                        MediaQuery.of(context).size.width > 600
+                            ? MediaQuery.of(context).size.width * 0.95
+                            : double.infinity,
+                  ),
+                  child: _buildTable(
+                    headers: ['Spending Group', 'Range', 'Count'],
+                    columnSpacing: 30,
+                    rows:
+                        (analysis['expenses_clustering'] as List).map((item) {
+                          final range =
+                              item['min_expenses'] == item['max_expenses']
+                                  ? 'E£${_formatNumber(item['min_expenses'].toDouble())}'
+                                  : 'E£${_formatNumber(item['min_expenses'].toDouble())} - ${_formatNumber(item['max_expenses'].toDouble())}';
+                          return [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    item['cluster'].trim().toLowerCase() ==
+                                            'low'
+                                        ? Colors.green
+                                        : item['cluster']
+                                                .trim()
+                                                .toLowerCase() ==
+                                            'moderate'
+                                        ? Colors.orange
+                                        : Colors.red,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                item['cluster'],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                          ),
-                          Text(
-                            range,
-                            style: const TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            item['count_of_expenses'].toString(),
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ];
-                      }).toList(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: Text(
+                                range,
+                                style: const TextStyle(fontSize: 16),
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: Text(
+                                item['count_of_expenses'].toString(),
+                                style: const TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ];
+                        }).toList(),
+                  ),
                 )
                 : _buildLocked('Not enough expenses entered.'),
           ],
@@ -986,59 +1046,89 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
             ),
             const SizedBox(height: 16),
             (analysis['association_rules']?.isNotEmpty ?? false)
-                ? _buildTable(
-                  headers: [
-                    '#',
-                    'If you spent in',
-                    'Then you\'ll spend in',
-                    'Chance',
-                  ],
-                  rows:
-                      (analysis['association_rules'] as List).asMap().entries.map((
-                        entry,
-                      ) {
-                        final rule = entry.value;
-                        return [
-                          Text(
-                            (entry.key + 1).toString(),
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          Text(
-                            rule['antecedents'][0] ?? 'No antecedent',
-                            style: const TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            rule['consequents'][0] ?? 'No consequent',
-                            style: const TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color:
-                                  (rule['confidence'] as num) >= 0.7
-                                      ? Colors.green
-                                      : (rule['confidence'] as num) >= 0.4
-                                      ? Colors.orange
-                                      : Colors.red,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              rule['confidence'] != null
-                                  ? '${((rule['confidence'] as num) * 100).toStringAsFixed(0)}%'
-                                  : 'N/A',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ];
-                      }).toList(),
+                ? ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth:
+                        MediaQuery.of(context).size.width > 600
+                            ? MediaQuery.of(context).size.width * 0.95
+                            : double.infinity,
+                  ),
+                  child: _buildTable(
+                    headers: [
+                      '#',
+                      'If you spent in',
+                      'Then you\'ll spend in',
+                      'Chance',
+                    ],
+                    columnSpacing: 30,
+                    rows:
+                        (analysis['association_rules'] as List)
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                              final rule = entry.value;
+                              return [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    (entry.key + 1).toString(),
+                                    style: const TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    rule['antecedents'][0] ?? 'No antecedent',
+                                    style: const TextStyle(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Text(
+                                    rule['consequents'][0] ?? 'No consequent',
+                                    style: const TextStyle(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        (rule['confidence'] as num) >= 0.7
+                                            ? Colors.green
+                                            : (rule['confidence'] as num) >= 0.4
+                                            ? Colors.orange
+                                            : Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    rule['confidence'] != null
+                                        ? '${((rule['confidence'] as num) * 100).toStringAsFixed(0)}%'
+                                        : 'N/A',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ];
+                            })
+                            .toList(),
+                  ),
                 )
                 : _buildLocked('No connections found so far.'),
           ],
@@ -1536,11 +1626,12 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
   Widget _buildTable({
     required List<String> headers,
     required List<List<dynamic>> rows,
+    double columnSpacing = 20,
   }) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
-        columnSpacing: 20,
+        columnSpacing: columnSpacing,
         columns:
             headers
                 .map(
