@@ -173,7 +173,7 @@ class Navbar extends StatelessWidget {
                               'Logout',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -196,22 +196,31 @@ class Navbar extends StatelessWidget {
     String title,
     String route,
   ) {
+    final currentRoute =
+        GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString();
+    final isActive = currentRoute == route;
+
     return ListTile(
-      leading: Icon(icon, color: Colors.white70, size: 28),
+      leading: Icon(
+        icon,
+        color: isActive ? Colors.blueAccent : Colors.white70,
+        size: 28,
+      ),
       title: Text(
         title,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+        style: TextStyle(
+          color: isActive ? Colors.blueAccent : Colors.white,
+          fontSize: 19,
+          fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
         ),
       ),
       onTap: () {
         Scaffold.of(context).closeDrawer();
         context.go(route);
       },
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      tileColor: Colors.transparent,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      tileColor:
+          isActive ? Colors.white.withValues(alpha: 0.1) : Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       hoverColor: Colors.white.withAlpha(25),
     );
