@@ -65,9 +65,7 @@ class Navbar extends StatelessWidget {
               padding: EdgeInsets.zero,
               children: [
                 DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                  ),
+                  decoration: BoxDecoration(color: Colors.white.withAlpha(25)),
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -215,7 +213,7 @@ class Navbar extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       tileColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      hoverColor: Colors.white.withOpacity(0.1),
+      hoverColor: Colors.white.withAlpha(25),
     );
   }
 }

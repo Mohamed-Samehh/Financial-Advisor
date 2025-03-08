@@ -984,7 +984,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   Icon(
                                     Icons.lock,
                                     size: 48,
-                                    color: Colors.grey.withOpacity(0.5),
+                                    color: Colors.grey.withAlpha(127),
                                   ),
                                   const SizedBox(height: 12),
                                   Text(

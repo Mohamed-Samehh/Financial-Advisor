@@ -107,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Icon(
                         Icons.person_add,
                         size: 80,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withAlpha(230), // tet7at f kolo
                       ),
                       const SizedBox(height: 20),
                       const Text(
@@ -189,7 +189,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue.withOpacity(0.05),
+                                    fillColor: Color.fromRGBO(
+                                      33,
+                                      150,
+                                      243,
+                                      0.05,
+                                    ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -227,7 +232,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue.withOpacity(0.05),
+                                    fillColor: Color.fromRGBO(
+                                      33,
+                                      150,
+                                      243,
+                                      0.05,
+                                    ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -279,7 +289,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue.withOpacity(0.05),
+                                    fillColor: Color.fromRGBO(
+                                      33,
+                                      150,
+                                      243,
+                                      0.05,
+                                    ),
                                   ),
                                   obscureText: !showPassword,
                                   validator: (value) {
@@ -332,7 +347,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.blue.withOpacity(0.05),
+                                    fillColor: Color.fromRGBO(
+                                      33,
+                                      150,
+                                      243,
+                                      0.05,
+                                    ),
                                   ),
                                   obscureText: !showConfirmPassword,
                                   validator: (value) {
@@ -455,7 +475,7 @@ class AlertMessage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

@@ -29,7 +29,7 @@ class NotFoundScreen extends StatelessWidget {
                   Icon(
                     Icons.error_outline,
                     size: 80,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withAlpha(230),
                   ),
                   const SizedBox(height: 20),
                   const Text(

@@ -209,7 +209,7 @@ class _GoalScreenState extends State<GoalScreen> {
                   Icon(
                     Icons.track_changes,
                     size: 80,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withAlpha(230),
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -331,7 +331,12 @@ class _GoalScreenState extends State<GoalScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                     ),
                                     initialValue: goal['name'],
                                     validator: (value) {
@@ -368,7 +373,12 @@ class _GoalScreenState extends State<GoalScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                     ),
                                     keyboardType: TextInputType.number,
                                     initialValue:
@@ -456,7 +466,7 @@ class _GoalScreenState extends State<GoalScreen> {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withAlpha(25),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -523,7 +533,7 @@ class AlertMessage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

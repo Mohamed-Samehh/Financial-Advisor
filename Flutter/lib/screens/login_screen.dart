@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Icon(
                         showForgotPassword ? Icons.lock_open : Icons.login,
                         size: 80,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withAlpha(230),
                       ),
                       const SizedBox(height: 20),
                       Text(
@@ -212,7 +212,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                     ),
                                     validator:
                                         (value) =>
@@ -259,7 +264,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.blue.withOpacity(0.05),
+                                      fillColor: Color.fromRGBO(
+                                        33,
+                                        150,
+                                        243,
+                                        0.05,
+                                      ),
                                     ),
                                     obscureText: !showPassword,
                                     validator:
@@ -385,7 +395,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 filled: true,
-                                fillColor: Colors.blue.withOpacity(0.05),
+                                fillColor: Color.fromRGBO(33, 150, 243, 0.05),
                               ),
                               onChanged: (value) => forgotPasswordEmail = value,
                             ),
@@ -491,7 +501,7 @@ class AlertMessage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
