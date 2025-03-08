@@ -13,7 +13,7 @@ import 'screens/analyze_expenses_screen.dart';
 // import 'screens/chatbot_screen.dart';
 // import 'screens/user_profile_screen.dart';
 // import 'screens/expense_history_screen.dart';
-// import 'screens/not_found_screen.dart';
+import 'screens/not_found_screen.dart';
 import 'services/auth_service.dart';
 
 final GoRouter router = GoRouter(
@@ -53,10 +53,10 @@ final GoRouter router = GoRouter(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
     ),
-    // GoRoute(
-    //   path: '/:path(.*)',
-    //   builder: (context, state) => const NotFoundScreen(),
-    // ),
+    GoRoute(
+      path: '/:path(.*)',
+      builder: (context, state) => const NotFoundScreen(),
+    ),
   ],
   redirect: (context, state) async {
     final authService = Provider.of<AuthService>(context, listen: false);

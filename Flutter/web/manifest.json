@@ -1,6 +1,6 @@
 {
-    "name": "financial_advisor",
-    "short_name": "financial_advisor",
+    "name": "Financial Advisor",
+    "short_name": "Financial Advisor",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

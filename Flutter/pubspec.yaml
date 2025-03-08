@@ -45,6 +45,7 @@ dependencies:
   google_fonts: ^6.1.0  # For using Google Fonts
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1  # For changing the app icon
   flutter_test:
     sdk: flutter
 
@@ -54,6 +55,20 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  flutter_launcher_icons:
+  image_path: "assets/logo.png"
+  android: true
+  ios: true
+  web:
+    generate: true
+  macos:
+    generate: true
+  windows:
+    generate: true
+  linux:
+    generate: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -67,6 +82,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/not-found image.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
