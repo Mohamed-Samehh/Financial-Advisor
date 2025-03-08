@@ -1122,7 +1122,7 @@ class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
     final maxY = maxBudget * 1.2;
 
     return _buildCard(
-      title: 'Remaining Budget Over Days',
+      title: 'Remaining Budget',
       child:
           analysis['monthly_budget'] == null
               ? _buildLocked(
