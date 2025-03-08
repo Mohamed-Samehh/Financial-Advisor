@@ -7,10 +7,10 @@ class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
 
   @override
-  _BudgetScreenState createState() => _BudgetScreenState();
+  BudgetScreenState createState() => BudgetScreenState();
 }
 
-class _BudgetScreenState extends State<BudgetScreen> {
+class BudgetScreenState extends State<BudgetScreen> {
   final _formKey = GlobalKey<FormState>();
   Map<String, dynamic> budget = {'id': null, 'monthly_budget': null};
   Map<String, dynamic> goal = {'id': null, 'name': '', 'target_amount': null};

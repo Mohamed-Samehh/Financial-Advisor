@@ -7,10 +7,10 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
@@ -30,9 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _checkLoginStatus() async {
+    if (!mounted) return;
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = await authService.getToken();
     if (token != null && await authService.checkTokenExpiry()) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Already logged in. Redirecting...')),
       );
@@ -49,11 +51,13 @@ class _LoginScreenState extends State<LoginScreen> {
           'email': email,
           'password': password,
         });
+        if (!mounted) return;
         if (result['token'] != null) {
           setState(() => loginError = '');
           context.go('/dashboard');
         }
       } catch (e) {
+        if (!mounted) return;
         setState(() {
           loginError = 'Invalid email or password. Please try again.';
           loading = false;
@@ -74,12 +78,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final authService = Provider.of<AuthService>(context, listen: false);
     try {
       await authService.forgotPassword(forgotPasswordEmail);
+      if (!mounted) return;
       setState(() {
         forgotPasswordMessage = 'A new password has been sent to your email.';
         forgotPasswordError = '';
         loadingForgotPassword = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         forgotPasswordError = e.toString();
         forgotPasswordMessage = '';

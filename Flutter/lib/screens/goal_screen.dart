@@ -7,10 +7,10 @@ class GoalScreen extends StatefulWidget {
   const GoalScreen({super.key});
 
   @override
-  _GoalScreenState createState() => _GoalScreenState();
+  GoalScreenState createState() => GoalScreenState();
 }
 
-class _GoalScreenState extends State<GoalScreen> {
+class GoalScreenState extends State<GoalScreen> {
   final _formKey = GlobalKey<FormState>();
   Map<String, dynamic> goal = {'id': null, 'name': '', 'target_amount': null};
   Map<String, dynamic> budget = {'id': null, 'monthly_budget': null};

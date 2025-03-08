@@ -8,10 +8,10 @@ class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({super.key});
 
   @override
-  _ExpensesScreenState createState() => _ExpensesScreenState();
+  ExpensesScreenState createState() => ExpensesScreenState();
 }
 
-class _ExpensesScreenState extends State<ExpensesScreen> {
+class ExpensesScreenState extends State<ExpensesScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> expenses = [];
   Map<String, dynamic> form = {

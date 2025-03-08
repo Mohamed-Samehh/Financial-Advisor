@@ -9,10 +9,10 @@ class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
 
   @override
-  _CategoriesScreenState createState() => _CategoriesScreenState();
+  CategoriesScreenState createState() => CategoriesScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
+class CategoriesScreenState extends State<CategoriesScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> categories = [];
   Map<String, dynamic> form = {'name': '', 'priority': null, 'id': null};
@@ -289,6 +289,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
 
     if (confirmed == true) {
+      if (!mounted) return;
       final TextEditingController controller = TextEditingController();
       final newCategory = await showDialog<String>(
         context: context,
@@ -315,9 +316,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       );
 
       if (newCategory != null && newCategory.isNotEmpty) {
+        if (!mounted) return;
         final apiService = Provider.of<ApiService>(context, listen: false);
         try {
           await apiService.deleteCategory(categoryId, newCategory);
+          if (!mounted) return;
           setState(() {
             message = 'Category deleted and expenses reassigned successfully!';
             messageType = 'success';

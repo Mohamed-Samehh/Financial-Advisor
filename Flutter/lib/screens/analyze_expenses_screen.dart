@@ -9,10 +9,10 @@ class AnalyzeExpensesScreen extends StatefulWidget {
   const AnalyzeExpensesScreen({super.key});
 
   @override
-  _AnalyzeExpensesScreenState createState() => _AnalyzeExpensesScreenState();
+  AnalyzeExpensesScreenState createState() => AnalyzeExpensesScreenState();
 }
 
-class _AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
+class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
   Map<String, dynamic> analysis = {};
   bool isLoading = true;
   String? errorMessage;

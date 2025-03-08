@@ -7,10 +7,10 @@ class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   String name = '';
   String email = '';
@@ -28,9 +28,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _checkLoginStatus() async {
+    if (!mounted) return;
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = await authService.getToken();
     if (token != null && await authService.checkTokenExpiry()) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Already logged in. Redirecting...')),
       );
@@ -52,10 +54,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'password': password,
           'password_confirmation': passwordConfirmation,
         });
+        if (!mounted) return;
         if (result['token'] != null) {
           context.go('/dashboard');
         }
       } catch (e) {
+        if (!mounted) return;
         setState(() {
           isLoading = false;
           message =

@@ -111,10 +111,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.child});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   bool _isNavbarVisible = false;
   bool _isLoggedIn = false;
 
@@ -135,10 +135,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_isLoggedIn) {
       final isValid = await authService.checkTokenExpiry();
+      if (!mounted) return;
       if (!isValid) {
         context.go('/login');
       }
     } else {
+      if (!mounted) return;
       context.go('/login');
     }
   }
