@@ -143,11 +143,14 @@ class ExpensesScreenState extends State<ExpensesScreen> {
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        isLoading = true;
-        message = null;
-        messageType = null;
-      });
+      if (form['category'] == null || form['category'].isEmpty) {
+        setState(() {
+          message = 'Category seems to be empty.';
+          messageType = 'error';
+          isLoading = false;
+        });
+        return;
+      }
 
       final date = form['date'] != null ? DateTime.parse(form['date']) : null;
       final firstDay = DateTime(DateTime.now().year, DateTime.now().month, 1);
@@ -415,172 +418,226 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                               key: _formKey,
                               child: Column(
                                 children: [
-                                  DropdownButtonFormField<String>(
-                                    decoration: InputDecoration(
-                                      labelText: 'Category',
-                                      labelStyle: const TextStyle(
-                                        color: Colors.blueGrey,
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width *
+                                        0.85,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color:
+                                            Theme.of(context).focusColor ==
+                                                    Colors.blueAccent
+                                                ? Colors.blueAccent
+                                                : Colors.grey,
+                                        width: 2,
                                       ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 2,
+                                      color: Color.fromRGBO(33, 150, 243, 0.05),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value:
+                                            form['category'].isEmpty
+                                                ? null
+                                                : form['category'],
+                                        hint: const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                          ),
+                                          child: Text(
+                                            'Category',
+                                            style: TextStyle(
+                                              color: Colors.blueGrey,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      filled: true,
-                                      fillColor: Color.fromRGBO(
-                                        33,
-                                        150,
-                                        243,
-                                        0.05,
+                                        items:
+                                            categories.map((category) {
+                                              return DropdownMenuItem<String>(
+                                                value: category,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                      ),
+                                                  child: Text(
+                                                    category,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                        onChanged:
+                                            (value) => setState(
+                                              () =>
+                                                  form['category'] =
+                                                      value ?? '',
+                                            ),
+                                        isExpanded: true,
+                                        icon: const Padding(
+                                          padding: EdgeInsets.only(right: 10),
+                                          child: Icon(
+                                            Icons.arrow_drop_down,
+                                            size: 24,
+                                            color: Colors.blueGrey,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    value:
-                                        form['category'].isEmpty
-                                            ? null
-                                            : form['category'],
-                                    items:
-                                        categories.map((category) {
-                                          return DropdownMenuItem<String>(
-                                            value: category,
-                                            child: Text(category),
-                                          );
-                                        }).toList(),
-                                    onChanged:
-                                        (value) => setState(
-                                          () => form['category'] = value ?? '',
-                                        ),
-                                    validator:
-                                        (value) =>
-                                            value == null || value.isEmpty
-                                                ? 'Category is required.'
-                                                : null,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  TextFormField(
-                                    decoration: InputDecoration(
-                                      labelText: 'Amount',
-                                      labelStyle: const TextStyle(
-                                        color: Colors.blueGrey,
-                                      ),
-                                      prefixText: 'E£ ',
-                                      prefixStyle: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: Color.fromRGBO(
-                                        33,
-                                        150,
-                                        243,
-                                        0.05,
-                                      ),
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                    initialValue:
-                                        form['amount']?.toString() ?? '',
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Amount is required.';
-                                      }
-                                      final numValue = double.tryParse(value);
-                                      if (numValue == null || numValue <= 0) {
-                                        return 'Amount must be greater than 0.';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged:
-                                        (value) => form['amount'] = value,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  TextFormField(
-                                    decoration: InputDecoration(
-                                      labelText: 'Date',
-                                      labelStyle: const TextStyle(
-                                        color: Colors.blueGrey,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: Color.fromRGBO(
-                                        33,
-                                        150,
-                                        243,
-                                        0.05,
-                                      ),
-                                      suffixIcon: IconButton(
-                                        icon: const Icon(
-                                          Icons.calendar_today,
-                                          color: Colors.blue,
-                                        ),
-                                        onPressed: () => _selectDate(context),
-                                      ),
-                                    ),
-                                    readOnly: true,
-                                    controller: TextEditingController(
-                                      text: form['date'],
-                                    ),
-                                    validator:
-                                        (value) =>
-                                            value == null || value.isEmpty
-                                                ? 'Date is required.'
-                                                : null,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  TextFormField(
-                                    decoration: InputDecoration(
-                                      labelText: 'Description',
-                                      labelStyle: const TextStyle(
-                                        color: Colors.blueGrey,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: Color.fromRGBO(
-                                        33,
-                                        150,
-                                        243,
-                                        0.05,
-                                      ),
-                                    ),
-                                    maxLength: 100,
-                                    maxLines: 2,
-                                    initialValue: form['description'],
-                                    onChanged:
-                                        (value) => form['description'] = value,
                                   ),
                                   const SizedBox(height: 16),
                                   Container(
+                                    width:
+                                        MediaQuery.of(context).size.width *
+                                        0.85,
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Amount',
+                                        labelStyle: const TextStyle(
+                                          color: Colors.blueGrey,
+                                        ),
+                                        prefixText: 'E£ ',
+                                        prefixStyle: const TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        filled: true,
+                                        fillColor: Color.fromRGBO(
+                                          33,
+                                          150,
+                                          243,
+                                          0.05,
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                      initialValue:
+                                          form['amount']?.toString() ?? '',
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Amount is required.';
+                                        }
+                                        final numValue = double.tryParse(value);
+                                        if (numValue == null || numValue <= 0) {
+                                          return 'Amount must be greater than 0.';
+                                        }
+                                        return null;
+                                      },
+                                      onChanged:
+                                          (value) => form['amount'] = value,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width *
+                                        0.85,
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Date',
+                                        labelStyle: const TextStyle(
+                                          color: Colors.blueGrey,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        filled: true,
+                                        fillColor: Color.fromRGBO(
+                                          33,
+                                          150,
+                                          243,
+                                          0.05,
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: const Icon(
+                                            Icons.calendar_today,
+                                            color: Colors.blue,
+                                          ),
+                                          onPressed: () => _selectDate(context),
+                                        ),
+                                      ),
+                                      readOnly: true,
+                                      controller: TextEditingController(
+                                        text: form['date'],
+                                      ),
+                                      validator:
+                                          (value) =>
+                                              value == null || value.isEmpty
+                                                  ? 'Date is required.'
+                                                  : null,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width *
+                                        0.85,
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Description',
+                                        labelStyle: const TextStyle(
+                                          color: Colors.blueGrey,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        filled: true,
+                                        fillColor: Color.fromRGBO(
+                                          33,
+                                          150,
+                                          243,
+                                          0.05,
+                                        ),
+                                      ),
+                                      maxLength: 100,
+                                      maxLines: 2,
+                                      initialValue: form['description'],
+                                      onChanged:
+                                          (value) =>
+                                              form['description'] = value,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width *
+                                        0.85,
                                     decoration: BoxDecoration(
                                       gradient: const LinearGradient(
                                         colors: [
