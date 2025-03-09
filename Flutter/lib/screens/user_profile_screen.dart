@@ -151,28 +151,43 @@ class UserProfileScreenState extends State<UserProfileScreen> {
 
   void _onDeleteAccount() async {
     if (_deleteAccountFormKey.currentState!.validate()) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         loadingDeleteAccount = true;
         deleteAccountMessage = null;
         deleteAccountMessageType = null;
       });
-      final authService = Provider.of<AuthService>(context, listen: false);
+
+      final contextSnapshot = context;
+      final authService = Provider.of<AuthService>(
+        contextSnapshot,
+        listen: false,
+      );
+
       try {
         await authService.deleteAccount(deleteAccountForm['password']!);
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account deleted successfully!')),
-        );
+        if (contextSnapshot.mounted) {
+          ScaffoldMessenger.of(contextSnapshot).showSnackBar(
+            const SnackBar(content: Text('Account deleted successfully!')),
+          );
+        }
         await authService.clearToken();
-        context.go('/login');
+        if (contextSnapshot.mounted) {
+          contextSnapshot.go('/login');
+        }
       } catch (e) {
-        setState(() {
-          deleteAccountMessage = 'Incorrect password. Please try again.';
-          deleteAccountMessageType = 'error';
-          loadingDeleteAccount = false;
-        });
+        if (mounted) {
+          setState(() {
+            deleteAccountMessage = 'Incorrect password. Please try again.';
+            deleteAccountMessageType = 'error';
+            loadingDeleteAccount = false;
+          });
+        }
       }
     } else {
+      if (!mounted) return;
       setState(() {
         deleteAccountMessage = 'Please enter your password to proceed.';
         deleteAccountMessageType = 'error';

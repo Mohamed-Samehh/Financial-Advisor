@@ -436,7 +436,7 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                         border: Border.all(color: Colors.blue),
                       ),
                       child: const Text(
-                        'Tip: Assign priorities based on the importance of each category to your financial goals. Higher priority should be given to the most essential categories.',
+                        'Tip: Assign priorities based on the importance of each category. Highest priority should be given to the most essential category.',
                         style: TextStyle(color: Colors.blueGrey, fontSize: 14),
                         textAlign: TextAlign.center,
                       ),

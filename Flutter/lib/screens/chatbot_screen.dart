@@ -17,7 +17,6 @@ class ChatbotScreenState extends State<ChatbotScreen>
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   List<Map<String, String>> messages = [];
-  String? errorMessage;
   bool isLoading = false;
   late AnimationController _animationController;
 
@@ -45,7 +44,6 @@ class ChatbotScreenState extends State<ChatbotScreen>
       messages.add({'role': 'user', 'content': _messageController.text});
       isLoading = true;
       messages.add({'role': 'bot', 'content': ''});
-      errorMessage = null;
     });
 
     _scrollToBottom();
@@ -72,7 +70,10 @@ class ChatbotScreenState extends State<ChatbotScreen>
       setState(() {
         isLoading = false;
         messages.removeWhere((msg) => msg['content'] == '');
-        errorMessage = 'Failed to get a response. Please try again.';
+        messages.add({
+          'role': 'bot',
+          'content': 'Oops! Failed to get a response. Please try again.',
+        });
       });
     }
 
@@ -415,81 +416,10 @@ class ChatbotScreenState extends State<ChatbotScreen>
                     ],
                   ),
                 ),
-                if (errorMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: AlertMessage(
-                      message: errorMessage!,
-                      isError: true,
-                      onDismiss: () => setState(() => errorMessage = null),
-                    ),
-                  ),
                 const SizedBox(height: 10),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// Reusing AlertMessage from previous screens
-class AlertMessage extends StatelessWidget {
-  final String message;
-  final bool isError;
-  final VoidCallback? onDismiss;
-
-  const AlertMessage({
-    super.key,
-    required this.message,
-    required this.isError,
-    this.onDismiss,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isError ? Colors.red[50] : Colors.green[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isError ? Colors.red : Colors.green,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isError ? Icons.error_outline : Icons.check_circle_outline,
-            color: isError ? Colors.red : Colors.green,
-            size: 24,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              '${isError ? 'Oops!' : 'Awesome!'} $message',
-              style: TextStyle(
-                color: isError ? Colors.red[900] : Colors.green[900],
-                fontSize: 14,
-              ),
-            ),
-          ),
-          if (onDismiss != null)
-            IconButton(
-              icon: const Icon(Icons.close, size: 20),
-              onPressed: onDismiss,
-              color: isError ? Colors.red : Colors.green,
-            ),
         ],
       ),
     );
