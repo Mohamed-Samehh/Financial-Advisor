@@ -751,16 +751,68 @@ class InvestScreenState extends State<InvestScreen> {
                                                   certificate['multiples']
                                                       .toDouble(),
                                                 );
-                                            final returns = calculateReturns(
-                                              roundedAmount,
-                                              certificate['monthlyInterestRate'] ??
-                                                  certificate['quarterlyInterestRate'] ??
-                                                  certificate['annuallyInterestRate'] ??
-                                                  certificate['atMaturityInterestRate'] ??
-                                                  '0%',
-                                              certificate['duration']
-                                                  .toDouble(),
-                                            );
+
+                                            final dailyReturns =
+                                                certificate['dailyInterestRate'] !=
+                                                        null
+                                                    ? calculateReturns(
+                                                      roundedAmount,
+                                                      certificate['dailyInterestRate'],
+                                                      certificate['duration']
+                                                          .toDouble(),
+                                                    )
+                                                    : null;
+                                            final monthlyReturns =
+                                                certificate['monthlyInterestRate'] !=
+                                                        null
+                                                    ? calculateReturns(
+                                                      roundedAmount,
+                                                      certificate['monthlyInterestRate'],
+                                                      certificate['duration']
+                                                          .toDouble(),
+                                                    )
+                                                    : null;
+                                            final quarterlyReturns =
+                                                certificate['quarterlyInterestRate'] !=
+                                                        null
+                                                    ? calculateReturns(
+                                                      roundedAmount,
+                                                      certificate['quarterlyInterestRate'],
+                                                      certificate['duration']
+                                                          .toDouble(),
+                                                    )
+                                                    : null;
+                                            final semiAnnualReturns =
+                                                certificate['semiAnnuallyInterestRate'] !=
+                                                        null
+                                                    ? calculateReturns(
+                                                      roundedAmount,
+                                                      certificate['semiAnnuallyInterestRate'],
+                                                      certificate['duration']
+                                                          .toDouble(),
+                                                    )
+                                                    : null;
+                                            final annualReturns =
+                                                certificate['annuallyInterestRate'] !=
+                                                        null
+                                                    ? calculateReturns(
+                                                      roundedAmount,
+                                                      certificate['annuallyInterestRate'],
+                                                      certificate['duration']
+                                                          .toDouble(),
+                                                    )
+                                                    : null;
+                                            final atMaturityReturns =
+                                                certificate['atMaturityInterestRate'] !=
+                                                        null
+                                                    ? calculateReturns(
+                                                      roundedAmount,
+                                                      certificate['atMaturityInterestRate'],
+                                                      certificate['duration']
+                                                          .toDouble(),
+                                                    )
+                                                    : null;
+
                                             return Card(
                                               elevation: 4,
                                               margin:
@@ -840,6 +892,16 @@ class InvestScreenState extends State<InvestScreen> {
                                                         textAlign:
                                                             TextAlign.center,
                                                       ),
+                                                    if (certificate['semiAnnuallyInterestRate'] !=
+                                                        null)
+                                                      Text(
+                                                        'Semi-Annual: ${certificate['semiAnnuallyInterestRate']}',
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
                                                     if (certificate['annuallyInterestRate'] !=
                                                         null)
                                                       Text(
@@ -883,10 +945,10 @@ class InvestScreenState extends State<InvestScreen> {
                                                         ),
                                                       if (targetAmount >=
                                                           certificate['minInvestment']) ...[
-                                                        if (certificate['dailyInterestRate'] !=
+                                                        if (dailyReturns !=
                                                             null)
                                                           Text(
-                                                            'Daily Return: E£${NumberFormat('#,##0.00').format(returns['daily'])}',
+                                                            'Daily Return: E£${NumberFormat('#,##0${dailyReturns['daily'] % 1 == 0 ? '' : '.00'}').format(dailyReturns['daily'])}',
                                                             style:
                                                                 const TextStyle(
                                                                   fontSize: 14,
@@ -895,10 +957,10 @@ class InvestScreenState extends State<InvestScreen> {
                                                                           .green,
                                                                 ),
                                                           ),
-                                                        if (certificate['monthlyInterestRate'] !=
+                                                        if (monthlyReturns !=
                                                             null)
                                                           Text(
-                                                            'Monthly Return: E£${NumberFormat('#,##0.00').format(returns['monthly'])}',
+                                                            'Monthly Return: E£${NumberFormat('#,##0${monthlyReturns['monthly'] % 1 == 0 ? '' : '.00'}').format(monthlyReturns['monthly'])}',
                                                             style:
                                                                 const TextStyle(
                                                                   fontSize: 14,
@@ -907,10 +969,10 @@ class InvestScreenState extends State<InvestScreen> {
                                                                           .green,
                                                                 ),
                                                           ),
-                                                        if (certificate['quarterlyInterestRate'] !=
+                                                        if (quarterlyReturns !=
                                                             null)
                                                           Text(
-                                                            'Quarterly Return: E£${NumberFormat('#,##0.00').format(returns['quarterly'])}',
+                                                            'Quarterly Return: E£${NumberFormat('#,##0${quarterlyReturns['quarterly'] % 1 == 0 ? '' : '.00'}').format(quarterlyReturns['quarterly'])}',
                                                             style:
                                                                 const TextStyle(
                                                                   fontSize: 14,
@@ -919,10 +981,10 @@ class InvestScreenState extends State<InvestScreen> {
                                                                           .green,
                                                                 ),
                                                           ),
-                                                        if (certificate['annuallyInterestRate'] !=
+                                                        if (semiAnnualReturns !=
                                                             null)
                                                           Text(
-                                                            'Annual Return: E£${NumberFormat('#,##0.00').format(returns['annual'])}',
+                                                            'Semi-Annual Return: E£${NumberFormat('#,##0${semiAnnualReturns['semiAnnual'] % 1 == 0 ? '' : '.00'}').format(semiAnnualReturns['semiAnnual'])}',
                                                             style:
                                                                 const TextStyle(
                                                                   fontSize: 14,
@@ -931,10 +993,22 @@ class InvestScreenState extends State<InvestScreen> {
                                                                           .green,
                                                                 ),
                                                           ),
-                                                        if (certificate['atMaturityInterestRate'] !=
+                                                        if (annualReturns !=
                                                             null)
                                                           Text(
-                                                            'At Maturity Return: E£${NumberFormat('#,##0.00').format(returns['atMaturity'])}',
+                                                            'Annual Return: E£${NumberFormat('#,##0${annualReturns['annual'] % 1 == 0 ? '' : '.00'}').format(annualReturns['annual'])}',
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color:
+                                                                      Colors
+                                                                          .green,
+                                                                ),
+                                                          ),
+                                                        if (atMaturityReturns !=
+                                                            null)
+                                                          Text(
+                                                            'At Maturity Return: E£${NumberFormat('#,##0${atMaturityReturns['atMaturity'] % 1 == 0 ? '' : '.00'}').format(atMaturityReturns['atMaturity'])}',
                                                             style:
                                                                 const TextStyle(
                                                                   fontSize: 14,
