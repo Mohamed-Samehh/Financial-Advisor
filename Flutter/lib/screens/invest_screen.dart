@@ -421,19 +421,26 @@ class InvestScreenState extends State<InvestScreen> {
   }
 
   Future<void> _launchURL(String url) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final bool isMounted = context.mounted;
+
     try {
       final Uri uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Cannot launch $url')));
+        if (isMounted) {
+          scaffoldMessenger.showSnackBar(
+            SnackBar(content: Text('Cannot launch $url')),
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error launching URL: $e')));
+      if (isMounted) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(content: Text('Error launching URL: $e')),
+        );
+      }
     }
   }
 
