@@ -23,6 +23,77 @@ class InvestScreenState extends State<InvestScreen> {
   // Pics from Wikimedia Commons (https://commons.wikimedia.org/)
   final List<Map<String, dynamic>> banks = [
     {
+      'name': 'Banque Misr',
+      'description':
+          'A major Egyptian bank offering a wide range of investment and savings products.',
+      'image': 'assets/Banks/Banque Misr.png',
+      'investmentLink':
+          'https://www.banquemisr.com/-/media/Interest-rates/Interest-rates-EN.pdf',
+      'certificates': [
+        {
+          'type': 'Talaat Harb Certificate',
+          'monthlyInterestRate': '23.5%',
+          'atMaturityInterestRate': '27%',
+          'duration': 1,
+          'minInvestment': 1000,
+          'multiples': 1000,
+          'description':
+              'A 1-year certificate offering a high fixed interest rate, with options for monthly payments or lump sum at maturity.',
+        },
+        {
+          'type': 'Certificates of Deposit (5 years)',
+          'monthlyInterestRate': '12.25%',
+          'annuallyInterestRate': '12.5%',
+          'duration': 5,
+          'minInvestment': 1000,
+          'multiples': 1000,
+          'description':
+              'A 5-year certificate offering fixed interest rates with options for monthly or annual payouts.',
+        },
+        {
+          'type': 'Certificates of Deposit (7 years)',
+          'monthlyInterestRate': '12.75%',
+          'duration': 7,
+          'minInvestment': 750,
+          'multiples': 750,
+          'description':
+              'A 7-year certificate providing a fixed monthly interest rate.',
+        },
+        {
+          'type': 'Al Qimma Certificate',
+          'monthlyInterestRate': '21.5%',
+          'duration': 3,
+          'minInvestment': 1000,
+          'multiples': 1000,
+          'description':
+              'A 3-year certificate providing a fixed monthly interest rate.',
+        },
+        {
+          'type': 'Aman Al Masreyeen Certificate of Deposit',
+          'atMaturityInterestRate': '13%',
+          'duration': 3,
+          'minInvestment': 500,
+          'multiples': 500,
+          'description':
+              'A 3-year nominal certificate offering life insurance and prize draws, with interest paid at maturity.',
+        },
+        {
+          'type': 'Ibn Misr Al-Tholatheya Descending Certificate',
+          'monthlyInterestRate':
+              '26% (1st year), 22.5% (2nd year), 19% (3rd year)',
+          'quarterlyInterestRate':
+              '27% (1st year), 23% (2nd year), 19% (3rd year)',
+          'annuallyInterestRate':
+              '30% (1st year), 25% (2nd year), 20% (3rd year)',
+          'duration': 3,
+          'minInvestment': 1000,
+          'multiples': 1000,
+          'description':
+              'A 3-year certificate with a descending fixed interest rate, offering multiple payout options.',
+        },
+      ],
+    },
+    {
       'name': 'National Bank of Egypt (NBE)',
       'description':
           'One of the largest banks in Egypt, offering a variety of fixed deposit and savings products.',
@@ -96,77 +167,6 @@ class InvestScreenState extends State<InvestScreen> {
           'multiples': 1000,
           'description':
               'A high-yield certificate with options for monthly, daily, or annual interest payouts.',
-        },
-      ],
-    },
-    {
-      'name': 'Banque Misr',
-      'description':
-          'A major Egyptian bank offering a wide range of investment and savings products.',
-      'image': 'assets/Banks/Banque Misr.png',
-      'investmentLink':
-          'https://www.banquemisr.com/-/media/Interest-rates/Interest-rates-EN.pdf',
-      'certificates': [
-        {
-          'type': 'Talaat Harb Certificate',
-          'monthlyInterestRate': '23.5%',
-          'atMaturityInterestRate': '27%',
-          'duration': 1,
-          'minInvestment': 1000,
-          'multiples': 1000,
-          'description':
-              'A 1-year certificate offering a high fixed interest rate, with options for monthly payments or lump sum at maturity.',
-        },
-        {
-          'type': 'Certificates of Deposit (5 years)',
-          'monthlyInterestRate': '12.25%',
-          'annuallyInterestRate': '12.5%',
-          'duration': 5,
-          'minInvestment': 1000,
-          'multiples': 1000,
-          'description':
-              'A 5-year certificate offering fixed interest rates with options for monthly or annual payouts.',
-        },
-        {
-          'type': 'Certificates of Deposit (7 years)',
-          'monthlyInterestRate': '12.75%',
-          'duration': 7,
-          'minInvestment': 750,
-          'multiples': 750,
-          'description':
-              'A 7-year certificate providing a fixed monthly interest rate.',
-        },
-        {
-          'type': 'Al Qimma Certificate',
-          'monthlyInterestRate': '21.5%',
-          'duration': 3,
-          'minInvestment': 1000,
-          'multiples': 1000,
-          'description':
-              'A 3-year certificate providing a fixed monthly interest rate.',
-        },
-        {
-          'type': 'Aman Al Masreyeen Certificate of Deposit',
-          'atMaturityInterestRate': '13%',
-          'duration': 3,
-          'minInvestment': 500,
-          'multiples': 500,
-          'description':
-              'A 3-year nominal certificate offering life insurance and prize draws, with interest paid at maturity.',
-        },
-        {
-          'type': 'Ibn Misr Al-Tholatheya Descending Certificate',
-          'monthlyInterestRate':
-              '26% (1st year), 22.5% (2nd year), 19% (3rd year)',
-          'quarterlyInterestRate':
-              '27% (1st year), 23% (2nd year), 19% (3rd year)',
-          'annuallyInterestRate':
-              '30% (1st year), 25% (2nd year), 20% (3rd year)',
-          'duration': 3,
-          'minInvestment': 1000,
-          'multiples': 1000,
-          'description':
-              'A 3-year certificate with a descending fixed interest rate, offering multiple payout options.',
         },
       ],
     },
