@@ -11,8 +11,8 @@ import 'screens/expenses_screen.dart';
 import 'screens/analyze_expenses_screen.dart';
 import 'screens/chatbot_screen.dart';
 import 'screens/invest_screen.dart';
-// import 'screens/user_profile_screen.dart';
 // import 'screens/expense_history_screen.dart';
+import 'screens/user_profile_screen.dart';
 import 'screens/not_found_screen.dart';
 import 'services/auth_service.dart';
 
@@ -44,10 +44,10 @@ final GoRouter router = GoRouter(
     //   path: '/history',
     //   builder: (context, state) => const ExpenseHistoryScreen(),
     // ),
-    // GoRoute(
-    //   path: '/account',
-    //   builder: (context, state) => const UserProfileScreen(),
-    // ),
+    GoRoute(
+      path: '/account',
+      builder: (context, state) => const UserProfileScreen(),
+    ),
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/register',
