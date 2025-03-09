@@ -44,6 +44,7 @@ dependencies:
   device_preview: ^1.2.0  # For previewing the app on different devices
   google_fonts: ^6.1.0  # For using Google Fonts
   flutter_markdown: ^0.6.18  # For rendering markdown
+  url_launcher: ^6.3.0  # For opening URLs
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1  # For changing the app icon

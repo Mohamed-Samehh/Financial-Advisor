@@ -357,7 +357,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Monitor your daily expenses.',
+                    'Monitor your daily expenses',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),

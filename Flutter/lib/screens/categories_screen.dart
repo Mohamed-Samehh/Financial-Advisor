@@ -404,7 +404,7 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Organize your categories effectively.',
+                    'Organize your categories effectively',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
