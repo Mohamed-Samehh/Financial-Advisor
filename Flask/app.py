@@ -243,6 +243,7 @@ def chat():
         f"Lower priority values indicate higher importance, with 1 being the most critical.\n\n"
 
         f"### Response Guidelines:\n"
+        f"- Summarize responses to be direct, concise, and informative, avoiding unnecessary elaboration.\n"
         f"- Ensure all financial recommendations are aligned with Egypt’s cost of living, banking options, and inflation trends.\n"
         f"- Provide structured, actionable insights based on the user's budget and spending behavior.\n"
         f"- Never split responses into multiple messages. Always provide a complete answer in a single response.\n"
