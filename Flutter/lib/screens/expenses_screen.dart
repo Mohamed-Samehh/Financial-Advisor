@@ -264,6 +264,8 @@ class ExpensesScreenState extends State<ExpensesScreen> {
     );
     if (expense['isRecentlyAdded'] == true) return;
 
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -272,11 +274,11 @@ class ExpensesScreenState extends State<ExpensesScreen> {
           content: const Text('Are you sure you want to delete this expense?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false), // Cancel
+              onPressed: () => Navigator.of(context).pop(false),
               child: const Text('No'),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(true), // Confirm
+              onPressed: () => Navigator.of(context).pop(true),
               child: const Text('Yes'),
             ),
           ],
@@ -287,7 +289,6 @@ class ExpensesScreenState extends State<ExpensesScreen> {
     if (confirm != true) return;
 
     setState(() => isLoading = true);
-    final apiService = Provider.of<ApiService>(context, listen: false);
     try {
       await apiService.deleteExpense(expenseId);
       setState(() {
