@@ -339,11 +339,6 @@ class CategoriesScreenState extends State<CategoriesScreen> {
           messageType = 'error';
         });
       }
-    } else {
-      setState(() {
-        message = 'Category deletion was cancelled.';
-        messageType = 'error';
-      });
     }
   }
 

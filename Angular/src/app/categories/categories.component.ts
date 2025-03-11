@@ -278,11 +278,6 @@ export class CategoriesComponent implements OnInit {
           text: 'No category name entered. Deletion cancelled.',
         };
       }
-    } else {
-      this.message = {
-        type: 'error',
-        text: 'Category deletion was cancelled.',
-      };
     }
   }
 }
