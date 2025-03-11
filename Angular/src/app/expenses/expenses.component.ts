@@ -221,6 +221,9 @@ export class ExpensesComponent implements OnInit {
     const expense = this.expenses.find(exp => exp.id === expenseId);
     if (expense?.isRecentlyAdded) return;
 
+    const confirmed = confirm('Are you sure you want to delete this expense?');
+    if (!confirmed) return;
+
     this.isLoading = true;
     this.apiService.deleteExpense(expenseId).subscribe({
       next: () => {

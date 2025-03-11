@@ -88,9 +88,16 @@ class BudgetScreenState extends State<BudgetScreen> {
       });
       final apiService = Provider.of<ApiService>(context, listen: false);
       try {
+        final newBudgetAmount = double.parse(budget['monthly_budget']);
+        if (goal['id'] != null &&
+            goal['target_amount'] != null &&
+            newBudgetAmount < double.parse(goal['target_amount'])) {
+          await _deleteGoal(goal['id']);
+        }
+
         if (budget['id'] != null) {
           final response = await apiService.updateBudget({
-            'monthly_budget': double.parse(budget['monthly_budget']),
+            'monthly_budget': newBudgetAmount,
           }, budget['id']);
           setState(() {
             budget = {
@@ -103,7 +110,7 @@ class BudgetScreenState extends State<BudgetScreen> {
           });
         } else {
           final response = await apiService.addBudget({
-            'monthly_budget': double.parse(budget['monthly_budget']),
+            'monthly_budget': newBudgetAmount,
           });
           setState(() {
             budget = {

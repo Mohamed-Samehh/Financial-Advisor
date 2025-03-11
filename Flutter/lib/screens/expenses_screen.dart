@@ -264,6 +264,28 @@ class ExpensesScreenState extends State<ExpensesScreen> {
     );
     if (expense['isRecentlyAdded'] == true) return;
 
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete this expense?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false), // Cancel
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true), // Confirm
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) return;
+
     setState(() => isLoading = true);
     final apiService = Provider.of<ApiService>(context, listen: false);
     try {

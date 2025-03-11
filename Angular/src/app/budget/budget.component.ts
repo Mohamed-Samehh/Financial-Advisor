@@ -66,6 +66,12 @@ export class BudgetComponent implements OnInit {
     if (budgetForm.valid) {
       this.isLoading = true;
 
+      const newBudgetAmount = Number(this.budget.monthly_budget);
+  
+      if (this.goal.id && this.goal.target_amount && newBudgetAmount < Number(this.goal.target_amount)) {
+        this.deleteGoal(this.goal.id);
+      }
+  
       if (this.budget.id) {
         // Update the existing budget
         this.apiService.updateBudget(this.budget, this.budget.id).subscribe(
