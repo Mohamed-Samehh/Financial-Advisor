@@ -394,26 +394,13 @@ class RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                     child:
                                         isLoading
-                                            ? Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        color: Colors.white,
-                                                        strokeWidth: 2,
-                                                      ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                const Text(
-                                                  'Processing...',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
+                                            ? const SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
                                             )
                                             : const Text(
                                               'Register',
@@ -436,6 +423,16 @@ class RegisterScreenState extends State<RegisterScreen> {
                                     const SizedBox(height: 2.0),
                                     TextButton(
                                       onPressed: () => context.go('/login'),
+                                      style: ButtonStyle(
+                                        foregroundColor:
+                                            WidgetStateProperty.all(
+                                              Colors.blue,
+                                            ),
+                                        overlayColor: WidgetStateProperty.all(
+                                          Colors.transparent,
+                                        ),
+                                        splashFactory: NoSplash.splashFactory,
+                                      ),
                                       child: const Text(
                                         'Login here',
                                         style: TextStyle(color: Colors.blue),
