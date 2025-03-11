@@ -100,7 +100,7 @@ class GoalScreenState extends State<GoalScreen> {
 
       if (targetAmount >= monthlyBudget) {
         setState(() {
-          message = 'Goal cannot be equal to or more than the budget.';
+          message = 'Goal cannot be equal or more than the budget.';
           messageType = 'error';
           isLoading = false;
         });

@@ -66,7 +66,7 @@ export class GoalsComponent implements OnInit {
 
     // Check if the goal is less than 100% of the budget
     if (this.goal.target_amount >= this.budget) {
-      this.message = { text: 'Goal cannot be equal to or more than the budget.', type: 'error' };
+      this.message = { text: 'Goal cannot be equal or more than the budget.', type: 'error' };
       return;
     }
 
