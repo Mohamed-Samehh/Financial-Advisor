@@ -19,7 +19,11 @@ class AuthService extends ChangeNotifier {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
-    return _handleResponse(response);
+    final result = _handleResponse(response);
+    if (result['token'] != null) {
+      await setToken(result['token']);
+    }
+    return result;
   }
 
   Future<Map<String, dynamic>> login(Map<String, String> data) async {
