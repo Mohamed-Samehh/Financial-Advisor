@@ -164,7 +164,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (message.isNotEmpty && !isLoading)
-                            AlertMessage(message: message, isError: true),
+                            AlertMessage(message: message),
                           Form(
                             key: _formKey,
                             child: Column(
@@ -459,9 +459,8 @@ class RegisterScreenState extends State<RegisterScreen> {
 
 class AlertMessage extends StatelessWidget {
   final String message;
-  final bool isError;
 
-  const AlertMessage({super.key, required this.message, required this.isError});
+  const AlertMessage({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -469,12 +468,9 @@ class AlertMessage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isError ? Colors.red[50] : Colors.green[50],
+        color: Colors.red[50],
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isError ? Colors.red : Colors.green,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.red, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(25),
@@ -485,19 +481,12 @@ class AlertMessage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            isError ? Icons.error_outline : Icons.check_circle_outline,
-            color: isError ? Colors.red : Colors.green,
-            size: 24,
-          ),
+          const Icon(Icons.error_outline, color: Colors.red, size: 24),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${isError ? 'Error!' : 'Success!'} $message',
-              style: TextStyle(
-                color: isError ? Colors.red[900] : Colors.green[900],
-                fontSize: 14,
-              ),
+              message,
+              style: const TextStyle(color: Colors.redAccent, fontSize: 14),
             ),
           ),
         ],

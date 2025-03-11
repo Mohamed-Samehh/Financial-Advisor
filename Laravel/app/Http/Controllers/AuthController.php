@@ -222,7 +222,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Email not registered.'], 404);
+            return response()->json(['message' => 'The email is not registered.'], 404);
         }
 
         // Generate a new password

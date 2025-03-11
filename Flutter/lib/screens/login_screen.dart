@@ -59,7 +59,10 @@ class LoginScreenState extends State<LoginScreen> {
       } catch (e) {
         if (!mounted) return;
         setState(() {
-          loginError = 'Invalid email or password. Please try again.';
+          loginError =
+              e.toString().contains('Invalid credentials')
+                  ? 'Incorrect email or password.'
+                  : 'An error occurred during login. Please try again.';
           loading = false;
         });
       }
@@ -69,11 +72,21 @@ class LoginScreenState extends State<LoginScreen> {
   void _forgotPassword() async {
     if (forgotPasswordEmail.isEmpty) {
       setState(() {
-        forgotPasswordError = 'Please enter a valid email.';
+        forgotPasswordError = 'Please enter a valid email address.';
         forgotPasswordMessage = '';
       });
       return;
     }
+    if (!RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    ).hasMatch(forgotPasswordEmail)) {
+      setState(() {
+        forgotPasswordError = 'Please enter a valid email address.';
+        forgotPasswordMessage = '';
+      });
+      return;
+    }
+
     setState(() => loadingForgotPassword = true);
     final authService = Provider.of<AuthService>(context, listen: false);
     try {
@@ -87,7 +100,10 @@ class LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        forgotPasswordError = e.toString();
+        forgotPasswordError =
+            e.toString().contains('email is not registered')
+                ? 'The email is not registered.'
+                : 'Error during password reset. Please try again.';
         forgotPasswordMessage = '';
         loadingForgotPassword = false;
       });
@@ -225,11 +241,17 @@ class LoginScreenState extends State<LoginScreen> {
                                         0.05,
                                       ),
                                     ),
-                                    validator:
-                                        (value) =>
-                                            value!.isEmpty
-                                                ? 'Email is required'
-                                                : null,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Email is required';
+                                      }
+                                      if (!RegExp(
+                                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                      ).hasMatch(value)) {
+                                        return 'Please enter a valid email address.';
+                                      }
+                                      return null;
+                                    },
                                     onChanged: (value) => email = value,
                                   ),
                                   const SizedBox(height: 16),
@@ -449,10 +471,18 @@ class LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 16),
                           TextButton(
                             onPressed:
-                                () => setState(
-                                  () =>
-                                      showForgotPassword = !showForgotPassword,
-                                ),
+                                () => setState(() {
+                                  showForgotPassword = !showForgotPassword;
+                                  if (showForgotPassword) {
+                                    loginError = '';
+                                    email = '';
+                                    password = '';
+                                  } else {
+                                    forgotPasswordError = '';
+                                    forgotPasswordMessage = '';
+                                    forgotPasswordEmail = '';
+                                  }
+                                }),
                             style: ButtonStyle(
                               foregroundColor: WidgetStateProperty.all(
                                 Colors.blue,
@@ -519,7 +549,7 @@ class AlertMessage extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${isError ? 'Error!' : 'Success!'} $message',
+              message,
               style: TextStyle(
                 color: isError ? Colors.red[900] : Colors.green[900],
                 fontSize: 14,
