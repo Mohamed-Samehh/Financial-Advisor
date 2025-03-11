@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'services/auth_service.dart';
 import 'services/api_service.dart';
 import 'router.dart';
-import '../screens/navbar.dart';
 
 void main() {
   runApp(
@@ -128,27 +127,18 @@ class HomeScreenState extends State<HomeScreen> {
   void _checkLoginStatus() async {
     final token = await authService.getToken();
     if (!mounted) return;
-    setState(() {
-      if (token != null) {
-        authService.checkTokenExpiry().then((isValid) {
-          if (!mounted) return;
-          if (!isValid) context.go('/login');
-        });
-      } else {
-        context.go('/login');
-      }
-    });
+    if (token != null) {
+      authService.checkTokenExpiry().then((isValid) {
+        if (!mounted) return;
+        if (!isValid) context.go('/login');
+      });
+    } else {
+      context.go('/login');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Navbar(onMenuPressed: () => Scaffold.of(context).openDrawer()),
-      ),
-      drawer: Navbar.buildDrawer(context),
-      body: widget.child,
-    );
+    return Scaffold(body: widget.child);
   }
 }
