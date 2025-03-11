@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'services/auth_service.dart';
 import 'services/api_service.dart';
 import 'router.dart';
+import '../screens/navbar.dart';
 
 void main() {
   runApp(
@@ -115,9 +116,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  bool _isNavbarVisible = false;
-  bool _isLoggedIn = false;
-
   late AuthService authService;
 
   @override
@@ -129,114 +127,28 @@ class HomeScreenState extends State<HomeScreen> {
 
   void _checkLoginStatus() async {
     final token = await authService.getToken();
+    if (!mounted) return;
     setState(() {
-      _isLoggedIn = token != null;
-    });
-
-    if (_isLoggedIn) {
-      final isValid = await authService.checkTokenExpiry();
-      if (!mounted) return;
-      if (!isValid) {
+      if (token != null) {
+        authService.checkTokenExpiry().then((isValid) {
+          if (!mounted) return;
+          if (!isValid) context.go('/login');
+        });
+      } else {
         context.go('/login');
       }
-    } else {
-      if (!mounted) return;
-      context.go('/login');
-    }
-  }
-
-  void _toggleNavbar() {
-    setState(() => _isNavbarVisible = !_isNavbarVisible);
-  }
-
-  void _closeNavbar() {
-    setState(() => _isNavbarVisible = false);
-  }
-
-  void _logout() {
-    authService.clearToken();
-    _closeNavbar();
-    context.go('/login');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF010B1F),
-        title: Row(
-          children: [
-            Image.asset('assets/logo.png', height: 40),
-            const SizedBox(width: 10),
-            const Text('Financial Advisor', style: TextStyle(fontSize: 24)),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu, size: 28),
-            onPressed: _toggleNavbar,
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Navbar(onMenuPressed: () => Scaffold.of(context).openDrawer()),
       ),
-      drawer: Drawer(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF010B1F), Color(0xFF0F1D36)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                child: Text(
-                  'Financial Advisor',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-              ),
-              if (_isLoggedIn) ...[
-                _buildNavItem(Icons.explore, 'Dashboard', '/dashboard'),
-                _buildNavItem(Icons.wallet, 'Budget', '/budget'),
-                _buildNavItem(Icons.track_changes, 'Goal', '/goal'),
-                _buildNavItem(Icons.list, 'Categories', '/categories'),
-                _buildNavItem(Icons.receipt, 'Expenses', '/expenses'),
-                _buildNavItem(Icons.pie_chart, 'Analyze', '/analyze'),
-                _buildNavItem(Icons.smart_toy, 'Chat', '/chat'),
-                _buildNavItem(Icons.trending_up, 'Invest', '/invest'),
-                _buildNavItem(Icons.history, 'History', '/history'),
-                _buildNavItem(Icons.account_circle, 'Account', '/account'),
-              ],
-              if (!_isLoggedIn) ...[
-                _buildNavItem(Icons.login, 'Login', '/login'),
-                _buildNavItem(Icons.person_add, 'Register', '/register'),
-              ],
-              if (_isLoggedIn)
-                ListTile(
-                  title: const Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  tileColor: const Color(0xFFF33D3D),
-                  onTap: _logout,
-                ),
-            ],
-          ),
-        ),
-      ),
-      body: widget.child, // Display the routed screen content
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String title, String route) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white),
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      onTap: () {
-        _closeNavbar();
-        context.go(route);
-      },
+      drawer: Navbar.buildDrawer(context),
+      body: widget.child,
     );
   }
 }
