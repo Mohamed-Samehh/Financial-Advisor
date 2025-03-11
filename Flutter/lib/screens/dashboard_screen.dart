@@ -115,7 +115,7 @@ class DashboardScreen extends StatelessWidget {
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Manage Budget',
                                 subtitle:
-                                    'Plan your monthly budget effectively.',
+                                    'Plan your monthly budget effectively',
                                 route: '/budget',
                               ),
                               _buildCard(
@@ -125,7 +125,7 @@ class DashboardScreen extends StatelessWidget {
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Manage Goal',
                                 subtitle:
-                                    'Define your financial targets clearly.',
+                                    'Define your financial targets clearly',
                                 route: '/goal',
                               ),
                               _buildCard(
@@ -134,8 +134,7 @@ class DashboardScreen extends StatelessWidget {
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Categories',
-                                subtitle:
-                                    'Organize your categories effectively.',
+                                subtitle: 'Prioritize your categories',
                                 route: '/categories',
                               ),
                               _buildCard(
@@ -144,7 +143,7 @@ class DashboardScreen extends StatelessWidget {
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Track Expenses',
-                                subtitle: 'Monitor your daily expenses.',
+                                subtitle: 'Monitor your daily expenses',
                                 route: '/expenses',
                               ),
                               _buildCard(
@@ -153,7 +152,8 @@ class DashboardScreen extends StatelessWidget {
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Analyze Expenses',
-                                subtitle: 'Gain visual insights.',
+                                subtitle:
+                                    'Gain insights with visual expense analysis',
                                 route: '/analyze',
                               ),
                               _buildCard(
@@ -163,7 +163,7 @@ class DashboardScreen extends StatelessWidget {
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Chat with AI',
                                 subtitle:
-                                    'Get instant financial advice, insights, and tips with our AI chatbot.',
+                                    'Get instant financial advice and insights',
                                 route: '/chat',
                               ),
                               _buildCard(
@@ -172,8 +172,7 @@ class DashboardScreen extends StatelessWidget {
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Invest',
-                                subtitle:
-                                    'Explore bank certificates to grow your savings.',
+                                subtitle: 'Explore bank certificates',
                                 route: '/invest',
                               ),
                               _buildCard(
@@ -182,8 +181,7 @@ class DashboardScreen extends StatelessWidget {
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Expense History',
-                                subtitle:
-                                    'Review and reflect on your past expenses.',
+                                subtitle: 'Review your past expenses',
                                 route: '/history',
                               ),
                               _buildCard(
@@ -192,7 +190,7 @@ class DashboardScreen extends StatelessWidget {
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Account',
-                                subtitle: 'Manage your profile.',
+                                subtitle: 'Manage your account',
                                 route: '/account',
                               ),
                             ],
