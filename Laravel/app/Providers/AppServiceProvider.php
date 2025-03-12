@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Change date for testing
         // if ($this->app->environment('local', 'testing')) {
-        //     Carbon::setTestNow(Carbon::now()->subMonth());
+        //     Carbon::setTestNow(Carbon::now()->subMonth(4));
         //     // subMonth() to test old data
         //     // addMonth() to test future data
         // }
