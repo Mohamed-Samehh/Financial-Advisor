@@ -155,7 +155,7 @@ class ChatbotScreenState extends State<ChatbotScreen>
                             ),
                             const SizedBox(height: 12),
                             const Text(
-                              'Get instant financial advices!',
+                              'Get instant financial advices and insights',
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.white70,

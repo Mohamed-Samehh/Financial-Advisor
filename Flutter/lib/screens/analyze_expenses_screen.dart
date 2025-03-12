@@ -198,7 +198,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Gain insights into your spending habits',
+                    'Gain insights with visual expense analysis',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),

@@ -227,7 +227,7 @@ class BudgetScreenState extends State<BudgetScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Set your monthly budget with ease',
+                    'Plan your monthly budget',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),

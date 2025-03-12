@@ -503,7 +503,7 @@ class InvestScreenState extends State<InvestScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Explore top investment options',
+                    'Explore bank certificates',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),

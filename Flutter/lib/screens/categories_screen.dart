@@ -399,7 +399,7 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Organize your categories effectively',
+                    'Prioritize your categories',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),

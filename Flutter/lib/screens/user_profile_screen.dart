@@ -262,7 +262,7 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Manage your profile settings',
+                    'Manage your account',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),

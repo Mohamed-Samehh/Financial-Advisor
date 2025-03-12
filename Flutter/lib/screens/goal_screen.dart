@@ -232,7 +232,7 @@ class GoalScreenState extends State<GoalScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Define your financial targets clearly',
+                    'Define your financial targets',
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
