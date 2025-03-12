@@ -81,14 +81,17 @@
 
                 <!-- Display goal/budget messages -->
                 <div *ngIf="goalByMonth[monthYear] && Expense_summary(monthYear) === 'goal_met'" class="alert alert-success" role="alert">
+                  <i class="fa fa-check-circle me-2"></i>
                   <strong>Goal Achieved!</strong> You've successfully reached your financial goal this month. Keep up the great work! 🎉
                 </div>
 
                 <div *ngIf="goalByMonth[monthYear] && Expense_summary(monthYear) === 'goal_not_met'" class="alert alert-warning" role="alert">
+                  <i class="fa fa-exclamation-circle me-2"></i>
                   <strong>Goal Not Met!</strong> Unfortunately, the financial goal this month wasn't reached.
                 </div>
 
                 <div *ngIf="budgetByMonth[monthYear] && Expense_summary(monthYear) === 'budget_surpassed'" class="alert alert-danger" role="alert">
+                  <i class="fa fa-exclamation-circle me-2"></i>
                   <strong>Budget Exceeded!</strong> You've gone over your budget this month. ⚠️
                 </div>
 

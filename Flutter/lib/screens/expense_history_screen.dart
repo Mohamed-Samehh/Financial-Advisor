@@ -194,8 +194,9 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
     final totalExpenses = totalExpensesByMonth[monthYear] ?? 0;
 
     if (totalExpenses > budget) return 'budget_surpassed';
-    if (goalTarget == 0 || totalExpenses > (budget - goalTarget))
+    if (goalTarget == 0 || totalExpenses > (budget - goalTarget)) {
       return 'goal_not_met';
+    }
     return 'goal_met';
   }
 
@@ -220,7 +221,9 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
   }
 
   int _calculateCrossAxisCount(double screenWidth) {
-    if (screenWidth < 600) {
+    if (screenWidth < 400) {
+      return 1;
+    } else if (screenWidth < 600) {
       return 2;
     } else if (screenWidth < 900) {
       return 3;
@@ -229,10 +232,20 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
     }
   }
 
+  double _calculateChildAspectRatio(double screenWidth, int crossAxisCount) {
+    double baseWidth = screenWidth / crossAxisCount;
+    double baseHeight = 120;
+    return baseWidth / baseHeight;
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = _calculateCrossAxisCount(screenWidth);
+    final childAspectRatio = _calculateChildAspectRatio(
+      screenWidth,
+      crossAxisCount,
+    );
 
     return Scaffold(
       appBar: PreferredSize(
@@ -527,7 +540,7 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                                           crossAxisCount: crossAxisCount,
                                           crossAxisSpacing: 8,
                                           mainAxisSpacing: 8,
-                                          childAspectRatio: 1.2,
+                                          childAspectRatio: childAspectRatio,
                                           children:
                                               expenses.map((expense) {
                                                 return Card(
@@ -609,7 +622,7 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                       if (totalPages > 1) ...[
                         const SizedBox(height: 16),
                         Row(
@@ -756,9 +769,9 @@ class AlertMessage extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            type == MessageType.error
-                ? Icons.error_outline
-                : Icons.check_circle_outline,
+            type == MessageType.success
+                ? Icons.check_circle_outline
+                : Icons.error_outline,
             color: _getIconAndTextColor(),
             size: 24,
           ),
