@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../screens/navbar.dart';
 
 class NotFoundScreen extends StatelessWidget {
   const NotFoundScreen({super.key});
@@ -8,6 +9,17 @@ class NotFoundScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Builder(
+          builder: (BuildContext appBarContext) {
+            return Navbar(
+              onMenuPressed: () => Scaffold.of(appBarContext).openDrawer(),
+            );
+          },
+        ),
+      ),
+      drawer: Navbar.buildDrawer(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -85,11 +97,7 @@ class NotFoundScreen extends StatelessWidget {
                       const SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: () {
-                          if (context.canPop()) {
-                            context.pop();
-                          } else {
-                            context.go('/');
-                          }
+                          context.go('/dashboard');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -99,7 +107,7 @@ class NotFoundScreen extends StatelessWidget {
                           ),
                         ),
                         child: const Text(
-                          'Go Back',
+                          'Go to Dashboard',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
