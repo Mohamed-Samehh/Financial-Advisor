@@ -1679,7 +1679,8 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isActive ? Colors.blue : Colors.transparent,
+          backgroundColor:
+              isActive ? Colors.blue : Colors.white.withValues(alpha: 0.9),
           foregroundColor: isActive ? Colors.white : Colors.blue,
           side: const BorderSide(color: Colors.blue, width: 2),
           shape: RoundedRectangleBorder(
