@@ -169,7 +169,7 @@ class LoginScreenState extends State<LoginScreen> {
                       Text(
                         showForgotPassword
                             ? 'Enter your email to reset your password'
-                            : 'Login to manage your finances seamlessly',
+                            : 'Login to your account',
                         style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white70,
