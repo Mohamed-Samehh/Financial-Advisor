@@ -282,11 +282,6 @@ export class CategoriesComponent implements OnInit {
           };
         },
       });
-    } else if (result.isDismissed) {
-      this.message = {
-        type: 'error',
-        text: 'Deletion cancelled.',
-      };
     }
   }
 }
