@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-profile',
@@ -156,33 +157,51 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  onDeleteAccount() {
+  async onDeleteAccount() {
     this.submittedDelete = true;
     this.deleteAccountError = '';
     this.loadingDeleteAccount = true;
-
+  
     if (this.deleteAccountForm.valid) {
       const password = this.deleteAccountForm.value.password?.toString().trim();
-
+  
       if (!password) {
         this.deleteAccountError = 'Please enter your password.';
         this.loadingDeleteAccount = false;
         return;
       }
-
-      this.authService.deleteAccount(password).subscribe({
-        next: () => {
-          alert('Account deleted successfully. You will now be logged out.');
+  
+      const confirmation = await Swal.fire({
+        title: "Are you sure?",
+        text: "This will permanently delete your account.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      });
+  
+      if (confirmation.isConfirmed) {
+        try {
+          await this.authService.deleteAccount(password).toPromise();
+          await Swal.fire({
+            title: "Account Deleted",
+            text: "Account deleted successfully. You will now be logged out.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "OK"
+          });
           this.submittedDelete = false;
           this.deleteAccountForm.reset();
-          window.location.reload();
           this.loadingDeleteAccount = false;
-        },
-        error: (err) => {
+          window.location.reload();
+        } catch (err: any) {
           this.deleteAccountError = err.error?.message || 'Incorrect password. Please try again.';
           this.loadingDeleteAccount = false;
-        },
-      });
+        }
+      } else {
+        this.loadingDeleteAccount = false;
+      }
     } else {
       this.deleteAccountError = 'Please enter your password to proceed.';
       this.loadingDeleteAccount = false;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-expenses',
@@ -217,12 +218,21 @@ export class ExpensesComponent implements OnInit {
     }
   }
 
-  deleteExpense(expenseId: any) {
+  async deleteExpense(expenseId: any) {
     const expense = this.expenses.find(exp => exp.id === expenseId);
     if (expense?.isRecentlyAdded) return;
 
-    const confirmed = confirm('Are you sure you want to delete this expense?');
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    });
+
+    if (!result.isConfirmed) return;
 
     this.isLoading = true;
     this.apiService.deleteExpense(expenseId).subscribe({

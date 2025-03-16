@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -27,11 +28,17 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const token = this.authService.getToken();
 
     if (token && this.authService.checkTokenExpiry()) {
-      alert("It looks like you're already logged in. Redirecting you to your dashboard.");
+      await Swal.fire({
+        title: "Already Logged In",
+        text: "It looks like you're already logged in. Redirecting you to your dashboard.",
+        icon: "info",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK"
+      });
       this.router.navigate(['/dashboard']);
     }
   }

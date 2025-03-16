@@ -273,7 +273,7 @@ class CategoriesScreenState extends State<CategoriesScreen> {
           (context) => AlertDialog(
             title: const Text('Confirm Deletion'),
             content: const Text(
-              'Deleting this category will move its all-time expenses to a new category. This change is permanent. Do you want to continue?',
+              'Removing this category will transfer all its current and previous expenses to a new category. Do you want to continue?',
             ),
             actions: [
               TextButton(
@@ -664,17 +664,41 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
                                                                   .center,
                                                           children: [
-                                                            const Icon(
-                                                              Icons
-                                                                  .monetization_on,
-                                                              size: 16,
-                                                              color:
-                                                                  Colors.green,
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                const Icon(
+                                                                  Icons
+                                                                      .monetization_on,
+                                                                  size: 16,
+                                                                  color:
+                                                                      Colors
+                                                                          .green,
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 4,
+                                                                ),
+                                                                Text(
+                                                                  'Monthly Average:',
+                                                                  style: TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color:
+                                                                        Colors
+                                                                            .grey[800],
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
                                                             const SizedBox(
                                                               width: 4,
@@ -690,6 +714,9 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                                                                     FontWeight
                                                                         .w500,
                                                               ),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                             ),
                                                           ],
                                                         ),
