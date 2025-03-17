@@ -247,41 +247,55 @@ export class CategoriesComponent implements OnInit {
 
   // Delete category with confirmation and reassign expenses
   async deleteCategoryWithConfirmation(categoryId: any) {
-    const result = await Swal.fire({
+    const firstConfirmation = await Swal.fire({
       title: "Are you sure?",
-      text: "Removing this category will transfer all its current and previous expenses to a new category. Please specify the new category name for the expense transfer:",
+      text: "Removing this category will transfer all its current and previous expenses to a new category.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-      input: 'text',
-      inputPlaceholder: 'Enter new category name',
-      inputValidator: (value) => {
-        if (!value) {
-          return 'You need to enter a category name!';
-        }
-        return null;
-      }
+      confirmButtonText: "Yes, proceed",
+      cancelButtonText: "No, cancel"
     });
 
-    if (result.isConfirmed && result.value) {
-      this.apiService.deleteCategory(categoryId, result.value).subscribe({
-        next: () => {
-          this.message = {
-            type: 'success',
-            text: 'Category deleted and expenses reassigned successfully!',
-          };
-          this.loadCategories();
-          this.loadSuggestedCategories();
-        },
-        error: (err) => {
-          this.message = {
-            type: 'error',
-            text: 'An error occurred while deleting the category.',
-          };
-        },
+    if (firstConfirmation.isConfirmed) {
+      const secondConfirmation = await Swal.fire({
+        title: "Specify New Category",
+        text: "Please specify the new category name for the expense transfer:",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+        input: 'text',
+        inputPlaceholder: 'Enter new category name',
+        inputValidator: (value) => {
+          if (!value) {
+            return 'You need to enter a category name!';
+          }
+          return null;
+        }
       });
+
+      if (secondConfirmation.isConfirmed && secondConfirmation.value) {
+        this.apiService.deleteCategory(categoryId, secondConfirmation.value).subscribe({
+          next: () => {
+            this.message = {
+              type: 'success',
+              text: 'Category deleted and expenses reassigned successfully!',
+            };
+            this.loadCategories();
+            this.loadSuggestedCategories();
+          },
+          error: (err) => {
+            this.message = {
+              type: 'error',
+              text: 'An error occurred while deleting the category.',
+            };
+          },
+        });
+      }
     }
   }
 }
