@@ -224,12 +224,6 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
         : currentYear.toString();
   }
 
-  String _formatMonthYear(String monthYear) {
-    final [year, month] = monthYear.split('-');
-    final date = DateTime(int.parse(year), int.parse(month));
-    return DateFormat('MMMM yyyy').format(date);
-  }
-
   int _calculateCrossAxisCount(double screenWidth) {
     if (screenWidth < 400) {
       return 1;
@@ -424,7 +418,7 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    _formatMonthYear(monthYear),
+                                    monthYear,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
