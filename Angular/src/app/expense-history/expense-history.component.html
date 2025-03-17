@@ -30,7 +30,7 @@
                [attr.data-bs-target]="'#collapse' + i" 
                aria-expanded="false" 
                aria-controls="collapse">
-            <h5 class="mb-0">{{ formatMonthYear(monthYear) }}</h5>
+            <h5 class="mb-0">{{ monthYear }}</h5>
             <div class="d-flex align-items-center">
               <span *ngIf="totalExpensesByMonth[monthYear] !== undefined"
                 [ngStyle]="{

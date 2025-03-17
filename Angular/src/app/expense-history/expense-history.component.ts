@@ -185,10 +185,4 @@ export class ExpenseHistoryComponent implements OnInit {
   hasExpenseHistory(): boolean {
     return Object.values(this.expensesByYear).some(expenses => expenses.length > 0);
   }
-
-  formatMonthYear(monthYear: string): string {
-    const [year, month] = monthYear.split('-');
-    const date = new Date(`${year}-${month}-01`);
-    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
-  }
 }
