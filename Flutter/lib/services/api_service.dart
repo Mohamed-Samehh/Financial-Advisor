@@ -134,10 +134,10 @@ class ApiService {
   }
 
   // Expenses
-  Future<dynamic> getAllExpenses() async {
+  Future<dynamic> getAllExpenses({int page = 1, int perPage = 1}) async {
     final headers = await _getHeaders();
     final response = await http.get(
-      Uri.parse('$_apiUrl/expenses/all'),
+      Uri.parse('$_apiUrl/expenses/all?page=$page&per_page=$perPage'),
       headers: headers,
     );
     return _handleResponse(response);

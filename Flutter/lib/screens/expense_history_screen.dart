@@ -13,7 +13,7 @@ class ExpenseHistoryScreen extends StatefulWidget {
 
 class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
   Map<String, List<Map<String, dynamic>>> expensesByMonth = {};
-  Map<String, num> totalExpensesByMonth = {};
+  Map<String, num?> totalExpensesByMonth = {};
   Map<String, Map<String, dynamic>> budgetByMonth = {};
   Map<String, Map<String, dynamic>> goalByMonth = {};
   List<String> sortedMonths = [];
@@ -22,7 +22,7 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
   bool isLoading = true;
   int currentPage = 1;
   int totalPages = 1;
-  final int monthsPerPage = 12;
+  final int yearsPerPage = 1;
   late int currentYear;
   late int currentMonth;
 
@@ -39,34 +39,22 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
     setState(() => isLoading = true);
     final apiService = Provider.of<ApiService>(context, listen: false);
     try {
-      final expensesResponse = await apiService.getAllExpenses();
+      final expensesResponse = await apiService.getAllExpenses(
+        page: currentPage,
+        perPage: yearsPerPage,
+      );
       final budgetsResponse = await apiService.getAllBudgets();
       final goalsResponse = await apiService.getAllGoals();
 
-      final List<dynamic> expenseItems =
-          expensesResponse is List<dynamic> ? expensesResponse : [];
+      final List<dynamic> expenseData = expensesResponse['data'] ?? [];
       final List<dynamic> budgets =
           budgetsResponse['budgets'] as List<dynamic>? ?? [];
       final List<dynamic> goals =
           goalsResponse['goals'] as List<dynamic>? ?? [];
 
-      final List<Map<String, dynamic>> tempExpenses = [];
-      for (var e in expenseItems) {
-        if (e is Map<String, dynamic>) {
-          final amount = _parseAmount(e['amount']);
-          final date = _parseDate(e['date']);
-          if (amount == null || date == null) continue;
-          tempExpenses.add({
-            'category': e['category']?.toString() ?? 'Unknown',
-            'amount': amount,
-            'date': e['date']?.toString() ?? '',
-          });
-        }
-      }
-
-      _groupExpensesByMonth(tempExpenses);
+      _groupExpensesByMonth(expenseData);
       _assignBudgetsAndGoals(budgets, goals);
-      _setupPagination();
+      _setupPagination(expensesResponse);
 
       setState(() => isLoading = false);
     } catch (e) {
@@ -81,56 +69,66 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
   num? _parseAmount(dynamic value) {
     if (value == null) return null;
     if (value is num) return value;
-    if (value is String) {
-      return num.tryParse(value);
-    }
+    if (value is String) return num.tryParse(value);
     return null;
   }
 
   DateTime? _parseDate(dynamic value) {
     if (value == null) return null;
-    if (value is String) {
-      return DateTime.tryParse(value);
-    }
+    if (value is String) return DateTime.tryParse(value);
     return null;
   }
 
-  void _groupExpensesByMonth(List<Map<String, dynamic>> expenses) {
-    expenses.sort((a, b) {
-      final dateA = _parseDate(a['date']) ?? DateTime(0);
-      final dateB = _parseDate(b['date']) ?? DateTime(0);
-      return dateB.compareTo(dateA);
-    });
+  void _groupExpensesByMonth(List<dynamic> expensesByYear) {
+    expensesByMonth = {};
+    totalExpensesByMonth = {};
+    sortedMonths = [];
 
-    final yearsWithExpenses = <int>{};
+    for (var yearExpenses in expensesByYear) {
+      if (yearExpenses is List<dynamic>) {
+        final year =
+            _parseDate(
+              yearExpenses.isNotEmpty ? yearExpenses[0]['date'] : null,
+            )?.year.toString() ??
+            currentYear.toString();
+        sortedMonths = [year];
 
-    for (var expense in expenses) {
-      final expenseDate = _parseDate(expense['date']);
-      if (expenseDate == null) continue;
-      final year = expenseDate.year;
-      final month = expenseDate.month;
-      final monthYear = '$year-${month.toString().padLeft(2, '0')}';
+        for (var expense in yearExpenses) {
+          if (expense is Map<String, dynamic>) {
+            final expenseDate = _parseDate(expense['date']);
+            if (expenseDate == null) continue;
+            final month = expenseDate.month;
+            final monthYear = '$year-${month.toString().padLeft(2, '0')}';
+            final amount = _parseAmount(expense['amount']) ?? 0;
 
-      if (year == currentYear && month == currentMonth) continue;
-
-      yearsWithExpenses.add(year);
-
-      if (!expensesByMonth.containsKey(monthYear)) {
-        expensesByMonth[monthYear] = [];
-        totalExpensesByMonth[monthYear] = 0;
+            if (_isCurrentMonth(monthYear)) {
+              totalExpensesByMonth[monthYear] = null;
+            } else {
+              if (!expensesByMonth.containsKey(monthYear)) {
+                expensesByMonth[monthYear] = [];
+                totalExpensesByMonth[monthYear] = 0;
+              }
+              expensesByMonth[monthYear]!.add({
+                'category': expense['category']?.toString() ?? 'Unknown',
+                'amount': amount,
+                'date': expense['date']?.toString() ?? '',
+              });
+              totalExpensesByMonth[monthYear] =
+                  (totalExpensesByMonth[monthYear] ?? 0) + amount;
+            }
+          }
+        }
       }
-      expensesByMonth[monthYear]!.add(expense);
-      totalExpensesByMonth[monthYear] =
-          totalExpensesByMonth[monthYear]! + (expense['amount'] as num);
     }
 
-    for (var year in yearsWithExpenses) {
-      for (int month = 1; month <= 12; month++) {
-        final monthYear = '$year-${month.toString().padLeft(2, '0')}';
-        if (!expensesByMonth.containsKey(monthYear)) {
-          expensesByMonth[monthYear] = [];
-          totalExpensesByMonth[monthYear] = 0;
-        }
+    final year =
+        sortedMonths.isNotEmpty ? sortedMonths[0] : currentYear.toString();
+    for (int month = 1; month <= 12; month++) {
+      final monthYear = '$year-${month.toString().padLeft(2, '0')}';
+      if (!expensesByMonth.containsKey(monthYear)) {
+        expensesByMonth[monthYear] = [];
+        totalExpensesByMonth[monthYear] ??=
+            _isCurrentMonth(monthYear) ? null : 0;
       }
     }
 
@@ -164,23 +162,28 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
     }
   }
 
-  void _setupPagination() {
-    totalPages = (sortedMonths.length / monthsPerPage).ceil();
+  void _setupPagination(Map<String, dynamic> expensesResponse) {
+    currentPage = expensesResponse['current_page'] ?? 1;
+    totalPages = expensesResponse['last_page'] ?? 1;
   }
 
   List<String> _getMonthsForCurrentPage() {
-    final startIndex = (currentPage - 1) * monthsPerPage;
-    return sortedMonths.sublist(
-      startIndex,
-      startIndex + monthsPerPage > sortedMonths.length
-          ? sortedMonths.length
-          : startIndex + monthsPerPage,
+    final year =
+        sortedMonths.isNotEmpty
+            ? sortedMonths[0].split('-')[0]
+            : currentYear.toString();
+    return List.generate(
+      12,
+      (index) => '$year-${(index + 1).toString().padLeft(2, '0')}',
     );
   }
 
   void _changePage(int page) {
     if (page < 1 || page > totalPages) return;
-    setState(() => currentPage = page);
+    setState(() {
+      currentPage = page;
+      _loadExpenses();
+    });
   }
 
   String _formatNumber(num? value) {
@@ -189,6 +192,7 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
   }
 
   String _expenseSummary(String monthYear) {
+    if (_isCurrentMonth(monthYear)) return '';
     final budget = budgetByMonth[monthYear]?['monthly_budget'] as num? ?? 0;
     final goalTarget = goalByMonth[monthYear]?['target_amount'] as num? ?? 0;
     final totalExpenses = totalExpensesByMonth[monthYear] ?? 0;
@@ -215,9 +219,15 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
   }
 
   String _getCurrentPageYear() {
-    if (sortedMonths.isEmpty) return '';
-    final firstMonthYear = _getMonthsForCurrentPage().first;
-    return firstMonthYear.split('-')[0];
+    return sortedMonths.isNotEmpty
+        ? sortedMonths[0].split('-')[0]
+        : currentYear.toString();
+  }
+
+  String _formatMonthYear(String monthYear) {
+    final [year, month] = monthYear.split('-');
+    final date = DateTime(int.parse(year), int.parse(month));
+    return DateFormat('MMMM yyyy').format(date);
   }
 
   int _calculateCrossAxisCount(double screenWidth) {
@@ -385,11 +395,12 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                       const SizedBox(height: 16),
                       ..._getMonthsForCurrentPage().map((monthYear) {
                         final expenses = expensesByMonth[monthYear] ?? [];
-                        final totalExpenses =
-                            totalExpensesByMonth[monthYear] ?? 0;
+                        final totalExpenses = totalExpensesByMonth[monthYear];
                         final isCurrent = _isCurrentMonth(monthYear);
                         final showBudgetAndGoal =
-                            totalExpenses > 0 && !isCurrent;
+                            totalExpenses != null &&
+                            totalExpenses > 0 &&
+                            !isCurrent;
 
                         return Card(
                           elevation: 8,
@@ -413,7 +424,7 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    monthYear,
+                                    _formatMonthYear(monthYear),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
@@ -422,7 +433,8 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                                   ),
                                   Row(
                                     children: [
-                                      if (totalExpenses > 0)
+                                      if (totalExpenses != null &&
+                                          totalExpenses > 0)
                                         Text(
                                           'Total: E£${_formatNumber(totalExpenses)}',
                                           style: TextStyle(
@@ -471,68 +483,73 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       // Budget and Goal Info
-                                      if (showBudgetAndGoal) ...[
-                                        if (budgetByMonth[monthYear] != null)
-                                          Text(
-                                            'Budget: E£${_formatNumber(budgetByMonth[monthYear]!['monthly_budget'])}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                      if (isCurrent)
+                                        const Text(
+                                          'Current month - Expenses are not displayed',
+                                          style: TextStyle(color: Colors.grey),
+                                        )
+                                      else if (expenses.isNotEmpty) ...[
+                                        if (showBudgetAndGoal) ...[
+                                          if (budgetByMonth[monthYear] != null)
+                                            Text(
+                                              'Budget: E£${_formatNumber(budgetByMonth[monthYear]!['monthly_budget'])}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
+                                          else
+                                            const Text(
+                                              'Budget: No budget was set for this month.',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          )
-                                        else
-                                          const Text(
-                                            'Budget: No budget was set for this month.',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                          const SizedBox(height: 8),
+                                          if (goalByMonth[monthYear] != null)
+                                            Text(
+                                              'Goal: ${goalByMonth[monthYear]!['name']} - E£${_formatNumber(goalByMonth[monthYear]!['target_amount'])}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
+                                          else
+                                            const Text(
+                                              'Goal: No goal was set for this month.',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                        const SizedBox(height: 8),
-                                        if (goalByMonth[monthYear] != null)
-                                          Text(
-                                            'Goal: ${goalByMonth[monthYear]!['name']} - E£${_formatNumber(goalByMonth[monthYear]!['target_amount'])}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                        else
-                                          const Text(
-                                            'Goal: No goal was set for this month.',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        const SizedBox(height: 16),
-                                        // Summary Messages
-                                        if (goalByMonth[monthYear] != null &&
-                                            _expenseSummary(monthYear) ==
-                                                'goal_met')
-                                          AlertMessage(
-                                            message:
-                                                'Goal Achieved! You\'ve successfully reached your financial goal this month. Keep up the great work! 🎉',
-                                            type: MessageType.success,
-                                          ),
-                                        if (goalByMonth[monthYear] != null &&
-                                            _expenseSummary(monthYear) ==
-                                                'goal_not_met')
-                                          AlertMessage(
-                                            message:
-                                                'Goal Not Met! Unfortunately, the financial goal this month wasn\'t reached.',
-                                            type: MessageType.warning,
-                                          ),
-                                        if (budgetByMonth[monthYear] != null &&
-                                            _expenseSummary(monthYear) ==
-                                                'budget_surpassed')
-                                          AlertMessage(
-                                            message:
-                                                'Budget Exceeded! You\'ve gone over your budget this month. ⚠️',
-                                            type: MessageType.error,
-                                          ),
-                                        if (budgetByMonth[monthYear] != null ||
-                                            goalByMonth[monthYear] != null)
                                           const SizedBox(height: 16),
-                                      ],
-                                      // Expense List
-                                      if (expenses.isNotEmpty)
+                                          if (goalByMonth[monthYear] != null &&
+                                              _expenseSummary(monthYear) ==
+                                                  'goal_met')
+                                            AlertMessage(
+                                              message:
+                                                  'Goal Achieved! You\'ve successfully reached your financial goal this month. 🎉',
+                                              type: MessageType.success,
+                                            ),
+                                          if (goalByMonth[monthYear] != null &&
+                                              _expenseSummary(monthYear) ==
+                                                  'goal_not_met')
+                                            AlertMessage(
+                                              message:
+                                                  'Goal Not Met! Unfortunately, the financial goal this month wasn\'t reached.',
+                                              type: MessageType.warning,
+                                            ),
+                                          if (budgetByMonth[monthYear] !=
+                                                  null &&
+                                              _expenseSummary(monthYear) ==
+                                                  'budget_surpassed')
+                                            AlertMessage(
+                                              message:
+                                                  'Budget Exceeded! You\'ve gone over your budget this month. ⚠️',
+                                              type: MessageType.error,
+                                            ),
+                                          if (budgetByMonth[monthYear] !=
+                                                  null ||
+                                              goalByMonth[monthYear] != null)
+                                            const SizedBox(height: 16),
+                                        ],
                                         GridView.count(
                                           shrinkWrap: true,
                                           physics:
@@ -603,14 +620,12 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                                                   ),
                                                 );
                                               }).toList(),
-                                        )
-                                      else
+                                        ),
+                                      ] else
                                         Text(
-                                          _isCurrentMonth(monthYear)
-                                              ? 'Current month - Expenses are not displayed.'
-                                              : _isFutureMonth(monthYear)
-                                              ? 'Upcoming month - No expenses recorded yet.'
-                                              : 'No expenses recorded for this month.',
+                                          _isFutureMonth(monthYear)
+                                              ? 'Upcoming month - No expenses recorded yet'
+                                              : 'No expenses recorded for this month',
                                           style: const TextStyle(
                                             color: Colors.grey,
                                           ),
