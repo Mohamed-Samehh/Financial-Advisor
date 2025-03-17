@@ -151,48 +151,80 @@ class UserProfileScreenState extends State<UserProfileScreen> {
 
   void _onDeleteAccount() async {
     if (_deleteAccountFormKey.currentState!.validate()) {
-      if (!mounted) {
-        return;
-      }
       setState(() {
         loadingDeleteAccount = true;
         deleteAccountMessage = null;
         deleteAccountMessageType = null;
       });
 
-      final contextSnapshot = context;
-      final authService = Provider.of<AuthService>(
-        contextSnapshot,
-        listen: false,
+      final authService = Provider.of<AuthService>(context, listen: false);
+
+      final bool? confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: const Text('Are you sure?'),
+            content: const Text('This will permanently delete your account.'),
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: const Text('Yes, delete it!'),
+              ),
+            ],
+          );
+        },
       );
 
-      try {
-        await authService.deleteAccount(deleteAccountForm['password']!);
-        if (contextSnapshot.mounted) {
-          ScaffoldMessenger.of(contextSnapshot).showSnackBar(
-            const SnackBar(content: Text('Account deleted successfully!')),
-          );
+      if (!mounted) return;
+
+      if (confirmed == true) {
+        try {
+          await authService.deleteAccount(deleteAccountForm['password']!);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Account deleted successfully!')),
+            );
+            setState(() {
+              loadingDeleteAccount = false;
+            });
+          }
+
+          await authService.clearToken();
+
+          if (mounted) {
+            GoRouter.of(context).go('/login');
+          }
+        } catch (e) {
+          if (mounted) {
+            setState(() {
+              deleteAccountMessage = 'Incorrect password. Please try again.';
+              deleteAccountMessageType = 'error';
+              loadingDeleteAccount = false;
+            });
+          }
         }
-        await authService.clearToken();
-        if (contextSnapshot.mounted) {
-          contextSnapshot.go('/login');
-        }
-      } catch (e) {
+      } else {
         if (mounted) {
           setState(() {
-            deleteAccountMessage = 'Incorrect password. Please try again.';
-            deleteAccountMessageType = 'error';
             loadingDeleteAccount = false;
           });
         }
       }
     } else {
-      if (!mounted) return;
-      setState(() {
-        deleteAccountMessage = 'Please enter your password to proceed.';
-        deleteAccountMessageType = 'error';
-        loadingDeleteAccount = false;
-      });
+      if (mounted) {
+        setState(() {
+          deleteAccountMessage = 'Please enter your password to proceed.';
+          deleteAccountMessageType = 'error';
+          loadingDeleteAccount = false;
+        });
+      }
     }
   }
 
