@@ -12,16 +12,16 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./expense-history.component.css']
 })
 export class ExpenseHistoryComponent implements OnInit {
-  expensesByMonth: { [key: string]: any[] } = {};
-  totalExpensesByMonth: { [key: string]: number } = {};
+  expensesByYear: { [key: string]: any[] } = {};
+  totalExpensesByMonth: { [key: string]: number | undefined } = {};
   budgetByMonth: { [key: string]: any } = {};
   goalByMonth: { [key: string]: any } = {};
-  sortedMonths: string[] = [];
-  message: { text: string; } | null = null;
+  sortedYears: string[] = [];
+  message: { text: string } | null = null;
   isLoading = true;
   currentPage = 1;
   totalPages = 1;
-  monthsPerPage = 12;
+  yearsPerPage = 1;
   pages: number[] = [];
   currentYear = new Date().getFullYear();
   currentMonth = new Date().getMonth() + 1;
@@ -35,21 +35,18 @@ export class ExpenseHistoryComponent implements OnInit {
   loadExpenseHistory() {
     this.isLoading = true;
     forkJoin({
-      expenses: this.apiService.getAllExpenses(),
+      expenses: this.apiService.getAllExpenses(this.currentPage, this.yearsPerPage),
       budgets: this.apiService.getAllBudgets(),
       goals: this.apiService.getAllGoals(),
     }).subscribe({
       next: (res) => {
         const { expenses, budgets, goals } = res;
-
         const budgetsArray = budgets.budgets || [];
         const goalsArray = goals.goals || [];
 
-        this.groupExpensesByMonth(expenses);
-
+        this.groupExpensesByYear(expenses.data);
         this.assignBudgetsAndGoals(budgetsArray, goalsArray);
-
-        this.setupPagination();
+        this.setupPagination(expenses);
 
         this.isLoading = false;
       },
@@ -61,46 +58,34 @@ export class ExpenseHistoryComponent implements OnInit {
     });
   }
 
-  groupExpensesByMonth(expenses: any[]) {
-    expenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  groupExpensesByYear(expensesByYear: any[]) {
+    this.expensesByYear = {};
+    this.totalExpensesByMonth = {};
+    this.sortedYears = [];
 
-    const yearsWithExpenses = new Set<number>();
+    expensesByYear.forEach((yearExpenses: any[]) => {
+      const year = yearExpenses[0]?.date.split('-')[0] || this.currentYear.toString();
+      this.sortedYears = [year];
 
-    expenses.forEach(expense => {
-      const expenseDate = new Date(expense.date);
-      const year = expenseDate.getFullYear();
-      const month = expenseDate.getMonth() + 1;
-      const monthYear = `${year}-${String(month).padStart(2, '0')}`;
-
-      if (year === this.currentYear && month === this.currentMonth) {
-        return;
-      }
-
-      yearsWithExpenses.add(year);
-
-      if (!this.expensesByMonth[monthYear]) {
-        this.expensesByMonth[monthYear] = [];
-        this.totalExpensesByMonth[monthYear] = 0;
-      }
-
-      this.expensesByMonth[monthYear].push(expense);
-      this.totalExpensesByMonth[monthYear] += expense.amount;
-    });
-
-    yearsWithExpenses.forEach(year => {
-      for (let month = 1; month <= 12; month++) {
+      yearExpenses.forEach(expense => {
+        const expenseDate = new Date(expense.date);
+        const month = expenseDate.getMonth() + 1;
         const monthYear = `${year}-${String(month).padStart(2, '0')}`;
-        if (!this.expensesByMonth[monthYear]) {
-          this.expensesByMonth[monthYear] = [];
-          this.totalExpensesByMonth[monthYear] = 0;
-        }
-      }
-    });
 
-    this.sortedMonths = Object.keys(this.expensesByMonth).sort((a, b) => {
-      const [yearA, monthA] = a.split('-').map(Number);
-      const [yearB, monthB] = b.split('-').map(Number);
-      return yearB - yearA || monthB - monthA;
+        if (this.isCurrentMonth(monthYear)) {
+          this.totalExpensesByMonth[monthYear] = undefined;
+        } else {
+          if (!this.expensesByYear[year]) {
+            this.expensesByYear[year] = [];
+          }
+          this.expensesByYear[year].push(expense);
+
+          if (!this.totalExpensesByMonth[monthYear]) {
+            this.totalExpensesByMonth[monthYear] = 0;
+          }
+          this.totalExpensesByMonth[monthYear]! += expense.amount;
+        }
+      });
     });
   }
 
@@ -118,29 +103,46 @@ export class ExpenseHistoryComponent implements OnInit {
     });
   }
 
-  setupPagination() {
-    this.totalPages = Math.ceil(this.sortedMonths.length / this.monthsPerPage);
+  setupPagination(expensesResponse: any) {
+    this.currentPage = expensesResponse.current_page;
+    this.totalPages = expensesResponse.last_page;
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
   getMonthsForCurrentPage(): string[] {
-    const startIndex = (this.currentPage - 1) * this.monthsPerPage;
-    return this.sortedMonths.slice(startIndex, startIndex + this.monthsPerPage);
+    const currentYear = this.sortedYears[0] || this.currentYear.toString();
+    return Array.from({ length: 12 }, (_, i) => 
+      `${currentYear}-${String(i + 1).padStart(2, '0')}`
+    );
+  }
+
+  filterByMonth(expenses: any[], monthYear: string): any[] {
+    if (!expenses || !monthYear || this.isCurrentMonth(monthYear)) return [];
+    
+    const [year, month] = monthYear.split('-').map(Number);
+    return expenses.filter(expense => {
+      const expenseDate = new Date(expense.date);
+      return expenseDate.getFullYear() === year && 
+             (expenseDate.getMonth() + 1) === month;
+    });
   }
 
   goToPage(page: number) {
     this.currentPage = page;
+    this.loadExpenseHistory();
   }
 
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.loadExpenseHistory();
     }
   }
 
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.loadExpenseHistory();
     }
   }
 
@@ -149,6 +151,8 @@ export class ExpenseHistoryComponent implements OnInit {
   }
 
   Expense_summary(monthYear: string): string {
+    if (this.isCurrentMonth(monthYear)) return '';
+
     const budget = this.budgetByMonth[monthYear]?.monthly_budget || 0;
     const goalTarget = this.goalByMonth[monthYear]?.target_amount || 0;
     const totalExpenses = this.totalExpensesByMonth[monthYear] || 0;
@@ -165,10 +169,7 @@ export class ExpenseHistoryComponent implements OnInit {
   }
 
   getCurrentPageYear(): string {
-    if (this.sortedMonths.length === 0) return '';
-  
-    const firstMonthYear = this.getMonthsForCurrentPage()[0];
-    return firstMonthYear ? firstMonthYear.split('-')[0] : '';
+    return this.sortedYears[0] || this.currentYear.toString();
   }
 
   isFutureMonth(monthYear: string): boolean {
@@ -182,6 +183,12 @@ export class ExpenseHistoryComponent implements OnInit {
   }
 
   hasExpenseHistory(): boolean {
-    return Object.values(this.expensesByMonth).some(expenses => expenses.length > 0);
-  }  
+    return Object.values(this.expensesByYear).some(expenses => expenses.length > 0);
+  }
+
+  formatMonthYear(monthYear: string): string {
+    const [year, month] = monthYear.split('-');
+    const date = new Date(`${year}-${month}-01`);
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  }
 }

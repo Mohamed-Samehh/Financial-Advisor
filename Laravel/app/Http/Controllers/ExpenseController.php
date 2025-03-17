@@ -23,11 +23,26 @@ class ExpenseController extends Controller
     // Retrieve all expenses for the user
     public function index(Request $request)
     {
+        $perPage = $request->query('per_page', 1);
+        $page = $request->query('page', 1);
+
         $expenses = Expense::where('user_id', $request->user()->id)
             ->orderBy('date', 'desc')
-            ->get();
+            ->get()
+            ->groupBy(function ($expense) {
+                return Carbon::parse($expense->date)->year;
+            });
 
-        return response()->json($expenses, 200);
+        $totalYears = $expenses->count();
+        $paginatedExpenses = $expenses->forPage($page, $perPage)->values();
+
+        return response()->json([
+            'data' => $paginatedExpenses,
+            'current_page' => (int)$page,
+            'per_page' => (int)$perPage,
+            'total' => $totalYears,
+            'last_page' => ceil($totalYears / $perPage)
+        ], 200);
     }
 
     // Store a new expense for the user
