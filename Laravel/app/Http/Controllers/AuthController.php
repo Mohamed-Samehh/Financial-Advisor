@@ -61,7 +61,7 @@ class AuthController extends Controller
         $user->categories()->createMany($categories);
 
         // Send welcome email
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        // Mail::to($user->email)->send(new WelcomeMail($user));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -129,7 +129,7 @@ class AuthController extends Controller
         }
 
         // Send password change mail
-        Mail::to($user->email)->send(new PasswordChangedMail($user));
+        // Mail::to($user->email)->send(new PasswordChangedMail($user));
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
 
@@ -155,9 +155,9 @@ class AuthController extends Controller
         ]);
 
         // Send email change mail
-        if ($emailChanged) {
-            Mail::to($oldEmail)->send(new EmailUpdatedMail($user, $oldEmail));
-        }
+        // if ($emailChanged) {
+        //     Mail::to($oldEmail)->send(new EmailUpdatedMail($user, $oldEmail));
+        // }
 
         return response()->json(['message' => 'Profile updated successfully', 'user' => $user], 200);
     }
@@ -180,7 +180,7 @@ class AuthController extends Controller
 
         try {
             // Send goodbye mail
-            Mail::to($user->email)->send(new GoodbyeMail($user));
+            // Mail::to($user->email)->send(new GoodbyeMail($user));
             $user->delete();
             return response()->json(['message' => 'Account deleted successfully'], 200);
         } catch (\Exception $e) {
@@ -246,7 +246,7 @@ class AuthController extends Controller
         }
 
         // Send password reset mail
-        Mail::to($user->email)->send(new ResetPasswordMail($user, $newPassword));
+        // Mail::to($user->email)->send(new ResetPasswordMail($user, $newPassword));
 
         return response()->json(['message' => 'A new password has been sent to your email.'], 200);
     }
