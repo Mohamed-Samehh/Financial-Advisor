@@ -29,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
             return app()->environment('local') || Auth::check();
         });
 
+        // Set the default timezone globally
+        Carbon::setLocale('en');
+        date_default_timezone_set('Africa/Cairo');
+
         // Change date for testing
         // if ($this->app->environment('local', 'testing')) {
         //     Carbon::setTestNow(Carbon::now()->subMonth(4));

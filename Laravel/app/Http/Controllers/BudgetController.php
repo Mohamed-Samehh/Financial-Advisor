@@ -8,13 +8,6 @@ use Carbon\Carbon;
 
 class BudgetController extends Controller
 {
-    // Set Time Zone for Carbon
-    public function __construct()
-    {
-        Carbon::setLocale('en');
-        date_default_timezone_set('Africa/Cairo');
-    }
-    
     // List all budgets ever entered by the user
     public function index(Request $request)
     {

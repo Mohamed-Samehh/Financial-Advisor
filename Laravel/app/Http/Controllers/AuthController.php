@@ -18,14 +18,7 @@ use App\Mail\PasswordChangedMail;
 use App\Mail\EmailUpdatedMail;
 
 class AuthController extends Controller
-{
-    // Set Time Zone for Carbon
-    public function __construct()
-    {
-        Carbon::setLocale('en');
-        date_default_timezone_set('Africa/Cairo');
-    }
-    
+{   
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [

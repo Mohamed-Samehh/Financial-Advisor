@@ -8,13 +8,6 @@ use Carbon\Carbon;
 
 class GoalController extends Controller
 {
-    // Set Time Zone for Carbon
-    public function __construct()
-    {
-        Carbon::setLocale('en');
-        date_default_timezone_set('Africa/Cairo');
-    }
-    
     // Display all goals ever entered by the user (index)
     public function index(Request $request)
     {

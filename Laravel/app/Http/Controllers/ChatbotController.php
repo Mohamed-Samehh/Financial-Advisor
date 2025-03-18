@@ -13,13 +13,6 @@ use Illuminate\Support\Facades\Http;
 
 class ChatbotController extends Controller
 {
-    // Set Time Zone for Carbon
-    public function __construct()
-    {
-        Carbon::setLocale('en');
-        date_default_timezone_set('Africa/Cairo');
-    }
-
     public function chat(Request $request)
     {
         $userMessage = $request->input('message');
