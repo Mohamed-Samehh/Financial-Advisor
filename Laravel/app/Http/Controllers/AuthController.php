@@ -31,7 +31,6 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -42,30 +41,19 @@ class AuthController extends Controller
             return response()->json($errors, 400);
         }
 
+        // Generate a random password
+        $randomPassword = Str::random(8);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($randomPassword),
         ]);
 
-        // Adding default categories
-        $categories = [
-            ['name' => 'Rent & Utilities', 'priority' => 1],
-            ['name' => 'Groceries', 'priority' => 2],
-            ['name' => 'Shopping', 'priority' => 3],
-            ['name' => 'Social Activities & Entertainment', 'priority' => 4],
-            ['name' => 'Transportation', 'priority' => 5],
-            ['name' => 'Other', 'priority' => 6],
-        ];
+        // Send welcome email with the random password
+        Mail::to($user->email)->send(new WelcomeMail($user, $randomPassword));
 
-        $user->categories()->createMany($categories);
-
-        // Send welcome email
-        // Mail::to($user->email)->send(new WelcomeMail($user));
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json(['token' => $token, 'user' => $user], 201);
+        return response()->json(['message' => 'Registration successful. Please check your email for your password.'], 201);
     }
 
     public function login(Request $request)
@@ -83,6 +71,23 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['error' => 'Invalid credentials'], 401);
+        }
+
+        // Add default categories when verified
+        if (is_null($user->email_verified_at)) {
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+
+            $categories = [
+                ['name' => 'Rent & Utilities', 'priority' => 1],
+                ['name' => 'Groceries', 'priority' => 2],
+                ['name' => 'Shopping', 'priority' => 3],
+                ['name' => 'Social Activities & Entertainment', 'priority' => 4],
+                ['name' => 'Transportation', 'priority' => 5],
+                ['name' => 'Other', 'priority' => 6],
+            ];
+
+            $user->categories()->createMany($categories);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -246,7 +251,7 @@ class AuthController extends Controller
         }
 
         // Send password reset mail
-        // Mail::to($user->email)->send(new ResetPasswordMail($user, $newPassword));
+        Mail::to($user->email)->send(new ResetPasswordMail($user, $newPassword));
 
         return response()->json(['message' => 'A new password has been sent to your email.'], 200);
     }

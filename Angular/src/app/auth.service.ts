@@ -4,10 +4,6 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
 
-interface LoginResponse {
-  token: string;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -18,13 +14,13 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   // Register a new user
-  register(data: any): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data);
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, data);
   }
 
   // Log in an existing user
-  login(data: any): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data).pipe(
+  login(data: any): Observable<{ token: string }> {
+    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, data).pipe(
       tap(response => {
         if (response.token) {
           this.setToken(response.token);

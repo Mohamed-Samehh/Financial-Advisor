@@ -12,11 +12,15 @@
 
         <p style="color: #555; font-size: 16px; line-height: 1.6;">Hi {{ $user->name }},</p>
 
-        <p style="color: #555; font-size: 16px; line-height: 1.6;">We’re excited to have you on board! Financial Advisor helps you take control of your finances with powerful insights and planning tools.</p>
+        <p style="color: #555; font-size: 16px; line-height: 1.6;">We’re excited to have you on board!<br>Your account has been created. Below is your temporary password:</p>
 
-        <p style="color: #555; font-size: 16px; line-height: 1.6;">Start by exploring your dashboard:</p>
+        <div style="background: #007BFF; color: #ffffff; display: inline-block; padding: 10px 20px; font-size: 18px; font-weight: bold; border-radius: 5px; margin: 20px 0;">
+            {{ $password }}
+        </div>
 
-        <a href="http://localhost:4200/dashboard" style="display: inline-block; background-color: #007BFF; color: #ffffff; padding: 14px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 50px; margin-top: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">Go to Dashboard</a>
+        <p style="color: #555; font-size: 16px; line-height: 1.6;">Please use this password to log in and change it as soon as possible for security reasons.</p>
+
+        <a href="http://localhost:4200/login" style="display: inline-block; background-color: #007BFF; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 50px; margin-top: 20px; transition: all 0.3s ease-in-out; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">Go to Login</a>
 
         <p style="color: #555; font-size: 16px; line-height: 1.6;">Need help? <a href="mailto:support@financial-advisor.com" style="color: #007BFF; text-decoration: none;">Contact Support</a></p>
 

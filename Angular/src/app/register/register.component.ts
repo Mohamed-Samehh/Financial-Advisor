@@ -15,17 +15,11 @@ import Swal from 'sweetalert2';
 export class RegisterComponent {
   form: any = {
     name: '',
-    email: '',
-    password: '',
-    password_confirmation: ''
+    email: ''
   };
   message: { text: string; } | null = null;
   submitted = false;
   isLoading = false;
-  showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
-  isPasswordFilled: boolean = false;
-  isConfirmPasswordFilled: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -44,26 +38,22 @@ export class RegisterComponent {
     }
   }
 
-  togglePasswordVisibility(field: 'password' | 'confirmPassword'): void {
-    if (field === 'password') {
-      this.showPassword = !this.showPassword;
-    } else if (field === 'confirmPassword') {
-      this.showConfirmPassword = !this.showConfirmPassword;
-    }
-  }
-
-  onSubmit(registrationForm: any): void {
+  async onSubmit(registrationForm: any): Promise<void> {
     this.submitted = true;
 
-    if (registrationForm.valid && this.form.password === this.form.password_confirmation) {
+    if (registrationForm.valid) {
       this.isLoading = true;
       this.authService.register(this.form).subscribe(
-        (res) => {
-          this.authService.setToken(res.token);
-          this.router.navigate(['/dashboard']).then(() => {
-            this.isLoading = false;
-            window.location.reload();
+        async (res) => {
+          this.isLoading = false;
+          await Swal.fire({
+            title: "Registration Successful",
+            text: "A password has been sent to your email. Please check your inbox and log in to continue.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "OK"
           });
+          this.router.navigate(['/login']);
         },
         (err) => {
           this.isLoading = false;
@@ -75,13 +65,5 @@ export class RegisterComponent {
     } else {
       this.message = { text: 'Please fill out the form correctly.' };
     }
-  }
-
-  checkPasswordInput(): void {
-    this.isPasswordFilled = this.form.password.length > 0;
-  }
-
-  checkConfirmPasswordInput(): void {
-    this.isConfirmPasswordFilled = this.form.password_confirmation.length > 0;
   }
 }
