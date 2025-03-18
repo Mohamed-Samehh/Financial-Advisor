@@ -1008,7 +1008,7 @@ class AlertMessage extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${isError ? 'Oops!' : 'Awesome!'} $message',
+              message,
               style: TextStyle(
                 color: isError ? Colors.red[900] : Colors.green[900],
                 fontSize: 14,

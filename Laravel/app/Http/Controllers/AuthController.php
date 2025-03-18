@@ -186,7 +186,10 @@ class AuthController extends Controller
         try {
             // Send goodbye mail
             // Mail::to($user->email)->send(new GoodbyeMail($user));
+            
+            $user->tokens()->delete();
             $user->delete();
+
             return response()->json(['message' => 'Account deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete account. Please try again.'], 500);
