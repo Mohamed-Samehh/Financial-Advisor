@@ -14,12 +14,8 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   String name = '';
   String email = '';
-  String password = '';
-  String passwordConfirmation = '';
   String message = '';
   bool isLoading = false;
-  bool showPassword = false;
-  bool showConfirmPassword = false;
 
   @override
   void initState() {
@@ -41,23 +37,38 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _submit() async {
-    if (_formKey.currentState!.validate() && password == passwordConfirmation) {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         isLoading = true;
         message = '';
       });
       final authService = Provider.of<AuthService>(context, listen: false);
       try {
-        final result = await authService.register({
-          'name': name,
-          'email': email,
-          'password': password,
-          'password_confirmation': passwordConfirmation,
-        });
+        await authService.register({'name': name, 'email': email});
         if (!mounted) return;
-        if (result['token'] != null) {
-          context.go('/dashboard');
-        }
+        setState(() {
+          isLoading = false;
+        });
+        await showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text('Registration Successful'),
+                content: const Text(
+                  'A password has been sent to your email. Please check your inbox and log in to continue.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.go('/login');
+                    },
+                    style: TextButton.styleFrom(foregroundColor: Colors.blue),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+        );
       } catch (e) {
         if (!mounted) return;
         setState(() {
@@ -255,121 +266,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                                     return null;
                                   },
                                   onChanged: (value) => email = value,
-                                ),
-                                const SizedBox(height: 16),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    labelText: 'Password',
-                                    labelStyle: const TextStyle(
-                                      color: Colors.blueGrey,
-                                    ),
-                                    prefixIcon: const Icon(
-                                      Icons.lock,
-                                      color: Colors.blue,
-                                    ),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        showPassword
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: Colors.blueGrey,
-                                      ),
-                                      onPressed:
-                                          () => setState(
-                                            () => showPassword = !showPassword,
-                                          ),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
-                                        color: Colors.blueAccent,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    filled: true,
-                                    fillColor: Color.fromRGBO(
-                                      33,
-                                      150,
-                                      243,
-                                      0.05,
-                                    ),
-                                  ),
-                                  obscureText: !showPassword,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Password is required';
-                                    }
-                                    if (value.length < 8) {
-                                      return 'Password must be at least 8 characters long';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) => password = value,
-                                ),
-                                const SizedBox(height: 16),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    labelText: 'Confirm Password',
-                                    labelStyle: const TextStyle(
-                                      color: Colors.blueGrey,
-                                    ),
-                                    prefixIcon: const Icon(
-                                      Icons.lock,
-                                      color: Colors.blue,
-                                    ),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        showConfirmPassword
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: Colors.blueGrey,
-                                      ),
-                                      onPressed:
-                                          () => setState(
-                                            () =>
-                                                showConfirmPassword =
-                                                    !showConfirmPassword,
-                                          ),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
-                                        color: Colors.blueAccent,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    filled: true,
-                                    fillColor: Color.fromRGBO(
-                                      33,
-                                      150,
-                                      243,
-                                      0.05,
-                                    ),
-                                  ),
-                                  obscureText: !showConfirmPassword,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Password confirmation is required';
-                                    }
-                                    if (value != password) {
-                                      return 'Passwords do not match';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged:
-                                      (value) => passwordConfirmation = value,
                                 ),
                                 const SizedBox(height: 24),
                                 Container(
