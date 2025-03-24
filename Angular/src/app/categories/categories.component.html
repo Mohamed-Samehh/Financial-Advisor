@@ -41,26 +41,29 @@
     <!-- Display Suggested Priorities -->
     <div *ngIf="!isLabelView" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
       <h5 class="text-center fw-bold mb-2" style="font-size: 20px; color: #607D8B;">Suggested Category Priorities</h5>
-      <p class="text-center text-sm mb-3" style="font-size: 12px; color: rgba(96, 125, 139, 0.7);">
-        Based on your monthly average from
-        <span class="fw-semibold">{{ firstMonthLabeled }}</span> to
-        <span class="fw-semibold">{{ lastMonthLabeled }}</span>
-      </p>
+      
+      <div *ngIf="suggestedCategories; else noSuggestedCategories">
+        <p class="text-center text-sm mb-3" style="font-size: 12px; color: rgba(96, 125, 139, 0.7);">
+          Based on your monthly average from
+          <span class="fw-semibold">{{ firstMonthSuggested }}</span> to
+          <span class="fw-semibold">{{ lastMonthSuggested }}</span>
+        </p>
 
-      <div *ngIf="suggestedCategories; else noSuggestedCategories" class="row row-cols-2 row-cols-md-3 g-2">
-        <div *ngFor="let suggested of suggestedCategories" class="col">
-          <div class="card border-0 shadow-sm bg-white" style="border-radius: 16px; box-shadow: 0 3px 6px rgba(96, 125, 139, 0.15);">
-            <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center">
-              <strong class="text-primary mb-2 text-truncate d-block" style="font-size: 14px; padding: 0 12px; max-width: 100%;">{{ suggested.category }}</strong>
-              <div class="mb-2 text-center" style="font-size: 12px; font-weight: 500;">
-                <span class="d-inline-flex align-items-center flex-wrap justify-content-center">
-                  <span class="material-icons text-success me-1" style="font-size: clamp(14px, 2.5vw, 19px);">monetization_on</span>
-                  <span class="text-muted me-1">Monthly Average:</span>
-                  <span class="text-muted">{{ suggested.average_expenses | currency:'E£':'symbol':'1.0-0' }}</span>
-                </span>
-              </div>
-              <div class="text-primary fw-bold text-center" style="background-color: rgba(33, 150, 243, 0.1); border-radius: 12px; padding: 4px 8px; font-size: 11px;">
-                Priority: {{ suggested.suggested_priority }}
+        <div class="row row-cols-2 row-cols-md-3 g-2">
+          <div *ngFor="let suggested of suggestedCategories" class="col">
+            <div class="card border-0 shadow-sm bg-white" style="border-radius: 16px; box-shadow: 0 3px 6px rgba(96, 125, 139, 0.15);">
+              <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center">
+                <strong class="text-primary mb-2 text-truncate d-block" style="font-size: 14px; padding: 0 12px; max-width: 100%;">{{ suggested.category }}</strong>
+                <div class="mb-2 text-center" style="font-size: 12px; font-weight: 500;">
+                  <span class="d-inline-flex align-items-center flex-wrap justify-content-center">
+                    <span class="material-icons text-success me-1" style="font-size: clamp(14px, 2.5vw, 19px);">monetization_on</span>
+                    <span class="text-muted me-1">Monthly Average:</span>
+                    <span class="text-muted">{{ suggested.average_expenses | currency:'E£':'symbol':'1.0-0' }}</span>
+                  </span>
+                </div>
+                <div class="text-primary fw-bold text-center" style="background-color: rgba(33, 150, 243, 0.1); border-radius: 12px; padding: 4px 8px; font-size: 11px;">
+                  Priority: {{ suggested.suggested_priority }}
+                </div>
               </div>
             </div>
           </div>
@@ -78,23 +81,26 @@
     <!-- Display Category Importance Labeling -->
     <div *ngIf="isLabelView" class="alert alert-info mt-3 p-3" style="background-color: #f7f7f7; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
       <h5 class="text-center fw-bold mb-2" style="font-size: 20px; color: #607D8B;">Category Importance Labeling</h5>
-      <p class="text-center text-sm mb-3" style="font-size: 12px; color: rgba(96, 125, 139, 0.7);">
-        Based on your monthly average from
-        <span class="fw-semibold">{{ firstMonthLabeled }}</span> to
-        <span class="fw-semibold">{{ lastMonthLabeled }}</span>
-      </p>
 
-      <div *ngIf="labeledCategories; else noLabeledCategories" class="row row-cols-2 row-cols-md-3 g-2">
-        <div *ngFor="let category of labeledCategories" class="col">
-          <div class="card border-0 shadow-sm bg-white" style="border-radius: 16px; box-shadow: 0 3px 6px rgba(96, 125, 139, 0.15);">
-            <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center">
-              <strong class="text-primary mb-2 text-truncate d-block" style="font-size: 14px; padding: 0 12px; max-width: 100%;">{{ category.category }}</strong>
-              <div class="d-flex align-items-center mb-2">
-                <i class="fa fa-star text-warning me-1" style="font-size: 16px;"></i>
-                <span class="text-muted" style="font-size: 12px; font-weight: 500;">Importance</span>
-              </div>
-              <div class="text-primary fw-bold text-center" style="background-color: rgba(33, 150, 243, 0.1); border-radius: 12px; padding: 4px 8px; font-size: 11px;">
-                {{ category.predicted_importance }}
+      <div *ngIf="labeledCategories; else noLabeledCategories">
+        <p class="text-center text-sm mb-3" style="font-size: 12px; color: rgba(96, 125, 139, 0.7);">
+          Based on your monthly average from
+          <span class="fw-semibold">{{ firstMonthLabeled }}</span> to
+          <span class="fw-semibold">{{ lastMonthLabeled }}</span>
+        </p>
+
+        <div class="row row-cols-2 row-cols-md-3 g-2">
+          <div *ngFor="let category of labeledCategories" class="col">
+            <div class="card border-0 shadow-sm bg-white" style="border-radius: 16px; box-shadow: 0 3px 6px rgba(96, 125, 139, 0.15);">
+              <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center">
+                <strong class="text-primary mb-2 text-truncate d-block" style="font-size: 14px; padding: 0 12px; max-width: 100%;">{{ category.category }}</strong>
+                <div class="d-flex align-items-center mb-2">
+                  <i class="fa fa-star text-warning me-1" style="font-size: 16px;"></i>
+                  <span class="text-muted" style="font-size: 12px; font-weight: 500;">Importance</span>
+                </div>
+                <div class="text-primary fw-bold text-center" style="background-color: rgba(33, 150, 243, 0.1); border-radius: 12px; padding: 4px 8px; font-size: 11px;">
+                  {{ category.predicted_importance }}
+                </div>
               </div>
             </div>
           </div>
