@@ -363,7 +363,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Track Your Expenses',
+                    'Track Expenses',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,

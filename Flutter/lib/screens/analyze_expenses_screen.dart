@@ -181,7 +181,7 @@ class AnalyzeExpensesScreenState extends State<AnalyzeExpensesScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Analyze Your Expenses',
+                    'Analyze Expenses',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,

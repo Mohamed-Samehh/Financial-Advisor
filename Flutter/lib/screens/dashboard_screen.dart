@@ -44,7 +44,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        'Your Financial Dashboard',
+                        'Dashboard',
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,

@@ -210,7 +210,7 @@ class BudgetScreenState extends State<BudgetScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Manage Your Budget',
+                    'Manage Budget',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
