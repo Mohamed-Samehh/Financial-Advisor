@@ -504,14 +504,26 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                                           color: Colors.white,
                                                         ),
                                                   )
-                                                  : const Text(
-                                                    'Update',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                  : Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: const [
+                                                      Icon(
+                                                        Icons.edit,
+                                                        color: Colors.white,
+                                                      ),
+                                                      SizedBox(width: 8),
+                                                      Text(
+                                                        'Update',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                         ),
                                       ),
@@ -773,14 +785,26 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                                           color: Colors.white,
                                                         ),
                                                   )
-                                                  : const Text(
-                                                    'Update Password',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                  : Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: const [
+                                                      Icon(
+                                                        Icons.lock,
+                                                        color: Colors.white,
+                                                      ),
+                                                      SizedBox(width: 8),
+                                                      Text(
+                                                        'Update Password',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                         ),
                                       ),
@@ -816,13 +840,36 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Delete Account',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blueGrey,
-                                  ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Delete Account',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Text(
+                                        'Permanent Action',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 16),
                                 if (deleteAccountMessage != null)
@@ -836,6 +883,50 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                           deleteAccountMessageType = null;
                                         }),
                                   ),
+
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.amber[700]!,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.warning_amber_rounded,
+                                        color: Colors.amber[700],
+                                        size: 36,
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Warning!',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.amber[900],
+                                              ),
+                                            ),
+                                            Text(
+                                              'This action can\'t be undone.',
+                                              style: TextStyle(
+                                                color: Colors.amber[900],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
                                 Form(
                                   key: _deleteAccountFormKey,
                                   child: Column(
