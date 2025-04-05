@@ -24,7 +24,6 @@ class GoalController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $currentMonth = Carbon::now()->format('Y-m');
 
         $existingGoal = Goal::where('user_id', $user->id)
             ->whereMonth('created_at', Carbon::now()->month)
@@ -54,7 +53,6 @@ class GoalController extends Controller
     public function show(Request $request)
     {
         $user = $request->user();
-        $currentMonth = Carbon::now()->format('Y-m');
 
         $goal = Goal::where('user_id', $user->id)
             ->whereMonth('created_at', Carbon::now()->month)

@@ -24,7 +24,6 @@ class BudgetController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $currentMonth = Carbon::now()->format('Y-m');
 
         $validated = $request->validate([
             'monthly_budget' => 'required|numeric|min:0',
@@ -53,7 +52,6 @@ class BudgetController extends Controller
     public function show(Request $request)
     {
         $user = $request->user();
-        $currentMonth = Carbon::now()->format('Y-m');
 
         $budget = Budget::where('user_id', $user->id)
             ->whereYear('created_at', Carbon::now()->year)
