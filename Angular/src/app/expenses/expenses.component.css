@@ -1,0 +1,184 @@
+/* Heading styles */
+.display-4 {
+    color: #0d6efd;
+    letter-spacing: -0.025em;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+  
+  .display-4::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 4px;
+    background-color: #0d6efd;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 4px;
+  }
+  
+  /* Card enhancements */
+  .card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05), 0 0.125rem 0.5rem rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.1), 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Category title styling */
+  .category-title {
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.75rem;
+  }
+  
+  .category-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background-color: #0d6efd;
+    border-radius: 4px;
+  }
+  
+  .badge {
+    font-weight: normal;
+  }
+  
+  /* Expense list items */
+  .expense-list .list-group-item {
+    border: none;
+    background-color: #ffffff;
+    padding: 1.25rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .expense-list .list-group-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08), 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Staggered animation for list items */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .expense-list .list-group-item:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  
+  .expense-list .list-group-item:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+  
+  .expense-list .list-group-item:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+  
+  .expense-list .list-group-item:nth-child(5) {
+    animation-delay: 0.25s;
+  }
+  
+  /* Spinner size */
+  .spinner-size {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.25rem;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #0d6efd;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #0b5ed7;
+  }
+  
+  /* Alerts styling */
+  .alert {
+    border-radius: 0.75rem;
+    border: none;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  
+  .alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 4px;
+  }
+  
+  .alert-success {
+    background-color: rgba(76, 175, 80, 0.08);
+    color: #2e7d32;
+  }
+  
+  .alert-success::before {
+    background-color: #4caf50;
+  }
+  
+  .alert-danger {
+    background-color: rgba(229, 57, 53, 0.08);
+    color: #c62828;
+  }
+  
+  .alert-danger::before {
+    background-color: #e53935;
+  }
+  
+  /* Form control focus */
+  .form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  
+  /* Media queries */
+  @media (max-width: 767.98px) {
+    .display-4 {
+      font-size: 2rem;
+    }
+    
+    .card-body {
+      padding: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 575.98px) {
+    .display-4 {
+      font-size: 1.75rem;
+    }
+  }
