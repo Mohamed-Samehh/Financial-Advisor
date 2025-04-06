@@ -58,6 +58,7 @@ export class ExpensesComponent implements OnInit {
   showAnalytics: boolean = false;
   showBudgetForm: boolean = false;
   showGoalForm: boolean = false;
+  tempGoalForm: any = { name: '', target_amount: 0 };
   
   @ViewChild('budgetInput') budgetInput!: ElementRef;
   @ViewChild('categoryInput') categoryInput!: ElementRef;
@@ -492,6 +493,11 @@ export class ExpensesComponent implements OnInit {
     this.showGoalForm = !this.showGoalForm;
     if (this.showGoalForm) {
       this.showBudgetForm = false;
+
+      this.tempGoalForm = {
+        name: this.goal.id ? this.goal.name : '',
+        target_amount: this.goal.id ? this.goal.target_amount : 0
+      };
     }
   }
 
@@ -578,19 +584,25 @@ export class ExpensesComponent implements OnInit {
       return;
     }
 
-    // Check if the goal target is less than the budget
-    if (this.goal.target_amount >= this.monthlyBudget) {
+    if (this.tempGoalForm.target_amount >= this.monthlyBudget) {
       this.message = { text: 'Goal cannot be equal or more than the budget.', type: 'error' };
       return;
     }
 
     if (goalForm.valid) {
       this.isLoading = true;
+
+      const tempGoal = {
+        id: this.goal.id,
+        name: this.tempGoalForm.name,
+        target_amount: this.tempGoalForm.target_amount
+      };
+      
       if (this.goal.id) {
         // Update existing goal
-        this.apiService.updateGoal(this.goal, this.goal.id).subscribe(
+        this.apiService.updateGoal(tempGoal, this.goal.id).subscribe(
           (res) => {
-            this.goal = { ...this.goal, ...res.goal };
+            this.goal = { ...res.goal };
             this.calculateBudget();
             this.message = { text: 'Goal updated successfully!', type: 'success' };
             this.isLoading = false;
@@ -604,7 +616,7 @@ export class ExpensesComponent implements OnInit {
         );
       } else {
         // Add new goal
-        this.apiService.addGoal(this.goal).subscribe(
+        this.apiService.addGoal(tempGoal).subscribe(
           (res) => {
             this.goal = res.goal;
             this.calculateBudget();
