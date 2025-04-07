@@ -796,7 +796,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                                                           TextOverflow.ellipsis,
                                                     ),
                                                   );
-                                                }).toList(),
+                                                }),
                                               ],
                                               onChanged: (value) {
                                                 if (value != null) {
@@ -833,7 +833,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                                             horizontal: 12,
                                           ),
                                           child: const FaIcon(
-                                            FontAwesomeIcons.sortAmountDown,
+                                            FontAwesomeIcons.arrowDownWideShort,
                                             color: Colors.blue,
                                             size: 16,
                                           ),
