@@ -1,0 +1,73 @@
+<div class="container mt-5">
+  <!-- Page Heading -->
+  <h2 class="text-center text-primary display-4 mb-4">Manage Your Budget</h2>
+
+  <!-- Loader while fetching, updating, or deleting budget -->
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary mt-5" role="status">
+    </div>
+    <p><b>Loading...</b></p>
+  </div>
+
+  <!-- Card for Form -->
+  <div class="card shadow-lg border-0 bg-light" *ngIf="!isLoading">
+    <div class="card-body p-5">
+      <!-- Success/Error Message -->
+      <div *ngIf="message" class="alert text-center alert-dismissible fade show"
+        [ngClass]="{
+          'alert-success': message.type === 'success',
+          'alert-danger': message.type === 'error'
+        }" role="alert">
+        <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
+        <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+      </div>
+
+      <!-- Budget Form -->
+      <form (ngSubmit)="onSubmit(budgetForm)" #budgetForm="ngForm">
+        <div class="form-group mb-4">
+          <label for="monthlyBudget" class="fw-bold">Monthly Budget:</label>
+          <input
+            type="number"
+            id="monthlyBudget"
+            [(ngModel)]="budget.monthly_budget"
+            name="monthlyBudget"
+            class="form-control form-control-lg"
+            placeholder="Enter your budget for the month"
+            required
+            min="1"
+            #monthlyBudget="ngModel"
+            [ngClass]="{
+              'is-valid': monthlyBudget.valid && (monthlyBudget.dirty || monthlyBudget.touched || submitted),
+              'is-invalid': monthlyBudget.invalid && (monthlyBudget.dirty || monthlyBudget.touched || submitted)
+            }"
+          />
+          <div *ngIf="monthlyBudget.invalid && (monthlyBudget.dirty || monthlyBudget.touched || submitted)" class="text-danger">
+            <div *ngIf="monthlyBudget.errors?.['required']">Monthly Budget is required.</div>
+            <div *ngIf="monthlyBudget.errors?.['min']">Monthly Budget must be greater than 0.</div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">
+          {{ budget.id ? 'Update Budget' : 'Set Budget' }}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Display Budget -->
+  <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Budget:</h4>
+
+  <div *ngIf="!budget.id && !isLoading" class="text-center text-muted mt-3 mb-5">
+    <p>No budget set for this month.</p>
+  </div>
+
+  <div *ngIf="budget.id && !isLoading" class="list-group mt-3 mb-5">
+    <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+      <span class="fw-bold text-dark">Current Month's Budget: E£{{ formatNumber(budget.monthly_budget) }}</span>
+      <button class="btn btn-outline-danger btn-sm ms-3" (click)="deleteBudget(budget.id)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>

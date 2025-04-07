@@ -1,0 +1,103 @@
+<div class="container mt-5">
+  <!-- Page Heading -->
+  <h2 class="text-center text-primary display-4 mb-4">Set Your Goal</h2>
+
+  <!-- Loader while fetching goal -->
+  <div *ngIf="isLoading" class="text-center mt-5">
+    <div class="spinner-border text-primary mt-5" role="status"></div>
+    <p><b>Loading...</b></p>
+  </div>
+
+  <!-- If no budget is set, show a warning message -->
+  <div *ngIf="!isLoading && !budget"
+      class="d-flex flex-column justify-content-center align-items-center text-center mt-5"
+      style="min-height: 150px; background-color: #f1f5f9; border-radius: 10px; border: 1px solid #d1dbe5;">
+    <i class="fa fa-lock text-secondary mb-3" style="font-size: 3rem;"></i>
+    <h5 class="text-secondary">No budget set! Please set a budget before setting a goal.</h5>
+  </div>
+
+  <!-- Card for Form -->
+  <div class="card shadow-lg border-0 bg-light" *ngIf="!isLoading && budget">
+    <div class="card-body p-5">
+      <!-- Success/Error Message -->
+      <div *ngIf="message" class="alert text-center alert-dismissible fade show"
+      [ngClass]="{
+        'alert-success': message.type === 'success',
+        'alert-danger': message.type === 'error'
+      }" role="alert">
+      <strong>{{ message.type === 'success' ? 'Awesome!' : 'Oops!' }}</strong> {{ message.text }}
+      <button type="button" class="btn-close" (click)="message = null" aria-label="Close"></button>
+      </div>
+
+      <!-- Goal Form -->
+      <form (ngSubmit)="onSubmit(goalForm)" #goalForm="ngForm">
+        <!-- Goal Name Field -->
+        <div class="form-group mb-4">
+          <label for="goalName" class="fw-bold">Goal Name:</label>
+          <input
+            type="text"
+            id="goalName"
+            [(ngModel)]="goal.name"
+            name="goalName"
+            class="form-control form-control-lg"
+            placeholder="E.g., trip"
+            required
+            #goalName="ngModel"
+            [ngClass]="{
+              'is-valid': goalName.valid && (goalName.dirty || goalName.touched || submitted),
+              'is-invalid': goalName.invalid && (goalName.dirty || goalName.touched || submitted)
+            }"
+          />
+          <div *ngIf="goalName.invalid && (goalName.dirty || goalName.touched || submitted)" class="text-danger">
+            <div *ngIf="goalName.errors?.['required']">Goal Name is required.</div>
+          </div>
+        </div>
+
+        <!-- Target Amount Field -->
+        <div class="form-group mb-4">
+          <label for="targetAmount" class="fw-bold">Target Amount:</label>
+          <input
+            type="number"
+            id="targetAmount"
+            [(ngModel)]="goal.target_amount"
+            name="targetAmount"
+            class="form-control form-control-lg"
+            placeholder="Enter the target amount"
+            required
+            min="1"
+            #targetAmount="ngModel"
+            [ngClass]="{
+              'is-valid': targetAmount.valid && (targetAmount.dirty || targetAmount.touched || submitted),
+              'is-invalid': targetAmount.invalid && (targetAmount.dirty || targetAmount.touched || submitted)
+            }"
+          />
+          <div *ngIf="targetAmount.invalid && (targetAmount.dirty || targetAmount.touched || submitted)" class="text-danger">
+            <div *ngIf="targetAmount.errors?.['required']">Target Amount is required.</div>
+            <div *ngIf="targetAmount.errors?.['min']">Target Amount must be greater than 0.</div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">
+          {{ goal.id ? 'Update Goal' : 'Set Goal' }}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Display Goal -->
+  <h4 class="mt-5 text-secondary" *ngIf="!isLoading && budget">Your Goal:</h4>
+
+  <div *ngIf="!goal.id && !isLoading && budget" class="text-center text-muted mt-3 mb-5">
+    <p>No goal set for this month.</p>
+  </div>
+
+  <div *ngIf="goal.id && !isLoading && budget" class="list-group mt-3 mb-5">
+    <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm">
+      <span class="fw-bold text-dark">Current Month's Goal: E£{{ formatNumber(goal.target_amount) }}</span>
+      <button class="btn btn-outline-danger btn-sm ms-3" (click)="deleteGoal(goal.id)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
