@@ -54,6 +54,13 @@
   transition: left 0.3s ease-in-out;
   overflow-y: auto;
   overflow-x: hidden;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .navbar-collapse.menu.show {
@@ -107,19 +114,6 @@
 .logout-button:hover {
   background-color: #fa172a;
   color: white !important;
-}
-
-/* Custom Scrollbar for Navbar */
-.navbar-collapse.menu::-webkit-scrollbar {
-  width: 4px;
-}
-
-.navbar-collapse.menu::-webkit-scrollbar-thumb {
-  background: #007bff;
-}
-
-.navbar-collapse.menu::-webkit-scrollbar-track {
-  background: #f1f1f1;
 }
 
 .brand-text {
