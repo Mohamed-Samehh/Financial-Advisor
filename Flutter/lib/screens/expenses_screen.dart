@@ -14,6 +14,7 @@ class ExpensesScreen extends StatefulWidget {
 class ExpensesScreenState extends State<ExpensesScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> expenses = [];
+  List<Map<String, dynamic>> filteredExpenses = [];
   Map<String, dynamic> form = {
     'category': '',
     'amount': null,
@@ -27,6 +28,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
   int? editingExpenseId;
   List<String> categories = [];
   String sortKey = 'date'; // Sorting based on 'date' or 'amount'
+  String filterCategory = 'all'; // Filtering based on category
   int currentPage = 1;
   final int itemsPerPage = 8;
   List<Map<String, dynamic>> paginatedExpenses = [];
@@ -70,14 +72,13 @@ class ExpensesScreenState extends State<ExpensesScreen> {
       final response = await apiService.getExpenses();
       setState(() {
         expenses = List<Map<String, dynamic>>.from(response['expenses'] ?? []);
-        _sortExpenses();
-        totalPages = (expenses.length / itemsPerPage).ceil();
-        _updatePaginatedExpenses();
+        _filterExpenses();
         isLoading = false;
       });
     } catch (e) {
       setState(() {
         expenses = [];
+        filteredExpenses = [];
         isLoading = false;
       });
     }
@@ -95,8 +96,26 @@ class ExpensesScreenState extends State<ExpensesScreen> {
     }
   }
 
+  // Filter expenses by category
+  void _filterExpenses() {
+    setState(() {
+      if (filterCategory == 'all') {
+        filteredExpenses = List.from(expenses);
+      } else {
+        filteredExpenses =
+            expenses
+                .where((expense) => expense['category'] == filterCategory)
+                .toList();
+      }
+      _sortExpenses();
+      currentPage = 1;
+      totalPages = (filteredExpenses.length / itemsPerPage).ceil();
+      _updatePaginatedExpenses();
+    });
+  }
+
   void _sortExpenses() {
-    expenses.sort((a, b) {
+    filteredExpenses.sort((a, b) {
       if (sortKey == 'date') {
         return DateTime.parse(
           b['date'],
@@ -124,10 +143,10 @@ class ExpensesScreenState extends State<ExpensesScreen> {
   void _updatePaginatedExpenses() {
     final start = (currentPage - 1) * itemsPerPage;
     setState(() {
-      paginatedExpenses = expenses.sublist(
+      paginatedExpenses = filteredExpenses.sublist(
         start,
-        start + itemsPerPage > expenses.length
-            ? expenses.length
+        start + itemsPerPage > filteredExpenses.length
+            ? filteredExpenses.length
             : start + itemsPerPage,
       );
     });
@@ -193,8 +212,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
         } else {
           setState(() {
             expenses.insert(0, tempExpense);
-            _sortExpenses();
-            totalPages = (expenses.length / itemsPerPage).ceil();
+            _filterExpenses();
           });
           await apiService.addExpense(tempExpense);
           setState(() {
@@ -213,8 +231,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
         if (!isEditing) {
           setState(() {
             expenses.removeAt(0);
-            _sortExpenses();
-            totalPages = (expenses.length / itemsPerPage).ceil();
+            _filterExpenses();
           });
         }
         setState(() {
@@ -293,8 +310,7 @@ class ExpensesScreenState extends State<ExpensesScreen> {
       await apiService.deleteExpense(expenseId);
       setState(() {
         expenses.removeWhere((exp) => exp['id'] == expenseId);
-        totalPages = (expenses.length / itemsPerPage).ceil();
-        _updatePaginatedExpenses();
+        _filterExpenses();
         message = 'Expense deleted successfully!';
         messageType = 'success';
         isLoading = false;
@@ -728,138 +744,257 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                             ),
                           ],
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
                           children: [
-                            const Text(
-                              'Sort Expenses:',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            DropdownButton<String>(
-                              value: sortKey,
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 'date',
-                                  child: Text('Date (Latest)'),
+                            // Filter and Sort Controls in a Row
+                            Row(
+                              children: [
+                                // Filter Control
+                                Expanded(
+                                  child: Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // Filter Icon
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                          ),
+                                          child: const FaIcon(
+                                            FontAwesomeIcons.filter,
+                                            color: Colors.blue,
+                                            size: 16,
+                                          ),
+                                        ),
+                                        // Filter Dropdown
+                                        Expanded(
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              value: filterCategory,
+                                              isExpanded: true,
+                                              icon: const SizedBox.shrink(),
+                                              items: [
+                                                const DropdownMenuItem(
+                                                  value: 'all',
+                                                  child: Text('All Categories'),
+                                                ),
+                                                ...categories.map((category) {
+                                                  return DropdownMenuItem<
+                                                    String
+                                                  >(
+                                                    value: category,
+                                                    child: Text(
+                                                      category,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ],
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  setState(() {
+                                                    filterCategory = value;
+                                                    _filterExpenses();
+                                                  });
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                DropdownMenuItem(
-                                  value: 'amount',
-                                  child: Text('Amount (Highest)'),
+                                const SizedBox(width: 8),
+                                // Sort Control
+                                Expanded(
+                                  child: Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // Sort Icon
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                          ),
+                                          child: const FaIcon(
+                                            FontAwesomeIcons.sortAmountDown,
+                                            color: Colors.blue,
+                                            size: 16,
+                                          ),
+                                        ),
+                                        // Sort Dropdown
+                                        Expanded(
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              value: sortKey,
+                                              isExpanded: true,
+                                              icon: const SizedBox.shrink(),
+                                              items: const [
+                                                DropdownMenuItem(
+                                                  value: 'date',
+                                                  child: Text('Date (Latest)'),
+                                                ),
+                                                DropdownMenuItem(
+                                                  value: 'amount',
+                                                  child: Text(
+                                                    'Amount (Highest)',
+                                                  ),
+                                                ),
+                                              ],
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  setState(() {
+                                                    sortKey = value;
+                                                    _sortExpenses();
+                                                  });
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    sortKey = value;
-                                    _sortExpenses();
-                                  });
-                                }
-                              },
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 16),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: paginatedExpenses.length,
-                        itemBuilder: (context, index) {
-                          final expense = paginatedExpenses[index];
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withAlpha(25),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${expense['category']}: E£${_formatNumber(expense['amount'])} on ${_formatDate(expense['date'])}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        expense['description'] ??
-                                            'No description',
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                      ),
-                                      if (expense['isRecentlyAdded'] == true)
-                                        const Padding(
-                                          padding: EdgeInsets.only(top: 4),
-                                          child: Text(
-                                            'Recently Added',
-                                            style: TextStyle(
-                                              color: Colors.green,
-                                              fontSize: 12,
-                                            ),
+                      if (filteredExpenses.isEmpty)
+                        Container(
+                          margin: const EdgeInsets.only(top: 20, bottom: 20),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.orange.shade300),
+                          ),
+                          child: const Text(
+                            'No expenses found for the selected category.',
+                            style: TextStyle(color: Colors.orange),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      if (filteredExpenses.isNotEmpty)
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: paginatedExpenses.length,
+                          itemBuilder: (context, index) {
+                            final expense = paginatedExpenses[index];
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(25),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${expense['category']}: E£${_formatNumber(expense['amount'])} on ${_formatDate(expense['date'])}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      if (isEditing &&
-                                          editingExpenseId == expense['id'])
-                                        const Padding(
-                                          padding: EdgeInsets.only(top: 4),
-                                          child: Text(
-                                            'Editing...',
-                                            style: TextStyle(
-                                              color: Colors.orange,
-                                              fontSize: 12,
+                                        Text(
+                                          expense['description'] ??
+                                              'No description',
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
+                                        if (expense['isRecentlyAdded'] == true)
+                                          const Padding(
+                                            padding: EdgeInsets.only(top: 4),
+                                            child: Text(
+                                              'Recently Added',
+                                              style: TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 12,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                    ],
+                                        if (isEditing &&
+                                            editingExpenseId == expense['id'])
+                                          const Padding(
+                                            padding: EdgeInsets.only(top: 4),
+                                            child: Text(
+                                              'Editing...',
+                                              style: TextStyle(
+                                                color: Colors.orange,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.pencil,
-                                    color:
-                                        isEditing &&
-                                                editingExpenseId ==
-                                                    expense['id']
-                                            ? Colors.orange
-                                            : Colors.blue,
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.pencil,
+                                      color:
+                                          isEditing &&
+                                                  editingExpenseId ==
+                                                      expense['id']
+                                              ? Colors.orange
+                                              : Colors.blue,
+                                    ),
+                                    onPressed:
+                                        expense['isRecentlyAdded'] == true
+                                            ? null
+                                            : () => _editExpense(expense),
                                   ),
-                                  onPressed:
-                                      expense['isRecentlyAdded'] == true
-                                          ? null
-                                          : () => _editExpense(expense),
-                                ),
-                                IconButton(
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.trash,
-                                    color: Colors.red,
+                                  IconButton(
+                                    icon: const FaIcon(
+                                      FontAwesomeIcons.trash,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed:
+                                        expense['isRecentlyAdded'] == true
+                                            ? null
+                                            : () =>
+                                                _deleteExpense(expense['id']),
                                   ),
-                                  onPressed:
-                                      expense['isRecentlyAdded'] == true
-                                          ? null
-                                          : () => _deleteExpense(expense['id']),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      if (totalPages > 1) ...[
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      if (totalPages > 1 && filteredExpenses.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
