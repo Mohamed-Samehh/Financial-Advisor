@@ -36,8 +36,8 @@
               }"
             />
               <div *ngIf="updateInfoForm.get('name')?.invalid && (updateInfoForm.get('name')?.dirty || updateInfoForm.get('name')?.touched || submittedInfo)" class="text-danger mt-1">
-                <div *ngIf="updateInfoForm.get('name')?.errors?.['required']"><i class="fas fa-exclamation-circle"></i> Name is required.</div>
-                <div *ngIf="updateInfoForm.get('name')?.errors?.['minlength']"><i class="fas fa-exclamation-circle"></i> Name must be at least 2 characters long.</div>
+                <div *ngIf="updateInfoForm.get('name')?.errors?.['required']">Name is required.</div>
+                <div *ngIf="updateInfoForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters long.</div>
               </div>
             </div>
 
@@ -55,8 +55,8 @@
               }"
             />
               <div *ngIf="updateInfoForm.get('email')?.invalid && (updateInfoForm.get('email')?.dirty || updateInfoForm.get('email')?.touched || submittedInfo)" class="text-danger mt-1">
-                <div *ngIf="updateInfoForm.get('email')?.errors?.['required']"><i class="fas fa-exclamation-circle"></i> Email is required.</div>
-                <div *ngIf="updateInfoForm.get('email')?.errors?.['email']"><i class="fas fa-exclamation-circle"></i> Invalid email address.</div>
+                <div *ngIf="updateInfoForm.get('email')?.errors?.['required']">Email is required.</div>
+                <div *ngIf="updateInfoForm.get('email')?.errors?.['email']">Invalid email address.</div>
               </div>
             </div>
           </div>
@@ -105,7 +105,7 @@
               </span>
             </div>
             <div *ngIf="updatePasswordForm.get('current_password')?.invalid && (updatePasswordForm.get('current_password')?.dirty || updatePasswordForm.get('current_password')?.touched || submittedPassword)" class="text-danger mt-1">
-              <div *ngIf="updatePasswordForm.get('current_password')?.errors?.['required']"><i class="fas fa-exclamation-circle"></i> Current Password is required.</div>
+              <div *ngIf="updatePasswordForm.get('current_password')?.errors?.['required']">Current Password is required.</div>
             </div>
           </div>
 
@@ -131,8 +131,8 @@
                 </span>
               </div>
               <div *ngIf="updatePasswordForm.get('new_password')?.invalid && (updatePasswordForm.get('new_password')?.dirty || updatePasswordForm.get('new_password')?.touched || submittedPassword)" class="text-danger mt-1">
-                <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['required']"><i class="fas fa-exclamation-circle"></i> New Password is required.</div>
-                <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['minlength']"><i class="fas fa-exclamation-circle"></i> New Password must be at least 8 characters long.</div>
+                <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['required']">New Password is required.</div>
+                <div *ngIf="updatePasswordForm.get('new_password')?.errors?.['minlength']">New Password must be at least 8 characters long.</div>
               </div>
             </div>
 
@@ -160,7 +160,7 @@
                 *ngIf="(updatePasswordForm.errors?.['mismatch'] && (updatePasswordForm.get('password_confirmation')?.dirty || updatePasswordForm.get('password_confirmation')?.touched || submittedPassword))"
                 class="text-danger mt-1"
               >
-                <i class="fas fa-exclamation-circle"></i> Passwords must match.
+                Passwords must match.
               </div>
             </div>
           </div>
@@ -222,7 +222,7 @@
               </span>
             </div>
             <div *ngIf="deleteAccountForm.get('password')?.invalid && (deleteAccountForm.get('password')?.dirty || deleteAccountForm.get('password')?.touched || submittedDelete)" class="text-danger mt-1">
-              <div *ngIf="deleteAccountForm.get('password')?.errors?.['required']"><i class="fas fa-exclamation-circle"></i> Password is required.</div>
+              <div *ngIf="deleteAccountForm.get('password')?.errors?.['required']">Password is required.</div>
             </div>
           </div>
 
