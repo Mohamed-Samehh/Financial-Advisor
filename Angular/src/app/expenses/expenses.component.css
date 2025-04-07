@@ -1,0 +1,22 @@
+.no-focus-style:focus,
+.no-focus-style:active {
+  box-shadow: none !important;
+  border-color: #dee2e6 !important;
+  outline: none !important;
+}
+
+.form-select.no-focus-style:focus-visible {
+  border-color: #dee2e6 !important;
+  outline: none !important;
+}
+
+.form-select.no-focus-style {
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+}
+
+.form-select.no-focus-style:active,
+.form-select.no-focus-style:focus-visible,
+.form-select.no-focus-style:focus {
+  background-image: none !important;
+}

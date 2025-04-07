@@ -110,19 +110,46 @@
   <h4 class="mt-5 text-secondary" *ngIf="!isLoading">Your Expenses:</h4>
   <div *ngIf="!isLoading && expenses.length > 0" class="list-group mt-3 mb-5">
 
-    <!-- Sorting Dropdown Card -->
-    <div class="list-group-item d-flex justify-content-between align-items-center bg-light shadow-sm mb-2">
-      <div class="d-flex justify-content-between align-items-center w-100">
-        <label for="sortBy" class="me-2 fw-bold mb-0">Sort Expenses:</label>
-        <select
-          id="sortBy"
-          class="form-select w-auto"
-          [(ngModel)]="sortKey"
-          (change)="sortExpenses()"
-        >
-          <option value="date">Date (Latest)</option>
-          <option value="amount">Amount (Highest)</option>
-        </select>
+    <!-- Filtering and Sorting Controls Card -->
+    <div class="list-group-item bg-light shadow-sm mb-2 p-3">
+      <div class="row g-3">
+        <!-- Filter by Category -->
+        <div class="col-12 col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fa fa-filter text-primary"></i>
+            </span>
+            <select
+              id="filterCategory"
+              class="form-select border-start-0 no-focus-style"
+              [(ngModel)]="filterCategory"
+              (change)="filterExpenses()"
+              aria-label="Filter by category"
+            >
+              <option value="all">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Sort Expenses -->
+        <div class="col-12 col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fa fa-sort-amount-down text-primary"></i>
+            </span>
+            <select
+              id="sortBy"
+              class="form-select border-start-0 no-focus-style"
+              [(ngModel)]="sortKey"
+              (change)="sortExpenses()"
+              aria-label="Sort expenses"
+            >
+              <option value="date">Date (Latest)</option>
+              <option value="amount">Amount (Highest)</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -165,12 +192,16 @@
   </div>
 
   <!-- No Expenses Found -->
+  <div *ngIf="!isLoading && filteredExpenses.length === 0 && expenses.length > 0" class="text-center text-muted mt-3 mb-5">
+    <p>No expenses found for the selected category.</p>
+  </div>
+
   <div *ngIf="!isLoading && expenses.length === 0" class="text-center text-muted mt-3 mb-5">
     <p>No expenses found for this month.</p>
   </div>
 
   <!-- Pagination Controls -->
-  <nav *ngIf="!isLoading && totalPages > 1 && expenses.length > 0">
+  <nav *ngIf="!isLoading && totalPages > 1 && filteredExpenses.length > 0">
     <ul class="pagination justify-content-center">
       <li class="page-item" [class.disabled]="currentPage === 1">
         <button class="page-link" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>

@@ -14,7 +14,9 @@ import Swal from 'sweetalert2';
 })
 export class ExpensesComponent implements OnInit {
   expenses: any[] = [];
+  filteredExpenses: any[] = [];
   sortKey: 'date' | 'amount' = 'date';
+  filterCategory: string = 'all';
   form: any = {};
   message: { text: string; type: 'success' | 'error' } | null = null;
   submitted: boolean = false;
@@ -49,10 +51,7 @@ export class ExpensesComponent implements OnInit {
     this.apiService.getExpenses().subscribe({
       next: (res) => {
         this.expenses = res.expenses || [];
-        this.sortExpenses();
-        this.totalPages = Math.ceil(this.expenses.length / this.itemsPerPage);
-        this.updatePaginatedExpenses();
-        this.updatePageNumbers();
+        this.filterExpenses();
         this.isLoading = false;
       },
       error: (err) => {
@@ -78,8 +77,27 @@ export class ExpensesComponent implements OnInit {
     });
   }
 
+  // Filter expenses based on selected category
+  filterExpenses() {
+    if (this.filterCategory === 'all') {
+      this.filteredExpenses = [...this.expenses];
+    } else {
+      this.filteredExpenses = this.expenses.filter(expense => 
+        expense.category === this.filterCategory
+      );
+    }
+    
+    this.sortExpenses();
+    
+    this.currentPage = 1;
+
+    this.totalPages = Math.ceil(this.filteredExpenses.length / this.itemsPerPage);
+    this.updatePaginatedExpenses();
+    this.updatePageNumbers();
+  }
+
   sortExpenses() {
-    this.expenses.sort((a, b) => {
+    this.filteredExpenses.sort((a, b) => {
       if (this.sortKey === 'date') {
         return new Date(b.date).getTime() - new Date(a.date).getTime(); // Sort by latest date
       }
@@ -175,8 +193,8 @@ export class ExpensesComponent implements OnInit {
       } else {
         // Add new expense if not editing
         this.expenses.unshift(tempExpense);
-        this.updatePaginatedExpenses();
-
+        this.filterExpenses();
+        
         this.apiService.addExpense(tempExpense).subscribe({
           next: (res) => {
             this.message = { text: 'Expense added successfully!', type: 'success' };
@@ -188,7 +206,7 @@ export class ExpensesComponent implements OnInit {
           error: (err) => {
             console.error('Failed to add expense', err);
             this.expenses.shift();
-            this.updatePaginatedExpenses();
+            this.filterExpenses();
             this.message = { text: 'Error adding expense. Please try again.', type: 'error' };
             this.isLoading = false;
           }
@@ -238,7 +256,7 @@ export class ExpensesComponent implements OnInit {
     this.apiService.deleteExpense(expenseId).subscribe({
       next: () => {
         this.expenses = this.expenses.filter(expense => expense.id !== expenseId);
-        this.updatePaginatedExpenses();
+        this.filterExpenses();
         this.message = { text: 'Expense deleted successfully!', type: 'success' };
         this.isLoading = false;
       },
@@ -252,7 +270,7 @@ export class ExpensesComponent implements OnInit {
 
   updatePaginatedExpenses() {
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    this.paginatedExpenses = this.expenses.slice(start, start + this.itemsPerPage);
+    this.paginatedExpenses = this.filteredExpenses.slice(start, start + this.itemsPerPage);
   }
 
   updatePageNumbers() {
