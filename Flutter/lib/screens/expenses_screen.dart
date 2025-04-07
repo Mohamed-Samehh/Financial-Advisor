@@ -783,7 +783,11 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                                               items: [
                                                 const DropdownMenuItem(
                                                   value: 'all',
-                                                  child: Text('All Categories'),
+                                                  child: Text(
+                                                    'All Categories',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
                                                 ...categories.map((category) {
                                                   return DropdownMenuItem<
@@ -848,13 +852,11 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                                               items: const [
                                                 DropdownMenuItem(
                                                   value: 'date',
-                                                  child: Text('Date (Latest)'),
+                                                  child: Text('Date'),
                                                 ),
                                                 DropdownMenuItem(
                                                   value: 'amount',
-                                                  child: Text(
-                                                    'Amount (Highest)',
-                                                  ),
+                                                  child: Text('Amount'),
                                                 ),
                                               ],
                                               onChanged: (value) {
