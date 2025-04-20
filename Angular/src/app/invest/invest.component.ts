@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
+import Chart from 'chart.js/auto';
 
 interface Bank {
   name: string;
@@ -43,7 +44,7 @@ interface Stock {
   templateUrl: './invest.component.html',
   styleUrl: './invest.component.css'
 })
-export class InvestComponent implements OnInit {
+export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   // Pics from Wikimedia Commons (https://commons.wikimedia.org/)
   banks: Bank[] = [
     {
@@ -345,10 +346,29 @@ export class InvestComponent implements OnInit {
   stocksError: string = '';
   currentDate: Date = new Date();
 
+  @ViewChild('stockChart') stockChart!: ElementRef;
+  chartInstance: any = null;
+  needChartRender: boolean = false;
+
   constructor(private apiService: ApiService) { }
 
   ngOnInit(): void {
     this.loadGoal();
+  }
+
+  ngAfterViewChecked() {
+    if ((this.selectedStock?.historicalData && 
+        this.stockChart?.nativeElement && 
+        !this.chartInstance) || this.needChartRender) {
+      this.renderChart();
+      this.needChartRender = false;
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
   }
 
   loadGoal() {
@@ -410,8 +430,18 @@ export class InvestComponent implements OnInit {
 
   switchTab(tab: 'certificates' | 'stocks'): void {
     this.activeTab = tab;
-    if (tab === 'stocks' && this.egyptStocks.length === 0) {
-      this.loadEgyptStocks();
+
+    if (tab !== 'stocks' && this.chartInstance) {
+      this.chartInstance.destroy();
+      this.chartInstance = null;
+    }
+    
+    if (tab === 'stocks') {
+      if (this.egyptStocks.length === 0) {
+        this.loadEgyptStocks();
+      } else if (this.selectedStock && this.selectedStock.historicalData) {
+        this.needChartRender = true;
+      }
     }
   }
 
@@ -449,6 +479,11 @@ export class InvestComponent implements OnInit {
   }
 
   viewStockDetails(stock: Stock): void {
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+      this.chartInstance = null;
+    }
+    
     this.selectedStock = stock;
     this.isLoadingStocks = true;
     this.stocksError = '';
@@ -469,6 +504,89 @@ export class InvestComponent implements OnInit {
         this.stocksError = 'Unable to load stock details. Please try again later.';
       }
     );
+  }
+
+  renderChart() {
+    if (!this.selectedStock?.historicalData || 
+        this.selectedStock.historicalData.length === 0 ||
+        !this.stockChart?.nativeElement) {
+      return;
+    }
+
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+
+    const histData = [...this.selectedStock.historicalData];
+    const labels = histData.map(item => item.date);
+    const closeData = histData.map(item => item.close);
+    const openData = histData.map(item => item.open);
+
+    const ctx = this.stockChart.nativeElement.getContext('2d');
+    this.chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Closing Price',
+            data: closeData,
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            borderWidth: 2,
+            tension: 0.1,
+            fill: true
+          },
+          {
+            label: 'Opening Price',
+            data: openData,
+            borderColor: '#6c757d',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            tension: 0.1,
+            pointRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: this.selectedStock.currency || 'EGP'
+            },
+            ticks: {
+              callback: function(value) {
+                return value.toLocaleString();
+              }
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const value = parseFloat(context.raw as string);
+                return `${context.dataset.label}: ${value.toLocaleString()} ${this.selectedStock?.currency || 'EGP'}`;
+              }
+            }
+          },
+          legend: {
+            position: 'top',
+          }
+        }
+      }
+    });
   }
 
   searchStocks(): void {
