@@ -78,7 +78,7 @@
           <!-- Stocks List -->
           <div class="card shadow">
             <div class="card-header bg-light text-primary">
-              <h5 class="card-title mb-0">Egyptian Stocks</h5>
+              <h5 class="card-title mb-0"><i class="fa fa-list-ul me-2"></i>EGX Available Stocks</h5>
             </div>
             <div class="card-body p-0">
               <div class="list-group list-group-flush" style="max-height: 600px; overflow-y: auto;">
@@ -109,14 +109,11 @@
           
           <!-- Stock Details Card -->
           <div *ngIf="selectedStock" class="card shadow">
-            <div class="card-header bg-light text-primary">
-              <h5 class="card-title mb-0">{{ selectedStock.name }}</h5>
-            </div>
             <div class="card-body">
               <!-- Basic Information -->
               <div class="row mb-4">
                 <div class="col-md-6">
-                  <h6 class="border-bottom pb-2 mb-3">Company Information</h6>
+                  <h6 class="border-bottom text-primary pb-2 mb-3">Company Information</h6>
                   <p><strong>Symbol:</strong> {{ selectedStock.code }}</p>
                   <p><strong>Exchange:</strong> {{ selectedStock.exchange }}</p>
                   <p><strong>Country:</strong> {{ selectedStock.country }}</p>
@@ -127,7 +124,7 @@
                 
                 <!-- Investment Information if we have historical data -->
                 <div *ngIf="selectedStock.historicalData && selectedStock.historicalData.length > 0 && goal.target_amount" class="col-md-6">
-                  <h6 class="border-bottom pb-2 mb-3">Investment Analysis</h6>
+                  <h6 class="border-bottom text-primary pb-2 mb-3">Investment Analysis</h6>
                   <p><strong>Your Investment:</strong> {{ goal.target_amount | currency:'E£':'symbol':'1.0-0' }}</p>
                   <p><strong>Current Price:</strong> {{ selectedStock.historicalData[selectedStock.historicalData.length-1]?.close | currency:(selectedStock.currency || 'EGP'):'symbol':'1.2-2' }}</p>
                   <p><strong>Estimated Shares:</strong> {{ Math.floor(goal.target_amount / (selectedStock.historicalData[selectedStock.historicalData.length-1]?.close || 1)) }}</p>
@@ -146,7 +143,7 @@
               
               <!-- Historical Data Table -->
               <div *ngIf="selectedStock.historicalData && selectedStock.historicalData.length > 0">
-                <h6 class="border-bottom pb-2 mb-3">Historical Price Data</h6>
+                <h6 class="border-bottom text-primary pb-2 mb-3">Historical Price Data</h6>
                 <div class="table-responsive">
                   <table class="table table-striped table-hover">
                     <thead>
