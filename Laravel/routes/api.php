@@ -7,6 +7,7 @@ use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\StocksController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -48,4 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories/label', [CategoryController::class, 'labelCategories']);
 
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
+
+    Route::get('/stocks/egypt', [StocksController::class, 'getEgyptStocks']);
+    Route::get('/stocks/details/{symbol}', [StocksController::class, 'getStockDetails']);
 });

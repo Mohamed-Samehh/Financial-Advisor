@@ -120,4 +120,13 @@ export class ApiService {
   getCategoryLabels(): Observable<any> {
     return this.http.get(`${this.apiUrl}/categories/label`, { headers: this.getHeaders() });
   }
+
+  // Stock API Methods
+  getEgyptStocks(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/stocks/egypt`, { headers: this.getHeaders() });
+  }
+
+  getStockDetails(symbol: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/stocks/details/${symbol}`, { headers: this.getHeaders() });
+  }
 }

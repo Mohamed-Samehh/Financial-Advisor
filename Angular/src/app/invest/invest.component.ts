@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
 
 interface Bank {
@@ -24,10 +25,21 @@ interface Certificate {
   description: string;
 }
 
+interface Stock {
+  code: string;
+  name: string;
+  exchange: string;
+  currency?: string;
+  country?: string;
+  type?: string;
+  isin?: string;
+  historicalData?: any[];
+}
+
 @Component({
   selector: 'app-invest',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './invest.component.html',
   styleUrl: './invest.component.css'
 })
@@ -324,6 +336,14 @@ export class InvestComponent implements OnInit {
   goal: any = { id: null, name: '', target_amount: null };
   isLoading: boolean = true;
   showInvestmentModeMessage: boolean = true;
+  activeTab: 'certificates' | 'stocks' = 'stocks'; // Set stocks as default
+  isLoadingStocks: boolean = false;
+  egyptStocks: Stock[] = [];
+  filteredStocks: Stock[] = [];
+  selectedStock: Stock | null = null;
+  searchQuery: string = '';
+  stocksError: string = '';
+  currentDate: Date = new Date();
 
   constructor(private apiService: ApiService) { }
 
@@ -337,24 +357,21 @@ export class InvestComponent implements OnInit {
         this.goal = res.goal ? { id: res.goal.id, name: res.goal.name, target_amount: res.goal.target_amount } : { id: null, name: '', target_amount: null };
         this.isLoading = false;
         this.showInvestmentModeMessage = !this.goal.name.toLowerCase().includes('invest');
+
+        if (!this.showInvestmentModeMessage) {
+          this.loadEgyptStocks();
+        }
       },
       (err) => {
         console.error('Failed to load goal', err);
         this.isLoading = false;
+        this.showInvestmentModeMessage = true;
       }
     );
   }
 
   // Calculate interest returns based on the average interest rate
-  calculateReturns(targetAmount: number, interestRate: string, duration: number): {
-    daily: number;
-    monthly: number;
-    quarterly: number;
-    semiAnnual: number;
-    annual: number;
-    atMaturity: number;
-    isChangingRate: boolean;
-  } {
+  calculateReturns(targetAmount: number, interestRate: string, duration: number): any {
     const rates = this.extractInterestRates(interestRate);
     const isChangingRate = rates.length > 1;
 
@@ -389,5 +406,105 @@ export class InvestComponent implements OnInit {
   // Round the target amount to the nearest multiple
   roundToNearestMultiple(targetAmount: number, multiple: number): number {
     return Math.floor(targetAmount / multiple) * multiple;
+  }
+
+  switchTab(tab: 'certificates' | 'stocks'): void {
+    this.activeTab = tab;
+    if (tab === 'stocks' && this.egyptStocks.length === 0) {
+      this.loadEgyptStocks();
+    }
+  }
+
+  loadEgyptStocks(): void {
+    this.isLoadingStocks = true;
+    this.stocksError = '';
+    
+    this.apiService.getEgyptStocks().subscribe(
+      (data) => {
+        this.egyptStocks = data
+          .map((stock: any) => ({
+            code: stock.Code,
+            name: stock.Name || stock.Code,
+            exchange: stock.Exchange,
+            currency: stock.Currency,
+            country: stock.Country,
+            type: stock.Type,
+            isin: stock.Isin
+          }));
+
+        this.filteredStocks = [...this.egyptStocks];
+        
+        this.isLoadingStocks = false;
+        
+        if (this.egyptStocks.length > 0) {
+          this.viewStockDetails(this.egyptStocks[0]);
+        }
+      },
+      (error) => {
+        console.error('Error loading Egypt stocks:', error);
+        this.isLoadingStocks = false;
+        this.stocksError = 'Unable to load Egyptian stocks. Please try again later.';
+      }
+    );
+  }
+
+  viewStockDetails(stock: Stock): void {
+    this.selectedStock = stock;
+    this.isLoadingStocks = true;
+    this.stocksError = '';
+  
+    this.apiService.getStockDetails(stock.code).subscribe(
+      (histData) => {
+        if (this.selectedStock && this.selectedStock.code === stock.code) {
+          this.selectedStock.historicalData = histData;
+          if (histData && histData.length > 0) {
+            this.currentDate = new Date(histData[histData.length - 1].date);
+          }
+          this.isLoadingStocks = false;
+        }
+      },
+      (error) => {
+        console.error('Error loading stock details:', error);
+        this.isLoadingStocks = false;
+        this.stocksError = 'Unable to load stock details. Please try again later.';
+      }
+    );
+  }
+
+  searchStocks(): void {
+    const query = this.searchQuery.toLowerCase().trim();
+    
+    if (!query) {
+      this.filteredStocks = [...this.egyptStocks];
+      return;
+    }
+
+    this.filteredStocks = this.egyptStocks.filter(stock => 
+      stock.name.toLowerCase().includes(query) || 
+      stock.code.toLowerCase().includes(query) ||
+      (stock.type && stock.type.toLowerCase().includes(query))
+    );
+  }
+
+  // Calculate potential return based on historical performance
+  calculatePotentialReturn(investmentAmount: number): number {
+    if (!this.selectedStock || !this.selectedStock.historicalData || this.selectedStock.historicalData.length < 2) {
+      return 0;
+    }
+
+    const data = this.selectedStock.historicalData;
+    const oldestData = data[0];
+    const newestData = data[data.length - 1];
+
+    // Calculate percent change
+    const startPrice = oldestData.close;
+    const endPrice = newestData.close;
+    const percentChange = ((endPrice - startPrice) / startPrice) * 100;
+
+    return investmentAmount * (percentChange / 100);
+  }
+  
+  get Math() {
+    return Math;
   }
 }
