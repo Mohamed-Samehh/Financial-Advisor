@@ -87,6 +87,13 @@
             </div>
             <div class="card-body p-0">
               <div class="list-group list-group-flush" style="max-height: 600px; overflow-y: auto;">
+                <!-- No results message -->
+                <div *ngIf="filteredStocks.length === 0" class="text-center py-4">
+                  <i class="fa fa-search text-muted mb-2" style="font-size: 2rem;"></i>
+                  <p class="text-muted mb-0">No stocks found matching "{{ searchQuery }}"</p>
+                  <small class="text-muted">Try adjusting your search criteria</small>
+                </div>
+                <!-- Stock list items -->
                 <a 
                   *ngFor="let stock of filteredStocks" 
                   href="javascript:void(0)" 
