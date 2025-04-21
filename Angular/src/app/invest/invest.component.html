@@ -9,6 +9,12 @@
       <span *ngIf="activeTab === 'stocks'">Explore investment opportunities in the Egyptian stock market (EGX).</span>
       <span *ngIf="activeTab === 'certificates'">Explore investment opportunities in bank certificates.</span>
     </div>
+
+    <!-- Error Message -->
+    <div *ngIf="stocksError" class="alert alert-danger mt-3">
+      <i class="fa fa-exclamation-circle me-2"></i>
+      {{ stocksError }}
+    </div>
   </div>
 
   <!-- Loader while fetching goal -->
@@ -62,7 +68,7 @@
       <!-- Stock List and Details -->
       <div class="row g-3">
         <!-- Left Side - Search and Stock List -->
-        <div class="col-12 col-md-4 order-1 order-md-1">
+        <div class="col-12 col-md-4">
           <!-- Search Box -->
           <div class="card shadow mb-3">
             <div class="card-header bg-light text-primary">
@@ -109,7 +115,7 @@
         </div>
         
         <!-- Right Side - Stock Details -->
-        <div class="col-12 col-md-8 order-2 order-md-2 mt-3 mt-md-0">
+        <div class="col-12 col-md-8">
           <!-- No Stock Selected -->
           <div *ngIf="!selectedStock" class="card shadow">
             <div class="card-body text-center p-4 p-md-5">
@@ -247,12 +253,6 @@
           </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Error Message -->
-    <div *ngIf="stocksError" class="alert alert-danger mt-3">
-      <i class="fa fa-exclamation-circle me-2"></i>
-      {{ stocksError }}
     </div>
   </div>
 
