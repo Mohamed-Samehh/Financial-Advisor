@@ -656,7 +656,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       ${investment.semiAnnuallyInterestRate ? 'Semi-Annual Interest Rate: ' + investment.semiAnnuallyInterestRate : ''}
       ${investment.annuallyInterestRate ? 'Annual Interest Rate: ' + investment.annuallyInterestRate : ''}
       ${investment.atMaturityInterestRate ? 'At Maturity Interest Rate: ' + investment.atMaturityInterestRate : ''}
-      Can you tell me if this is a good investment? What are the pros and cons?`;
+      Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with?`;
     } else if (type === 'stock') {
       // Add welcome message first
       this.chatResponses.push({ 
