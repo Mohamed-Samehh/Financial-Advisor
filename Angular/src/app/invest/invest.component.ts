@@ -338,7 +338,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   goal: any = { id: null, name: '', target_amount: null };
   isLoading: boolean = true;
   showInvestmentModeMessage: boolean = true;
-  activeTab: 'certificates' | 'stocks' = 'stocks'; // Set stocks as default
+  activeTab: 'certificates' | 'stocks' = 'certificates'; // Set certificates as default
   isLoadingStocks: boolean = false;
   egyptStocks: Stock[] = [];
   filteredStocks: Stock[] = [];
@@ -614,24 +614,6 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       (stock.type && stock.type.toLowerCase().includes(query))
     );
   }
-
-  // Calculate potential return based on historical performance
-  calculatePotentialReturn(investmentAmount: number): number {
-    if (!this.selectedStock || !this.selectedStock.historicalData || this.selectedStock.historicalData.length < 2) {
-      return 0;
-    }
-
-    const data = this.selectedStock.historicalData;
-    const oldestData = data[0];
-    const newestData = data[data.length - 1];
-
-    // Calculate percent change
-    const startPrice = oldestData.close;
-    const endPrice = newestData.close;
-    const percentChange = ((endPrice - startPrice) / startPrice) * 100;
-
-    return investmentAmount * (percentChange / 100);
-  }
   
   openChatbot(investment: any, investmentType: 'certificate' | 'stock') {
     this.showChatModal = true;
@@ -659,7 +641,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (type === 'certificate') {
       // Add welcome message first
       this.chatResponses.push({ 
-        message: `<strong>Welcome to your Investment Analysis</strong><br>I'm analyzing the ${investment.type} from ${bank?.name}.`, 
+        message: `I'm analyzing your <b>${investment.type}</b> certificate from <b>${bank?.name}</b> now. Just a moment while I prepare insights on returns and suitability for your investment.`, 
         isBot: true 
       });
       
@@ -676,7 +658,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     } else if (type === 'stock') {
       // Add welcome message first
       this.chatResponses.push({ 
-        message: `<strong>Welcome to your Investment Analysis</strong><br>I'm analyzing ${investment.name} (${investment.code}) stock.`, 
+        message: `I'm analyzing <b>${investment.name}</b> (<b>${investment.code}</b>) stock now. Just a moment while I prepare insights on performance and suitability for your investment.`, 
         isBot: true 
       });
       
