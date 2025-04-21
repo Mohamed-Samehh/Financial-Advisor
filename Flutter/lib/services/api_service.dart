@@ -247,4 +247,23 @@ class ApiService {
     );
     return _handleResponse(response);
   }
+
+  // Stocks
+  Future<dynamic> getEgyptStocks() async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$_apiUrl/stocks/egypt'),
+      headers: headers,
+    );
+    return _handleResponse(response);
+  }
+
+  Future<dynamic> getStockDetails(String symbol) async {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$_apiUrl/stocks/details/$symbol'),
+      headers: headers,
+    );
+    return _handleResponse(response);
+  }
 }
