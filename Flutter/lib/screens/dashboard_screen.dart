@@ -170,7 +170,7 @@ class DashboardScreen extends StatelessWidget {
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
                                 title: 'Invest',
-                                subtitle: 'Explore bank certificates',
+                                subtitle: 'Explore ways to grow your savings',
                                 route: '/invest',
                               ),
                               _buildCard(

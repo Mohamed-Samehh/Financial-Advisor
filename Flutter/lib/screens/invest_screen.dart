@@ -757,7 +757,7 @@ class InvestScreenState extends State<InvestScreen> {
                   child: Column(
                     children: [
                       Icon(
-                        Icons.account_balance,
+                        Icons.trending_up,
                         size: 80,
                         color: Colors.white.withAlpha(230),
                       ),
@@ -780,7 +780,7 @@ class InvestScreenState extends State<InvestScreen> {
                       ),
                       const SizedBox(height: 12),
                       const Text(
-                        'Explore bank certificates',
+                        'Explore ways to grow your savings',
                         style: TextStyle(fontSize: 18, color: Colors.white70),
                         textAlign: TextAlign.center,
                       ),
@@ -838,7 +838,7 @@ class InvestScreenState extends State<InvestScreen> {
                                 textAlign: TextAlign.center,
                               ),
                               const Text(
-                                'Explore top investment options from leading banks to grow your savings.',
+                                'Explore top investment options from Egyptian leading banks.',
                                 style: TextStyle(
                                   color: Colors.blueGrey,
                                   fontSize: 14,
@@ -960,7 +960,7 @@ class InvestScreenState extends State<InvestScreen> {
           Expanded(
             child: _buildTabButton(
               title: 'Bank Certificates',
-              icon: FontAwesomeIcons.university,
+              icon: Icons.account_balance,
               isActive: activeTab == 'certificates',
               onTap: () => _switchTab('certificates'),
             ),
