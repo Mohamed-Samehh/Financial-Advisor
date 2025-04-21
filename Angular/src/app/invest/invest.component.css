@@ -1,10 +1,19 @@
 .chat-container {
   max-height: 400px; 
+  height: 400px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 10px;
+}
+
+@media (max-width: 576px) {
+  .chat-container {
+    max-height: calc(100vh - 110px);
+    height: calc(100vh - 110px);
+    padding: 8px;
+  }
 }
 
 .chat-container::-webkit-scrollbar {
@@ -30,6 +39,14 @@
   transition: opacity 0.2s ease-in-out;
 }
 
+@media (max-width: 576px) {
+  .chat-message {
+    padding: 10px 14px;
+    max-width: 90%;
+    margin-bottom: 8px;
+  }
+}
+
 .bot {
   align-self: flex-start;
   background-color: #e3f2fd;
@@ -50,6 +67,13 @@
   align-self: flex-start;
 }
 
+@media (max-width: 576px) {
+  .thinking {
+    font-size: 16px;
+    padding: 8px 12px;
+  }
+}
+
 @keyframes dots {
   0% { content: ''; opacity: 0; }
   25% { content: '.'; opacity: 1; }
@@ -67,4 +91,82 @@
   animation: dots 1.5s infinite ease-in-out;
   font-weight: 700;
   letter-spacing: 1px;
+}
+
+@media (max-width: 576px) {
+  .thinking::after {
+    font-size: 16px;
+    width: 20px;
+  }
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .list-group-flush {
+    max-height: 30vh !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .list-group-item {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .input-group .form-control {
+    height: 38px;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-fullscreen-sm-down {
+    padding: 0 !important;
+  }
+  
+  .modal-fullscreen-sm-down .modal-content {
+    height: 100vh;
+    border: 0;
+    border-radius: 0;
+  }
+  
+  .modal-body {
+    padding: 0 !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 0.5rem !important;
+  }
+  
+  .modal-header {
+    padding: 0.75rem 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding: 0.75rem;
+  }
+  
+  .small {
+    font-size: 0.85rem;
+  }
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 576px) {
+  .img-fluid {
+    max-width: 80px !important;
+    padding: 6px !important;
+  }
 }

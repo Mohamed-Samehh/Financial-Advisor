@@ -30,11 +30,15 @@
     <!-- Toggle Arrows -->
     <div class="d-flex justify-content-center mb-3">
       <button class="btn btn-outline-primary me-2" [ngClass]="{'btn-primary text-white': !isLabelView}" (click)="isLabelView = false">
-        <i class="fa fa-arrow-left"></i>  Suggested Priorities
+        <i class="fa fa-arrow-left"></i>  
+        <span class="d-none d-sm-inline">&nbsp; Suggested Priorities</span>
+        <span class="d-inline d-sm-none">&nbsp; Suggested</span>
       </button>
 
       <button class="btn btn-outline-primary ms-2" [ngClass]="{'btn-primary text-white': isLabelView}" (click)="isLabelView = true">
-        Importance Labeling  <i class="fa fa-arrow-right"></i>
+        <span class="d-none d-sm-inline">Importance Labeling &nbsp;</span>
+        <span class="d-inline d-sm-none">Importance &nbsp;</span>
+        <i class="fa fa-arrow-right"></i>
       </button>
     </div>
 
