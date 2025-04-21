@@ -669,12 +669,12 @@ class InvestScreenState extends State<InvestScreen> {
       Duration: ${investment['duration']} year(s)
       Minimum Investment: ${investment['minInvestment']} EGP
       My investment amount: ${goal['target_amount'] != null ? roundToNearestMultiple(double.parse(goal['target_amount']), investment['multiples'].toDouble()) : 'Not set'} EGP
-      ${investment['dailyInterestRate'] != null ? 'Daily Interest Rate: ' + investment['dailyInterestRate'] : ''}
-      ${investment['monthlyInterestRate'] != null ? 'Monthly Interest Rate: ' + investment['monthlyInterestRate'] : ''}
-      ${investment['quarterlyInterestRate'] != null ? 'Quarterly Interest Rate: ' + investment['quarterlyInterestRate'] : ''}
-      ${investment['semiAnnuallyInterestRate'] != null ? 'Semi-Annual Interest Rate: ' + investment['semiAnnuallyInterestRate'] : ''}
-      ${investment['annuallyInterestRate'] != null ? 'Annual Interest Rate: ' + investment['annuallyInterestRate'] : ''}
-      ${investment['atMaturityInterestRate'] != null ? 'At Maturity Interest Rate: ' + investment['atMaturityInterestRate'] : ''}
+      ${investment['dailyInterestRate'] != null ? 'Daily Interest Rate: ${investment['dailyInterestRate']}' : ''}
+      ${investment['monthlyInterestRate'] != null ? 'Monthly Interest Rate: ${investment['monthlyInterestRate']}' : ''}
+      ${investment['quarterlyInterestRate'] != null ? 'Quarterly Interest Rate: ${investment['quarterlyInterestRate']}' : ''}
+      ${investment['semiAnnuallyInterestRate'] != null ? 'Semi-Annual Interest Rate: ${investment['semiAnnuallyInterestRate']}' : ''}
+      ${investment['annuallyInterestRate'] != null ? 'Annual Interest Rate: ${investment['annuallyInterestRate']}' : ''}
+      ${investment['atMaturityInterestRate'] != null ? 'At Maturity Interest Rate: ${investment['atMaturityInterestRate']}' : ''}
       Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with?''';
     } else if (type == 'stock') {
       // Format stock data for analysis
@@ -683,7 +683,7 @@ class InvestScreenState extends State<InvestScreen> {
       Exchange: ${investment['exchange']}
       Currency: ${investment['currency'] ?? 'EGP'}
       ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? 'Current Price: ${investment['historicalData'][investment['historicalData'].length - 1]['close']}' : ''}
-      My investment amount: ${goal['target_amount'] != null ? goal['target_amount'] : 'Not set'} EGP
+      My investment amount: ${goal['target_amount']?.toString() ?? 'Not set'} EGP
       ${investment['historicalData'] != null && goal['target_amount'] != null ? 'Estimated Shares I can buy: ${(double.parse(goal['target_amount']) / (investment['historicalData'][investment['historicalData'].length - 1]['close'] ?? 1)).floor()}' : ''}
       ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? '\nHistorical Prices:\n${List.from(investment['historicalData']).reversed.take(10).map((data) => '${data['date']}: Open=${data['open']}, Close=${data['close']}, High=${data['high']}, Low=${data['low']}').join('\n')}' : ''}
       Can you tell me if this is a good investment? What are the pros and cons?''';
@@ -948,7 +948,7 @@ class InvestScreenState extends State<InvestScreen> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),
@@ -990,7 +990,10 @@ class InvestScreenState extends State<InvestScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: isActive ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+          color:
+              isActive
+                  ? Colors.blue.withValues(alpha: 0.1)
+                  : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border(
             bottom: BorderSide(
@@ -1035,7 +1038,7 @@ class InvestScreenState extends State<InvestScreen> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.15),
+                    color: Colors.grey.withValues(alpha: 0.15),
                     spreadRadius: 2,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
@@ -1616,7 +1619,9 @@ class InvestScreenState extends State<InvestScreen> {
                                         ),
                                         tileColor:
                                             isSelected
-                                                ? Colors.blue.withOpacity(0.1)
+                                                ? Colors.blue.withValues(
+                                                  alpha: 0.1,
+                                                )
                                                 : null,
                                         onTap: () => _viewStockDetails(stock),
                                       );
@@ -1672,7 +1677,7 @@ class InvestScreenState extends State<InvestScreen> {
             Icon(
               Icons.bar_chart,
               size: 72,
-              color: Colors.blue.withOpacity(0.6),
+              color: Colors.blue.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -1720,7 +1725,7 @@ class InvestScreenState extends State<InvestScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -1838,7 +1843,7 @@ class InvestScreenState extends State<InvestScreen> {
                   Row(
                     children: [
                       const FaIcon(
-                        FontAwesomeIcons.history,
+                        FontAwesomeIcons.clockRotateLeft,
                         color: Colors.blue,
                         size: 20,
                       ),
@@ -2152,7 +2157,7 @@ class InvestScreenState extends State<InvestScreen> {
           SizedBox(
             width: 100,
             child: Text(
-              label + ':',
+              '$label:',
               style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ),
@@ -2217,10 +2222,16 @@ class InvestScreenState extends State<InvestScreen> {
           horizontalInterval: 1,
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
-            return FlLine(color: Colors.grey.withOpacity(0.3), strokeWidth: 1);
+            return FlLine(
+              color: Colors.grey.withValues(alpha: 0.3),
+              strokeWidth: 1,
+            );
           },
           getDrawingVerticalLine: (value) {
-            return FlLine(color: Colors.grey.withOpacity(0.3), strokeWidth: 1);
+            return FlLine(
+              color: Colors.grey.withValues(alpha: 0.3),
+              strokeWidth: 1,
+            );
           },
         ),
         titlesData: FlTitlesData(
@@ -2266,7 +2277,7 @@ class InvestScreenState extends State<InvestScreen> {
         ),
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
         ),
         lineBarsData: [
           // Close price line
@@ -2279,7 +2290,7 @@ class InvestScreenState extends State<InvestScreen> {
             dotData: FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withValues(alpha: 0.1),
             ),
           ),
           // Open price line
