@@ -345,7 +345,11 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   searchQuery: string = '';
   stocksError: string = '';
   currentDate: Date = new Date();
-
+  showChatModal: boolean = false;
+  chatResponses: { message: string, isBot: boolean }[] = [];
+  isChatLoading: boolean = false;
+  selectedInvestment: any = null;
+  
   @ViewChild('stockChart') stockChart!: ElementRef;
   chartInstance: any = null;
   needChartRender: boolean = false;
@@ -354,6 +358,36 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit(): void {
     this.loadGoal();
+  }
+
+  // Add the format function for markdown
+  formatResponse(text: string): string {
+    // Simple markdown conversion for basic formatting
+    if (!text) return '';
+    
+    // Replace markdown links [text](url) with HTML links
+    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    
+    // Replace **bold** with <strong>
+    text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    
+    // Replace *italic* with <em>
+    text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    
+    // Replace ## headers with <h2>
+    text = text.replace(/##\s(.+)$/gm, '<h5>$1</h5>');
+    
+    // Replace # headers with <h1>
+    text = text.replace(/#\s(.+)$/gm, '<h4>$1</h4>');
+    
+    // Replace bullet lists
+    text = text.replace(/^\s*-\s(.+)$/gm, '<li>$1</li>');
+    text = text.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
+    
+    // Replace newlines with <br>
+    text = text.replace(/\n/g, '<br>');
+    
+    return text;
   }
 
   ngAfterViewChecked() {
@@ -620,6 +654,89 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     const percentChange = ((endPrice - startPrice) / startPrice) * 100;
 
     return investmentAmount * (percentChange / 100);
+  }
+  
+  openChatbot(investment: any, investmentType: 'certificate' | 'stock') {
+    this.showChatModal = true;
+    this.chatResponses = [];
+    this.selectedInvestment = investment;
+    
+    // Send the analysis request immediately
+    if (investmentType === 'certificate') {
+      const bank = this.banks.find(b => b.certificates.includes(investment)) || null;
+      this.sendInitialInvestmentInfo(investment, bank, 'certificate');
+    } else if (investmentType === 'stock') {
+      this.sendInitialInvestmentInfo(investment, null, 'stock');
+    }
+  }
+
+  closeChatbot() {
+    this.showChatModal = false;
+  }
+
+  sendInitialInvestmentInfo(investment: any, bank: Bank | null, type: 'certificate' | 'stock') {
+    this.isChatLoading = true;
+    
+    let initialMessage = '';
+    
+    if (type === 'certificate') {
+      // Add welcome message first
+      this.chatResponses.push({ 
+        message: `<strong>Welcome to your Investment Analysis</strong><br>I'm analyzing the ${investment.type} from ${bank?.name}.`, 
+        isBot: true 
+      });
+      
+      // Format certificate data for the analysis
+      initialMessage = `I'm looking at a ${investment.type} from ${bank?.name}. 
+      Duration: ${investment.duration} year(s)
+      Minimum Investment: ${investment.minInvestment} EGP
+      My investment amount: ${this.goal.target_amount ? this.roundToNearestMultiple(this.goal.target_amount, investment.multiples) : 'Not set'} EGP
+      ${investment.monthlyInterestRate ? 'Monthly Interest Rate: ' + investment.monthlyInterestRate : ''}
+      ${investment.quarterlyInterestRate ? 'Quarterly Interest Rate: ' + investment.quarterlyInterestRate : ''}
+      ${investment.annuallyInterestRate ? 'Annual Interest Rate: ' + investment.annuallyInterestRate : ''}
+      ${investment.atMaturityInterestRate ? 'At Maturity Interest Rate: ' + investment.atMaturityInterestRate : ''}
+      Can you tell me if this is a good investment? What are the pros and cons?`;
+    } else if (type === 'stock') {
+      // Add welcome message first
+      this.chatResponses.push({ 
+        message: `<strong>Welcome to your Investment Analysis</strong><br>I'm analyzing ${investment.name} (${investment.code}) stock.`, 
+        isBot: true 
+      });
+      
+      // Format stock data for the analysis
+      initialMessage = `I'm looking at ${investment.name} (${investment.code}) stock.
+      Exchange: ${investment.exchange}
+      Currency: ${investment.currency || 'EGP'}
+      ${investment.historicalData && investment.historicalData.length > 0 ? 
+        `Current Price: ${investment.historicalData[investment.historicalData.length-1].close}` : ''}
+      My investment amount: ${this.goal.target_amount ? this.goal.target_amount : 'Not set'} EGP
+      ${investment.historicalData && this.goal.target_amount ? 
+        `Estimated Shares I can buy: ${Math.floor(this.goal.target_amount / (investment.historicalData[investment.historicalData.length-1]?.close || 1))}` : ''}
+      Can you tell me if this is a good investment? What are the pros and cons?`;
+    }
+    
+    // Send message to API but don't display it in the chat
+    this.apiService.sendChatMessage(initialMessage).subscribe(
+      (response) => {
+        this.isChatLoading = false;
+        if (response && response.message) {
+          this.chatResponses.push({ message: this.formatResponse(response.message), isBot: true });
+        } else {
+          this.chatResponses.push({ 
+            message: "I couldn't generate a specific analysis for this investment. Please consider traditional financial metrics like potential return, risk level, and your investment timeline.", 
+            isBot: true 
+          });
+        }
+      },
+      (error) => {
+        console.error('Error from analysis API:', error);
+        this.isChatLoading = false;
+        this.chatResponses.push({ 
+          message: "Sorry, I'm having trouble analyzing this investment right now. Please try again later or consult with a financial advisor.", 
+          isBot: true 
+        });
+      }
+    );
   }
   
   get Math() {
