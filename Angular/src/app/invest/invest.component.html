@@ -142,7 +142,7 @@
                     <i class="fas fa-dollar-sign me-2"></i>Investment Information
                   </h6>
                   <p class="text-muted"><strong>Your Investment:</strong><span class="text-success"> {{ goal.target_amount | currency:'E£':'symbol':'1.0-0' }}</span></p>
-                  <p class="text-muted"><strong>Current Price:</strong> {{ selectedStock.historicalData[selectedStock.historicalData.length-1]?.close | currency:(selectedStock.currency || 'EGP'):'symbol':'1.2-2' }}</p>
+                  <p class="text-muted"><strong>Current Price:</strong> E£{{ selectedStock.historicalData[selectedStock.historicalData.length-1]?.close | number:'1.2-2' }}</p>
                   <p class="text-muted"><strong>Estimated Shares:</strong> {{ Math.floor(goal.target_amount / (selectedStock.historicalData[selectedStock.historicalData.length-1]?.close || 1)) }}</p>
                 </div>
               </div>
@@ -167,10 +167,10 @@
                     <tbody>
                       <tr *ngFor="let data of selectedStock.historicalData.slice().reverse()">
                         <td>{{ data.date }}</td>
-                        <td>{{ data.open | currency:(selectedStock.currency || 'EGP'):'symbol':'1.2-2' }}</td>
-                        <td>{{ data.high | currency:(selectedStock.currency || 'EGP'):'symbol':'1.2-2' }}</td>
-                        <td>{{ data.low | currency:(selectedStock.currency || 'EGP'):'symbol':'1.2-2' }}</td>
-                        <td>{{ data.close | currency:(selectedStock.currency || 'EGP'):'symbol':'1.2-2' }}</td>
+                        <td>E£{{ data.open | number:'1.2-2' }}</td>
+                        <td>E£{{ data.high | number:'1.2-2' }}</td>
+                        <td>E£{{ data.low | number:'1.2-2' }}</td>
+                        <td>E£{{ data.close | number:'1.2-2' }}</td>
                         <td>{{ data.volume | number }}</td>
                       </tr>
                     </tbody>
