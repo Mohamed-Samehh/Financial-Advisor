@@ -1761,13 +1761,23 @@ class InvestScreenState extends State<InvestScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Company Information',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.business,
+                          color: Colors.blue,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Company Information',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
                     ),
                     const Divider(),
                     _buildInfoRow('Symbol', stock['code']),
@@ -1786,13 +1796,23 @@ class InvestScreenState extends State<InvestScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Investment Information',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.attach_money,
+                            color: Colors.blue,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Investment Information',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
                       ),
                       const Divider(),
                       _buildInfoRow(
@@ -1815,13 +1835,23 @@ class InvestScreenState extends State<InvestScreen> {
                 // Historical data table
                 if (hasHistoricalData) ...[
                   const SizedBox(height: 24),
-                  const Text(
-                    'Historical Price Data',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
+                  Row(
+                    children: [
+                      const FaIcon(
+                        FontAwesomeIcons.history,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Historical Price Data',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ],
                   ),
                   const Divider(),
                   SingleChildScrollView(
