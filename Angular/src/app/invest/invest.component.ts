@@ -650,8 +650,10 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       Duration: ${investment.duration} year(s)
       Minimum Investment: ${investment.minInvestment} EGP
       My investment amount: ${this.goal.target_amount ? this.roundToNearestMultiple(this.goal.target_amount, investment.multiples) : 'Not set'} EGP
+      ${investment.dailyInterestRate ? 'Daily Interest Rate: ' + investment.dailyInterestRate : ''}
       ${investment.monthlyInterestRate ? 'Monthly Interest Rate: ' + investment.monthlyInterestRate : ''}
       ${investment.quarterlyInterestRate ? 'Quarterly Interest Rate: ' + investment.quarterlyInterestRate : ''}
+      ${investment.semiAnnuallyInterestRate ? 'Semi-Annual Interest Rate: ' + investment.semiAnnuallyInterestRate : ''}
       ${investment.annuallyInterestRate ? 'Annual Interest Rate: ' + investment.annuallyInterestRate : ''}
       ${investment.atMaturityInterestRate ? 'At Maturity Interest Rate: ' + investment.atMaturityInterestRate : ''}
       Can you tell me if this is a good investment? What are the pros and cons?`;
