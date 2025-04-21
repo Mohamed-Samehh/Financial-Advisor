@@ -671,6 +671,10 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       My investment amount: ${this.goal.target_amount ? this.goal.target_amount : 'Not set'} EGP
       ${investment.historicalData && this.goal.target_amount ? 
         `Estimated Shares I can buy: ${Math.floor(this.goal.target_amount / (investment.historicalData[investment.historicalData.length-1]?.close || 1))}` : ''}
+      ${investment.historicalData && investment.historicalData.length > 0 ? 
+        `\nHistorical Prices:\n${investment.historicalData.slice().reverse().slice(0, 10).map((data: any) => 
+          `${data.date}: Open=${data.open}, Close=${data.close}, High=${data.high}, Low=${data.low}`
+        ).join('\n')}` : ''}
       Can you tell me if this is a good investment? What are the pros and cons?`;
     }
     
