@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
 import Chart from 'chart.js/auto';
+import { marked } from 'marked';
 
 interface Bank {
   name: string;
@@ -360,34 +361,10 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.loadGoal();
   }
 
-  // Add the format function for markdown
+  // Convert Markdown to HTML using marked.js
   formatResponse(text: string): string {
-    // Simple markdown conversion for basic formatting
-    if (!text) return '';
-    
-    // Replace markdown links [text](url) with HTML links
-    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-    
-    // Replace **bold** with <strong>
-    text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    
-    // Replace *italic* with <em>
-    text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    
-    // Replace ## headers with <h2>
-    text = text.replace(/##\s(.+)$/gm, '<h5>$1</h5>');
-    
-    // Replace # headers with <h1>
-    text = text.replace(/#\s(.+)$/gm, '<h4>$1</h4>');
-    
-    // Replace bullet lists
-    text = text.replace(/^\s*-\s(.+)$/gm, '<li>$1</li>');
-    text = text.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
-    
-    // Replace newlines with <br>
-    text = text.replace(/\n/g, '<br>');
-    
-    return text;
+    const result = marked.parse(text);
+    return typeof result === 'string' ? result : '';
   }
 
   ngAfterViewChecked() {
