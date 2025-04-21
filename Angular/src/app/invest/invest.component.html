@@ -166,13 +166,13 @@
                     </thead>
                     <tbody>
                       <tr *ngFor="let data of selectedStock.historicalData.slice().reverse()">
-                        <td [ngClass]="{'text-success': data.close > data.open, 'text-danger': data.close < data.open}">
+                        <td [ngClass]="{'text-success': data.close > data.open, 'text-danger': data.close < data.open, 'text-warning': data.close === data.open}">
                           {{ data.date }}
                         </td>
                         <td class="text-primary">E£{{ data.open | number:'1.2-2' }}</td>
                         <td>E£{{ data.high | number:'1.2-2' }}</td>
                         <td>E£{{ data.low | number:'1.2-2' }}</td>
-                        <td [ngClass]="{'text-success': data.close > data.open, 'text-danger': data.close < data.open}">
+                        <td [ngClass]="{'text-success': data.close > data.open, 'text-danger': data.close < data.open, 'text-warning': data.close === data.open}">
                           E£{{ data.close | number:'1.2-2' }}
                         </td>
                         <td>{{ data.volume | number }}</td>
