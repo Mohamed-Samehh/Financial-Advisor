@@ -656,7 +656,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       ${investment.semiAnnuallyInterestRate ? 'Semi-Annual Interest Rate: ' + investment.semiAnnuallyInterestRate : ''}
       ${investment.annuallyInterestRate ? 'Annual Interest Rate: ' + investment.annuallyInterestRate : ''}
       ${investment.atMaturityInterestRate ? 'At Maturity Interest Rate: ' + investment.atMaturityInterestRate : ''}
-      Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with?`;
+      Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with? Make sure to use my spending data in your analysis.`;
     } else if (type === 'stock') {
       // Add welcome message first
       this.chatResponses.push({ 
@@ -677,7 +677,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
         `\nHistorical Prices:\n${investment.historicalData.slice().reverse().slice(0, 10).map((data: any) => 
           `${data.date}: Open=${data.open}, Close=${data.close}, High=${data.high}, Low=${data.low}`
         ).join('\n')}` : ''}
-      Can you tell me if this is a good investment? What are the pros and cons?`;
+      Can you tell me if this is a good investment? What are the pros and cons? Make sure to use my spending data in your analysis.`;
     }
     
     // Send message to API but don't display it in the chat

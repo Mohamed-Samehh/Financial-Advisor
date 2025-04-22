@@ -675,7 +675,7 @@ class InvestScreenState extends State<InvestScreen> {
       ${investment['semiAnnuallyInterestRate'] != null ? 'Semi-Annual Interest Rate: ${investment['semiAnnuallyInterestRate']}' : ''}
       ${investment['annuallyInterestRate'] != null ? 'Annual Interest Rate: ${investment['annuallyInterestRate']}' : ''}
       ${investment['atMaturityInterestRate'] != null ? 'At Maturity Interest Rate: ${investment['atMaturityInterestRate']}' : ''}
-      Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with?''';
+      Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with? Make sure to use my spending data in your analysis.''';
     } else if (type == 'stock') {
       // Format stock data for analysis
       initialMessage =
@@ -686,7 +686,7 @@ class InvestScreenState extends State<InvestScreen> {
       My investment amount: ${goal['target_amount']?.toString() ?? 'Not set'} EGP
       ${investment['historicalData'] != null && goal['target_amount'] != null ? 'Estimated Shares I can buy: ${(double.parse(goal['target_amount']) / (investment['historicalData'][investment['historicalData'].length - 1]['close'] ?? 1)).floor()}' : ''}
       ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? '\nHistorical Prices:\n${List.from(investment['historicalData']).reversed.take(10).map((data) => '${data['date']}: Open=${data['open']}, Close=${data['close']}, High=${data['high']}, Low=${data['low']}').join('\n')}' : ''}
-      Can you tell me if this is a good investment? What are the pros and cons?''';
+      Can you tell me if this is a good investment? What are the pros and cons? Make sure to use my spending data in your analysis.''';
     }
 
     // Send message to API
@@ -1896,6 +1896,10 @@ class InvestScreenState extends State<InvestScreen> {
                                 DataCell(
                                   Text(
                                     'E£${NumberFormat('#,##0.00').format(data['open'])}',
+                                    style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                                 DataCell(
@@ -2491,7 +2495,7 @@ class InvestScreenState extends State<InvestScreen> {
 
                 // Footer
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(16),

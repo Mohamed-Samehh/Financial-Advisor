@@ -271,7 +271,7 @@ class UserProfileScreenState extends State<UserProfileScreen> {
               child: Column(
                 children: [
                   Icon(
-                    Icons.person,
+                    Icons.account_circle,
                     size: 80,
                     color: Colors.white.withAlpha(230),
                   ),
