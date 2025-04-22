@@ -1389,7 +1389,7 @@ class InvestScreenState extends State<InvestScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Get Investment Analysis',
+                    'Get Financial Advice',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize:
