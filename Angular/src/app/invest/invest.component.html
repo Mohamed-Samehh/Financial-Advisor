@@ -478,37 +478,61 @@
                 <tr *ngFor="let item of selectedCertificates">
                   <td>{{ item.certificate.type }}</td>
                   <td>{{ item.bank.name }}</td>
-                  <td>{{ item.certificate.duration }}</td>
-                  <td>{{ item.certificate.minInvestment | currency:'E£':'symbol':'1.0-0' }}</td>
-                  <td>{{ item.certificate.multiples | currency:'E£':'symbol':'1.0-0' }}</td>
-                  <td>{{ item.certificate.dailyInterestRate || '-' }}</td>
-                  <td>{{ item.certificate.monthlyInterestRate || '-' }}</td>
-                  <td>{{ item.certificate.quarterlyInterestRate || '-' }}</td>
-                  <td>{{ item.certificate.semiAnnuallyInterestRate || '-' }}</td>
-                  <td>{{ item.certificate.annuallyInterestRate || '-' }}</td>
-                  <td>{{ item.certificate.atMaturityInterestRate || '-' }}</td>
-                  <td *ngIf="goal.target_amount">
+                  <td [ngClass]="{'winner-cell': isWinningValue(item.certificate.duration, 'duration')}">
+                    {{ item.certificate.duration }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': isWinningValue(item.certificate.minInvestment, 'minInvestment')}">
+                    {{ item.certificate.minInvestment | currency:'E£':'symbol':'1.0-0' }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': isWinningValue(item.certificate.multiples, 'multiples')}">
+                    {{ item.certificate.multiples | currency:'E£':'symbol':'1.0-0' }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': item.certificate.dailyInterestRate && isWinningValue(calculateAverageRate(item.certificate.dailyInterestRate), 'dailyInterest')}">
+                    {{ item.certificate.dailyInterestRate || '-' }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': item.certificate.monthlyInterestRate && isWinningValue(calculateAverageRate(item.certificate.monthlyInterestRate), 'monthlyInterest')}">
+                    {{ item.certificate.monthlyInterestRate || '-' }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': item.certificate.quarterlyInterestRate && isWinningValue(calculateAverageRate(item.certificate.quarterlyInterestRate), 'quarterlyInterest')}">
+                    {{ item.certificate.quarterlyInterestRate || '-' }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': item.certificate.semiAnnuallyInterestRate && isWinningValue(calculateAverageRate(item.certificate.semiAnnuallyInterestRate), 'semiAnnualInterest')}">
+                    {{ item.certificate.semiAnnuallyInterestRate || '-' }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': item.certificate.annuallyInterestRate && isWinningValue(calculateAverageRate(item.certificate.annuallyInterestRate), 'annualInterest')}">
+                    {{ item.certificate.annuallyInterestRate || '-' }}
+                  </td>
+                  <td [ngClass]="{'winner-cell': item.certificate.atMaturityInterestRate && isWinningValue(calculateAverageRate(item.certificate.atMaturityInterestRate), 'atMaturityInterest')}">
+                    {{ item.certificate.atMaturityInterestRate || '-' }}
+                  </td>
+                  <td *ngIf="goal.target_amount" [ngClass]="{'winner-cell': isWinningValue(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), 'yourInvestment')}">
                     {{ roundToNearestMultiple(goal.target_amount, item.certificate.multiples) | currency:'E£':'symbol':'1.0-0' }}
                     <span *ngIf="goal.target_amount < item.certificate.minInvestment" class="text-danger small">(Below Min)</span>
                   </td>
                   <!-- Monthly Return -->
                   <td *ngIf="goal.target_amount">
                     <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'monthly') as rate; else noReturn">
-                      {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).monthly | currency:'E£':'symbol':'1.0-2' }}
+                      <span [ngClass]="{'winner-cell': isWinningValue(calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).monthly, 'monthlyReturn')}">
+                        {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).monthly | currency:'E£':'symbol':'1.0-2' }}
+                      </span>
                     </ng-container>
                     <ng-template #noReturn>-</ng-template>
                   </td>
                   <!-- Annual Return -->
                   <td *ngIf="goal.target_amount">
                     <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'annual') as rate; else noReturn">
-                      {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).annual | currency:'E£':'symbol':'1.0-2' }}
+                      <span [ngClass]="{'winner-cell': isWinningValue(calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).annual, 'annualReturn')}">
+                        {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).annual | currency:'E£':'symbol':'1.0-2' }}
+                      </span>
                     </ng-container>
                     <ng-template #noReturn>-</ng-template>
                   </td>
                   <!-- At Maturity Return -->
                   <td *ngIf="goal.target_amount">
                     <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'atMaturity') as rate; else noReturn">
-                      {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).atMaturity | currency:'E£':'symbol':'1.0-2' }}
+                      <span [ngClass]="{'winner-cell': isWinningValue(calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).atMaturity, 'atMaturityReturn')}">
+                        {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).atMaturity | currency:'E£':'symbol':'1.0-2' }}
+                      </span>
                     </ng-container>
                     <ng-template #noReturn>-</ng-template>
                   </td>

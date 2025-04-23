@@ -353,7 +353,22 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   selectedBank: Bank | null = null;
   selectedCertificates: { certificate: Certificate, bank: Bank }[] = [];
   showCompareModal: boolean = false;
-  
+  winningValues: {
+    duration?: number;
+    minInvestment?: number;
+    multiples?: number;
+    dailyInterest?: number;
+    monthlyInterest?: number;
+    quarterlyInterest?: number;
+    semiAnnualInterest?: number;
+    annualInterest?: number;
+    atMaturityInterest?: number;
+    yourInvestment?: number;
+    monthlyReturn?: number;
+    annualReturn?: number;
+    atMaturityReturn?: number;
+  } = {};
+
   @ViewChild('stockChart') stockChart!: ElementRef;
   chartInstance: any = null;
   needChartRender: boolean = false;
@@ -439,6 +454,11 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   // Round the target amount to the nearest multiple
+  calculateAverageRate(interestRate: string): number {
+    const rates = this.extractInterestRates(interestRate);
+    return rates.length > 0 ? rates.reduce((sum, rate) => sum + rate, 0) / rates.length : 0;
+  }
+
   roundToNearestMultiple(targetAmount: number, multiple: number): number {
     return Math.floor(targetAmount / multiple) * multiple;
   }
@@ -741,11 +761,13 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   openCompareModal(): void {
     if (this.selectedCertificates.length >= 2) {
       this.showCompareModal = true;
+      this.calculateWinningValues();
     }
   }
 
   closeCompareModal(): void {
     this.showCompareModal = false;
+    this.winningValues = {};
   }
 
   getInterestRateForReturnType(certificate: Certificate, returnType: 'monthly' | 'annual' | 'atMaturity'): string | null {
@@ -757,5 +779,117 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       return certificate.atMaturityInterestRate || null;
     }
     return null;
+  }
+
+  calculateWinningValues(): void {
+    this.winningValues = {};
+
+    this.selectedCertificates.forEach(item => {
+      const investmentAmount = this.roundToNearestMultiple(this.goal.target_amount, item.certificate.multiples);
+
+      // Duration (shortest is best)
+      if (!this.winningValues.duration || item.certificate.duration < this.winningValues.duration) {
+        this.winningValues.duration = item.certificate.duration;
+      }
+
+      // Min Investment (lowest is best)
+      if (!this.winningValues.minInvestment || item.certificate.minInvestment < this.winningValues.minInvestment) {
+        this.winningValues.minInvestment = item.certificate.minInvestment;
+      }
+
+      // Allowed Multiples (lowest is best)
+      if (!this.winningValues.multiples || item.certificate.multiples < this.winningValues.multiples) {
+        this.winningValues.multiples = item.certificate.multiples;
+      }
+
+      // Daily Interest (highest average rate is best)
+      if (item.certificate.dailyInterestRate) {
+        const avgRate = this.calculateAverageRate(item.certificate.dailyInterestRate);
+        if (!this.winningValues.dailyInterest || avgRate > this.winningValues.dailyInterest) {
+          this.winningValues.dailyInterest = avgRate;
+        }
+      }
+
+      // Monthly Interest (highest average rate is best)
+      if (item.certificate.monthlyInterestRate) {
+        const avgRate = this.calculateAverageRate(item.certificate.monthlyInterestRate);
+        if (!this.winningValues.monthlyInterest || avgRate > this.winningValues.monthlyInterest) {
+          this.winningValues.monthlyInterest = avgRate;
+        }
+      }
+
+      // Quarterly Interest (highest average rate is best)
+      if (item.certificate.quarterlyInterestRate) {
+        const avgRate = this.calculateAverageRate(item.certificate.quarterlyInterestRate);
+        if (!this.winningValues.quarterlyInterest || avgRate > this.winningValues.quarterlyInterest) {
+          this.winningValues.quarterlyInterest = avgRate;
+        }
+      }
+
+      // Semi-Annual Interest (highest average rate is best)
+      if (item.certificate.semiAnnuallyInterestRate) {
+        const avgRate = this.calculateAverageRate(item.certificate.semiAnnuallyInterestRate);
+        if (!this.winningValues.semiAnnualInterest || avgRate > this.winningValues.semiAnnualInterest) {
+          this.winningValues.semiAnnualInterest = avgRate;
+        }
+      }
+
+      // Annual Interest (highest average rate is best)
+      if (item.certificate.annuallyInterestRate) {
+        const avgRate = this.calculateAverageRate(item.certificate.annuallyInterestRate);
+        if (!this.winningValues.annualInterest || avgRate > this.winningValues.annualInterest) {
+          this.winningValues.annualInterest = avgRate;
+        }
+      }
+
+      // At Maturity Interest (highest average rate is best)
+      if (item.certificate.atMaturityInterestRate) {
+        const avgRate = this.calculateAverageRate(item.certificate.atMaturityInterestRate);
+        if (!this.winningValues.atMaturityInterest || avgRate > this.winningValues.atMaturityInterest) {
+          this.winningValues.atMaturityInterest = avgRate;
+        }
+      }
+
+      // Your Investment (highest adjusted amount is best)
+      if (this.goal.target_amount) {
+        const adjustedInvestment = this.roundToNearestMultiple(this.goal.target_amount, item.certificate.multiples);
+        if (!this.winningValues.yourInvestment || adjustedInvestment > this.winningValues.yourInvestment) {
+          this.winningValues.yourInvestment = adjustedInvestment;
+        }
+      }
+
+      // Monthly Return (highest is best)
+      const monthlyRate = this.getInterestRateForReturnType(item.certificate, 'monthly');
+      if (monthlyRate) {
+        const monthlyReturn = this.calculateReturns(investmentAmount, monthlyRate, item.certificate.duration).monthly;
+        if (!this.winningValues.monthlyReturn || monthlyReturn > this.winningValues.monthlyReturn) {
+          this.winningValues.monthlyReturn = monthlyReturn;
+        }
+      }
+
+      // Annual Return (highest is best)
+      const annualRate = this.getInterestRateForReturnType(item.certificate, 'annual');
+      if (annualRate) {
+        const annualReturn = this.calculateReturns(investmentAmount, annualRate, item.certificate.duration).annual;
+        if (!this.winningValues.annualReturn || annualReturn > this.winningValues.annualReturn) {
+          this.winningValues.annualReturn = annualReturn;
+        }
+      }
+
+      // At Maturity Return (highest is best)
+      const atMaturityRate = this.getInterestRateForReturnType(item.certificate, 'atMaturity');
+      if (atMaturityRate) {
+        const atMaturityReturn = this.calculateReturns(investmentAmount, atMaturityRate, item.certificate.duration).atMaturity;
+        if (!this.winningValues.atMaturityReturn || atMaturityReturn > this.winningValues.atMaturityReturn) {
+          this.winningValues.atMaturityReturn = atMaturityReturn;
+        }
+      }
+    });
+  }
+
+  isWinningValue(value: number | string | undefined, key: keyof typeof this.winningValues): boolean {
+    if (value === undefined || value === '-') return false;
+    const numericValue = typeof value === 'string' ? parseFloat(value.replace(/[^\d.-]/g, '')) : value;
+    return numericValue === this.winningValues[key];
   }
 }

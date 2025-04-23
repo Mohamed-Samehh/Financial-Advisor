@@ -186,6 +186,11 @@ canvas {
   border-bottom: 1px solid #dee2e6;
 }
 
+.winner-cell {
+  color: #28a745;
+  font-weight: 500;
+}
+
 @media (max-width: 576px) {
   .comparison-table th, .comparison-table td {
     font-size: 0.85rem;
