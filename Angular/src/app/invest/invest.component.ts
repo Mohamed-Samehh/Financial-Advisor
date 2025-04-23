@@ -892,4 +892,19 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     const numericValue = typeof value === 'string' ? parseFloat(value.replace(/[^\d.-]/g, '')) : value;
     return numericValue === this.winningValues[key];
   }
+
+  removeCertificateFromComparison(item: { certificate: Certificate, bank: Bank }): void {
+    const index = this.selectedCertificates.findIndex(
+      selected => selected.certificate === item.certificate && selected.bank === item.bank
+    );
+    if (index !== -1) {
+      this.selectedCertificates.splice(index, 1);
+      if (this.selectedCertificates.length === 1) {
+        this.selectedCertificates = [];
+        this.closeCompareModal();
+      } else if (this.selectedCertificates.length >= 2) {
+        this.calculateWinningValues();
+      }
+    }
+  }
 }

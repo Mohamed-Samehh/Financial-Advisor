@@ -457,6 +457,7 @@
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
+                  <th></th>
                   <th>Certificate</th>
                   <th>Bank</th>
                   <th>Duration (Years)</th>
@@ -476,6 +477,11 @@
               </thead>
               <tbody>
                 <tr *ngFor="let item of selectedCertificates">
+                  <td>
+                    <button class="btn btn-link text-danger p-0 remove-btn" (click)="removeCertificateFromComparison(item)">
+                      <i class="fa fa-trash-alt"></i>
+                    </button>
+                  </td>
                   <td>{{ item.certificate.type }}</td>
                   <td>{{ item.bank.name }}</td>
                   <td [ngClass]="{'winner-cell': isWinningValue(item.certificate.duration, 'duration')}">
