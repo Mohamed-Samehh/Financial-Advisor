@@ -350,6 +350,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   chatResponses: { message: string, isBot: boolean }[] = [];
   isChatLoading: boolean = false;
   selectedInvestment: any = null;
+  selectedBank: Bank | null = null;
   
   @ViewChild('stockChart') stockChart!: ElementRef;
   chartInstance: any = null;
@@ -359,6 +360,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit(): void {
     this.loadGoal();
+    this.selectedBank = this.banks[0];
   }
 
   // Convert Markdown to HTML using marked.js
@@ -452,6 +454,10 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.loadEgyptStocks();
       } else if (this.selectedStock && this.selectedStock.historicalData) {
         this.needChartRender = true;
+      }
+    } else if (tab === 'certificates') {
+      if (!this.selectedBank) {
+        this.selectedBank = this.banks[0];
       }
     }
   }
@@ -706,5 +712,10 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   
   get Math() {
     return Math;
+  }
+
+  // Handle bank selection from dropdown
+  onBankSelect(): void {
+    // No additional logic needed since ngModel updates selectedBank
   }
 }

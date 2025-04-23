@@ -258,15 +258,30 @@
 
   <!-- Bank Certificates Tab Content -->
   <div *ngIf="!isLoading && !showInvestmentModeMessage && activeTab === 'certificates'">
+    <!-- Bank Selection Dropdown -->
+    <div class="mb-4">
+      <div class="card shadow">
+        <div class="card-header bg-light text-primary">
+          <h6 class="card-title mb-0"><i class="fa fa-university me-2"></i>Select a Bank</h6>
+        </div>
+        <div class="card-body">
+          <select class="form-select" [(ngModel)]="selectedBank" (change)="onBankSelect()">
+            <option [ngValue]="null" disabled>Select a bank</option>
+            <option *ngFor="let bank of banks" [ngValue]="bank">{{ bank.name }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <!-- Bank Certificates Information -->
-    <div *ngFor="let bank of banks" class="mb-4 mb-md-5">
+    <div *ngIf="selectedBank" class="mb-4 mb-md-5">
       <div class="card shadow-lg border-0 bg-light">
         <div class="card-body text-center p-3 p-md-4">
           <!-- Centered Bank Header -->
           <div class="mb-4">
             <img
-              [src]="bank.image"
-              alt="{{ bank.name }}"
+              [src]="selectedBank.image"
+              alt="{{ selectedBank.name }}"
               class="img-fluid shadow-md border mb-3"
               style="
                 max-width: 100px;
@@ -277,13 +292,13 @@
                 background-color: #f9f9f9;
                 padding: 8px;"
             />
-            <h3 class="card-title text-primary fw-bold mb-2">{{ bank.name }}</h3>
-            <p class="text-muted">{{ bank.description }}</p>
+            <h3 class="card-title text-primary fw-bold mb-2">{{ selectedBank.name }}</h3>
+            <p class="text-muted">{{ selectedBank.description }}</p>
           </div>
 
           <!-- Centered Certificates Section -->
           <div class="row justify-content-center g-3 g-md-4">
-            <div *ngFor="let certificate of bank.certificates" class="col-12 col-sm-6">
+            <div *ngFor="let certificate of selectedBank.certificates" class="col-12 col-sm-6">
               <div class="card border-0 h-100 shadow-sm text-center p-2 p-md-3">
                 <div class="card-body">
                   <h5 class="card-title text-secondary">{{ certificate.type }}</h5>
@@ -359,7 +374,7 @@
           <!-- Investment Link -->
           <div class="text-center mt-4">
             <a
-              [href]="bank.investmentLink"
+              [href]="selectedBank.investmentLink"
               target="_blank"
               class="btn btn-primary btn-lg shadow-sm"
             >
