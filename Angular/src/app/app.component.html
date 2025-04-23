@@ -9,12 +9,15 @@
     </button>
     <div class="navbar-collapse menu" [ngClass]="{'show': isNavbarVisible}">
       <div class="menu-overlay" *ngIf="isNavbarVisible" (click)="toggleNavbar()"></div>
-      <a class="navbar-brand ms-4" routerLink="/" (click)="closeNavbar()">
+      <div class="navbar-brand ms-4">
         <div class="brand-text">
           Financial Advisor
           <span class="subtitle">Your Money, Your Way</span>
         </div>
-      </a>
+      </div>
+      <button class="close-button" *ngIf="isNavbarVisible" (click)="toggleNavbar()">
+        <i class="fa fa-times" style="font-size: 24px;"></i>
+      </button>
       <hr class="navbar-divider" />
       <ul class="navbar-nav ms-auto">
         <li class="nav-item" *ngIf="isLoggedIn">
