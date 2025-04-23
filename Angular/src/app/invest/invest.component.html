@@ -296,10 +296,24 @@
             <p class="text-muted">{{ selectedBank.description }}</p>
           </div>
 
+          <!-- Compare Button -->
+          <div class="text-center mb-4">
+            <button class="btn btn-primary" [disabled]="selectedCertificates.length < 2" (click)="openCompareModal()">
+              <i class="fa fa-balance-scale me-2"></i>Compare Selected ({{ selectedCertificates.length }})
+            </button>
+          </div>
+
           <!-- Centered Certificates Section -->
           <div class="row justify-content-center g-3 g-md-4">
             <div *ngFor="let certificate of selectedBank.certificates" class="col-12 col-sm-6">
               <div class="card border-0 h-100 shadow-sm text-center p-2 p-md-3">
+                <div class="card-header bg-transparent border-0">
+                  <input type="checkbox" 
+                         [checked]="isCertificateSelected(certificate, selectedBank)"
+                         (change)="toggleCertificateSelection(certificate, selectedBank)"
+                         class="form-check-input me-2">
+                  <label class="form-check-label">{{ certificate.type }}</label>
+                </div>
                 <div class="card-body">
                   <h5 class="card-title text-secondary">{{ certificate.type }}</h5>
 
@@ -422,6 +436,89 @@
         <!-- Modal Footer -->
         <div class="modal-footer text-center p-1">
           <button class="btn btn-secondary" (click)="closeChatbot()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <div class="modal fade show" tabindex="-1" [ngClass]="{'d-block': showCompareModal}" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">
+            <i class="fa fa-balance-scale me-2"></i>
+            Compare Certificates
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeCompareModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Certificate</th>
+                  <th>Bank</th>
+                  <th>Duration (Years)</th>
+                  <th>Min Investment</th>
+                  <th>Allowed Multiples</th>
+                  <th>Daily Interest</th>
+                  <th>Monthly Interest</th>
+                  <th>Quarterly Interest</th>
+                  <th>Semi-Annual Interest</th>
+                  <th>Annual Interest</th>
+                  <th>At Maturity Interest</th>
+                  <th *ngIf="goal.target_amount">Your Investment</th>
+                  <th *ngIf="goal.target_amount">Monthly Return</th>
+                  <th *ngIf="goal.target_amount">Annual Return</th>
+                  <th *ngIf="goal.target_amount">At Maturity Return</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of selectedCertificates">
+                  <td>{{ item.certificate.type }}</td>
+                  <td>{{ item.bank.name }}</td>
+                  <td>{{ item.certificate.duration }}</td>
+                  <td>{{ item.certificate.minInvestment | currency:'E£':'symbol':'1.0-0' }}</td>
+                  <td>{{ item.certificate.multiples | currency:'E£':'symbol':'1.0-0' }}</td>
+                  <td>{{ item.certificate.dailyInterestRate || '-' }}</td>
+                  <td>{{ item.certificate.monthlyInterestRate || '-' }}</td>
+                  <td>{{ item.certificate.quarterlyInterestRate || '-' }}</td>
+                  <td>{{ item.certificate.semiAnnuallyInterestRate || '-' }}</td>
+                  <td>{{ item.certificate.annuallyInterestRate || '-' }}</td>
+                  <td>{{ item.certificate.atMaturityInterestRate || '-' }}</td>
+                  <td *ngIf="goal.target_amount">
+                    {{ roundToNearestMultiple(goal.target_amount, item.certificate.multiples) | currency:'E£':'symbol':'1.0-0' }}
+                    <span *ngIf="goal.target_amount < item.certificate.minInvestment" class="text-danger small">(Below Min)</span>
+                  </td>
+                  <!-- Monthly Return -->
+                  <td *ngIf="goal.target_amount">
+                    <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'monthly') as rate; else noReturn">
+                      {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).monthly | currency:'E£':'symbol':'1.0-2' }}
+                    </ng-container>
+                    <ng-template #noReturn>-</ng-template>
+                  </td>
+                  <!-- Annual Return -->
+                  <td *ngIf="goal.target_amount">
+                    <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'annual') as rate; else noReturn">
+                      {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).annual | currency:'E£':'symbol':'1.0-2' }}
+                    </ng-container>
+                    <ng-template #noReturn>-</ng-template>
+                  </td>
+                  <!-- At Maturity Return -->
+                  <td *ngIf="goal.target_amount">
+                    <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'atMaturity') as rate; else noReturn">
+                      {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).atMaturity | currency:'E£':'symbol':'1.0-2' }}
+                    </ng-container>
+                    <ng-template #noReturn>-</ng-template>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeCompareModal()">Close</button>
         </div>
       </div>
     </div>

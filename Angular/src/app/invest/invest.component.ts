@@ -351,6 +351,8 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   isChatLoading: boolean = false;
   selectedInvestment: any = null;
   selectedBank: Bank | null = null;
+  selectedCertificates: { certificate: Certificate, bank: Bank }[] = [];
+  showCompareModal: boolean = false;
   
   @ViewChild('stockChart') stockChart!: ElementRef;
   chartInstance: any = null;
@@ -717,5 +719,43 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
   // Handle bank selection from dropdown
   onBankSelect(): void {
     // No additional logic needed since ngModel updates selectedBank
+  }
+
+  toggleCertificateSelection(certificate: Certificate, bank: Bank): void {
+    const index = this.selectedCertificates.findIndex(
+      item => item.certificate === certificate && item.bank === bank
+    );
+    if (index === -1) {
+      this.selectedCertificates.push({ certificate, bank });
+    } else {
+      this.selectedCertificates.splice(index, 1);
+    }
+  }
+
+  isCertificateSelected(certificate: Certificate, bank: Bank): boolean {
+    return this.selectedCertificates.some(
+      item => item.certificate === certificate && item.bank === bank
+    );
+  }
+
+  openCompareModal(): void {
+    if (this.selectedCertificates.length >= 2) {
+      this.showCompareModal = true;
+    }
+  }
+
+  closeCompareModal(): void {
+    this.showCompareModal = false;
+  }
+
+  getInterestRateForReturnType(certificate: Certificate, returnType: 'monthly' | 'annual' | 'atMaturity'): string | null {
+    if (returnType === 'monthly') {
+      return certificate.monthlyInterestRate || null;
+    } else if (returnType === 'annual') {
+      return certificate.annuallyInterestRate || null;
+    } else if (returnType === 'atMaturity') {
+      return certificate.atMaturityInterestRate || null;
+    }
+    return null;
   }
 }
