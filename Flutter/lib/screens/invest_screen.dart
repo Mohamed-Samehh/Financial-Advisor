@@ -101,12 +101,9 @@ class InvestScreenState extends State<InvestScreen> {
         },
         {
           'type': 'Ibn Misr Al-Tholatheya Descending Certificate',
-          'monthlyInterestRate':
-              '26% (1st year), 22.5% (2nd year), 19% (3rd year)',
-          'quarterlyInterestRate':
-              '27% (1st year), 23% (2nd year), 19% (3rd year)',
-          'annuallyInterestRate':
-              '30% (1st year), 25% (2nd year), 20% (3rd year)',
+          'monthlyInterestRate': '26% (Y1), 22.5% (Y2), 19% (Y3)',
+          'quarterlyInterestRate': '27% (Y1), 23% (Y2), 19% (Y3)',
+          'annuallyInterestRate': '30% (Y1), 25% (Y2), 20% (Y3)',
           'duration': 3,
           'minInvestment': 1000,
           'multiples': 1000,
@@ -125,8 +122,7 @@ class InvestScreenState extends State<InvestScreen> {
       'certificates': [
         {
           'type': 'Platinum Certificate With Monthly Step Down Interest',
-          'monthlyInterestRate':
-              '26% (1st year), 22% (2nd year), 18% (3rd year)',
+          'monthlyInterestRate': '26% (Y1), 22% (Y2), 18% (Y3)',
           'duration': 3,
           'minInvestment': 1000,
           'multiples': 1000,
@@ -135,8 +131,7 @@ class InvestScreenState extends State<InvestScreen> {
         },
         {
           'type': 'Platinum Certificate With Annual Step Down Interest',
-          'annuallyInterestRate':
-              '30% (1st year), 25% (2nd year), 20% (3rd year)',
+          'annuallyInterestRate': '30% (Y1), 25% (Y2), 20% (Y3)',
           'duration': 3,
           'minInvestment': 1000,
           'multiples': 1000,
