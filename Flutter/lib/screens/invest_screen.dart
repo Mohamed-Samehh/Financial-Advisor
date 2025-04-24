@@ -985,9 +985,10 @@ class InvestScreenState extends State<InvestScreen> {
       Exchange: ${investment['exchange']}
       Currency: ${investment['currency'] ?? 'EGP'}
       ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? 'Current Price: ${investment['historicalData'][investment['historicalData'].length - 1]['close']}' : ''}
+      ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? 'Current Volume: ${investment['historicalData'][investment['historicalData'].length - 1]['volume']}' : ''}
       My investment amount: ${goal['target_amount']?.toString() ?? 'Not set'} EGP
       ${investment['historicalData'] != null && goal['target_amount'] != null ? 'Estimated Shares I can buy: ${(double.parse(goal['target_amount']) / (investment['historicalData'][investment['historicalData'].length - 1]['close'] ?? 1)).floor()}' : ''}
-      ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? '\nHistorical Prices:\n${List.from(investment['historicalData']).reversed.take(10).map((data) => '${data['date']}: Open=${data['open']}, Close=${data['close']}, High=${data['high']}, Low=${data['low']}').join('\n')}' : ''}
+      ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? '\nHistorical Prices:\n${List.from(investment['historicalData']).reversed.take(10).map((data) => '${data['date']}: Open=${data['open']}, Close=${data['close']}, High=${data['high']}, Low=${data['low']}, Volume=${data['volume']}').join('\n')}' : ''}
       Can you tell me if this is a good investment? What are the pros and cons? Make sure to use my spending data in your analysis.''';
     }
 
