@@ -3170,7 +3170,7 @@ class InvestScreenState extends State<InvestScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Property label (fixed width)
+          // Property label
           Container(
             width: 160,
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
