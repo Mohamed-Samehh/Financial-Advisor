@@ -25,6 +25,12 @@ class InvestScreenState extends State<InvestScreen> {
   // Tabs
   String activeTab = 'certificates'; // 'certificates' or 'stocks'
 
+  // Certificates
+  bool isLoadingCertificates = false;
+  List<Map<String, dynamic>> selectedCertificates = [];
+  bool showCompareModal = false;
+  Map<String, dynamic> winningValues = {};
+
   // Stocks
   bool isLoadingStocks = false;
   List<Map<String, dynamic>> egyptStocks = [];
@@ -447,6 +453,299 @@ class InvestScreenState extends State<InvestScreen> {
         stocksError = 'Unable to load Egyptian stocks. Please try again later.';
       });
     }
+  }
+
+  void _toggleCertificateSelection(
+    Map<String, dynamic> certificate,
+    Map<String, dynamic> bank,
+  ) {
+    final int index = selectedCertificates.indexWhere(
+      (item) =>
+          item['certificate']['type'] == certificate['type'] &&
+          item['bank']['name'] == bank['name'],
+    );
+
+    setState(() {
+      if (index == -1) {
+        selectedCertificates.add({'certificate': certificate, 'bank': bank});
+      } else {
+        selectedCertificates.removeAt(index);
+      }
+    });
+  }
+
+  bool _isCertificateSelected(
+    Map<String, dynamic> certificate,
+    Map<String, dynamic> bank,
+  ) {
+    return selectedCertificates.any(
+      (item) =>
+          item['certificate']['type'] == certificate['type'] &&
+          item['bank']['name'] == bank['name'],
+    );
+  }
+
+  void _openCompareModal() {
+    if (selectedCertificates.length >= 2) {
+      setState(() {
+        showCompareModal = true;
+        _calculateWinningValues();
+      });
+    }
+  }
+
+  void _closeCompareModal() {
+    setState(() {
+      showCompareModal = false;
+      winningValues = {};
+    });
+  }
+
+  void _removeCertificateFromComparison(Map<String, dynamic> item) {
+    setState(() {
+      final int index = selectedCertificates.indexWhere(
+        (selected) =>
+            selected['certificate']['type'] == item['certificate']['type'] &&
+            selected['bank']['name'] == item['bank']['name'],
+      );
+
+      if (index != -1) {
+        selectedCertificates.removeAt(index);
+        if (selectedCertificates.length == 1) {
+          selectedCertificates = [];
+          _closeCompareModal();
+        } else if (selectedCertificates.length >= 2) {
+          _calculateWinningValues();
+        }
+      }
+    });
+  }
+
+  void _calculateWinningValues() {
+    setState(() {
+      winningValues = {};
+
+      for (var item in selectedCertificates) {
+        final certificate = item['certificate'];
+        final double investmentAmount =
+            double.tryParse(goal['target_amount'] ?? '0') != null
+                ? roundToNearestMultiple(
+                  double.parse(goal['target_amount']),
+                  certificate['multiples'].toDouble(),
+                )
+                : 0.0;
+
+        // Duration (shortest is best)
+        if (winningValues['duration'] == null ||
+            certificate['duration'] < winningValues['duration']) {
+          winningValues['duration'] = certificate['duration'];
+        }
+
+        // Min Investment (lowest is best)
+        if (winningValues['minInvestment'] == null ||
+            certificate['minInvestment'] < winningValues['minInvestment']) {
+          winningValues['minInvestment'] = certificate['minInvestment'];
+        }
+
+        // Allowed Multiples (lowest is best)
+        if (winningValues['multiples'] == null ||
+            certificate['multiples'] < winningValues['multiples']) {
+          winningValues['multiples'] = certificate['multiples'];
+        }
+
+        // Daily Interest (highest average rate is best)
+        if (certificate['dailyInterestRate'] != null) {
+          final avgRate = calculateAverageRate(
+            certificate['dailyInterestRate'],
+          );
+          if (winningValues['dailyInterest'] == null ||
+              avgRate > winningValues['dailyInterest']) {
+            winningValues['dailyInterest'] = avgRate;
+          }
+        }
+
+        // Monthly Interest (highest average rate is best)
+        if (certificate['monthlyInterestRate'] != null) {
+          final avgRate = calculateAverageRate(
+            certificate['monthlyInterestRate'],
+          );
+          if (winningValues['monthlyInterest'] == null ||
+              avgRate > winningValues['monthlyInterest']) {
+            winningValues['monthlyInterest'] = avgRate;
+          }
+        }
+
+        // Quarterly Interest (highest average rate is best)
+        if (certificate['quarterlyInterestRate'] != null) {
+          final avgRate = calculateAverageRate(
+            certificate['quarterlyInterestRate'],
+          );
+          if (winningValues['quarterlyInterest'] == null ||
+              avgRate > winningValues['quarterlyInterest']) {
+            winningValues['quarterlyInterest'] = avgRate;
+          }
+        }
+
+        // Semi-Annual Interest (highest average rate is best)
+        if (certificate['semiAnnuallyInterestRate'] != null) {
+          final avgRate = calculateAverageRate(
+            certificate['semiAnnuallyInterestRate'],
+          );
+          if (winningValues['semiAnnualInterest'] == null ||
+              avgRate > winningValues['semiAnnualInterest']) {
+            winningValues['semiAnnualInterest'] = avgRate;
+          }
+        }
+
+        // Annual Interest (highest average rate is best)
+        if (certificate['annuallyInterestRate'] != null) {
+          final avgRate = calculateAverageRate(
+            certificate['annuallyInterestRate'],
+          );
+          if (winningValues['annualInterest'] == null ||
+              avgRate > winningValues['annualInterest']) {
+            winningValues['annualInterest'] = avgRate;
+          }
+        }
+
+        // At Maturity Interest (highest average rate is best)
+        if (certificate['atMaturityInterestRate'] != null) {
+          final avgRate = calculateAverageRate(
+            certificate['atMaturityInterestRate'],
+          );
+          if (winningValues['atMaturityInterest'] == null ||
+              avgRate > winningValues['atMaturityInterest']) {
+            winningValues['atMaturityInterest'] = avgRate;
+          }
+        }
+
+        // Your Investment (highest adjusted amount is best)
+        if (goal['target_amount'] != null) {
+          final double targetAmount = double.parse(
+            goal['target_amount'] ?? '0',
+          );
+          final double adjustedInvestment = roundToNearestMultiple(
+            targetAmount,
+            certificate['multiples'].toDouble(),
+          );
+          if (winningValues['yourInvestment'] == null ||
+              adjustedInvestment > winningValues['yourInvestment']) {
+            winningValues['yourInvestment'] = adjustedInvestment;
+          }
+        }
+
+        // Daily Return (highest is best)
+        if (certificate['dailyInterestRate'] != null &&
+            goal['target_amount'] != null) {
+          final returns = calculateReturns(
+            investmentAmount,
+            certificate['dailyInterestRate'],
+            certificate['duration'].toDouble(),
+          );
+          if (winningValues['dailyReturn'] == null ||
+              returns['daily'] > winningValues['dailyReturn']) {
+            winningValues['dailyReturn'] = returns['daily'];
+          }
+        }
+
+        // Monthly Return (highest is best)
+        if (certificate['monthlyInterestRate'] != null &&
+            goal['target_amount'] != null) {
+          final returns = calculateReturns(
+            investmentAmount,
+            certificate['monthlyInterestRate'],
+            certificate['duration'].toDouble(),
+          );
+          if (winningValues['monthlyReturn'] == null ||
+              returns['monthly'] > winningValues['monthlyReturn']) {
+            winningValues['monthlyReturn'] = returns['monthly'];
+          }
+        }
+
+        // Quarterly Return (highest is best)
+        if (certificate['quarterlyInterestRate'] != null &&
+            goal['target_amount'] != null) {
+          final returns = calculateReturns(
+            investmentAmount,
+            certificate['quarterlyInterestRate'],
+            certificate['duration'].toDouble(),
+          );
+          if (winningValues['quarterlyReturn'] == null ||
+              returns['quarterly'] > winningValues['quarterlyReturn']) {
+            winningValues['quarterlyReturn'] = returns['quarterly'];
+          }
+        }
+
+        // Semi-Annual Return (highest is best)
+        if (certificate['semiAnnuallyInterestRate'] != null &&
+            goal['target_amount'] != null) {
+          final returns = calculateReturns(
+            investmentAmount,
+            certificate['semiAnnuallyInterestRate'],
+            certificate['duration'].toDouble(),
+          );
+          if (winningValues['semiAnnualReturn'] == null ||
+              returns['semiAnnual'] > winningValues['semiAnnualReturn']) {
+            winningValues['semiAnnualReturn'] = returns['semiAnnual'];
+          }
+        }
+
+        // Annual Return (highest is best)
+        if (certificate['annuallyInterestRate'] != null &&
+            goal['target_amount'] != null) {
+          final returns = calculateReturns(
+            investmentAmount,
+            certificate['annuallyInterestRate'],
+            certificate['duration'].toDouble(),
+          );
+          if (winningValues['annualReturn'] == null ||
+              returns['annual'] > winningValues['annualReturn']) {
+            winningValues['annualReturn'] = returns['annual'];
+          }
+        }
+
+        // At Maturity Return (highest is best)
+        if (certificate['atMaturityInterestRate'] != null &&
+            goal['target_amount'] != null) {
+          final returns = calculateReturns(
+            investmentAmount,
+            certificate['atMaturityInterestRate'],
+            certificate['duration'].toDouble(),
+          );
+          if (winningValues['atMaturityReturn'] == null ||
+              returns['atMaturity'] > winningValues['atMaturityReturn']) {
+            winningValues['atMaturityReturn'] = returns['atMaturity'];
+          }
+        }
+      }
+    });
+  }
+
+  double calculateAverageRate(String interestRate) {
+    final rates = extractInterestRates(interestRate);
+    return rates.isNotEmpty
+        ? rates.reduce((a, b) => a + b) / rates.length
+        : 0.0;
+  }
+
+  String? _getInterestRateForReturnType(
+    Map<String, dynamic> certificate,
+    String returnType,
+  ) {
+    if (returnType == 'daily') {
+      return certificate['dailyInterestRate'];
+    } else if (returnType == 'monthly') {
+      return certificate['monthlyInterestRate'];
+    } else if (returnType == 'quarterly') {
+      return certificate['quarterlyInterestRate'];
+    } else if (returnType == 'semiAnnual') {
+      return certificate['semiAnnuallyInterestRate'];
+    } else if (returnType == 'annual') {
+      return certificate['annuallyInterestRate'];
+    } else if (returnType == 'atMaturity') {
+      return certificate['atMaturityInterestRate'];
+    }
+    return null;
   }
 
   // Get details for a specific stock
@@ -929,6 +1228,7 @@ class InvestScreenState extends State<InvestScreen> {
             ),
           ),
           if (showChatModal) _buildChatbotModal(),
+          if (showCompareModal) _buildComparisonModal(),
         ],
       ),
     );
@@ -1150,7 +1450,27 @@ class InvestScreenState extends State<InvestScreen> {
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+
+                  // Compare button
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed:
+                        selectedCertificates.length < 2
+                            ? null
+                            : _openCompareModal,
+                    icon: const Icon(FontAwesomeIcons.balanceScale, size: 16),
+                    label: Text(
+                      'Compare Selected (${selectedCertificates.length})',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      disabledBackgroundColor: Colors.grey[300],
+                      foregroundColor: Colors.white,
+                      disabledForegroundColor: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -1187,6 +1507,11 @@ class InvestScreenState extends State<InvestScreen> {
 
   // Build certificate card
   Widget _buildCertificateCard(Map<String, dynamic> certificate) {
+    final selectedBank = banks.firstWhere(
+      (bank) => bank['name'] == selectedBankName,
+      orElse: () => banks[0],
+    );
+
     final targetAmount = double.tryParse(goal['target_amount'] ?? '0') ?? 0.0;
     final roundedAmount = roundToNearestMultiple(
       targetAmount,
@@ -1256,6 +1581,7 @@ class InvestScreenState extends State<InvestScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Certificate name
             Text(
               certificate['type'],
               style: const TextStyle(
@@ -1264,6 +1590,30 @@ class InvestScreenState extends State<InvestScreen> {
                 color: Colors.blueGrey,
               ),
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+
+            // Checkbox
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Checkbox(
+                  value: _isCertificateSelected(certificate, selectedBank),
+                  onChanged: (bool? value) {
+                    _toggleCertificateSelection(certificate, selectedBank);
+                  },
+                  activeColor: Colors.blue,
+                ),
+                Text(
+                  "Add to comparison",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.blue[700],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             Text(
@@ -1366,33 +1716,38 @@ class InvestScreenState extends State<InvestScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () => _openChatbot(certificate, 'certificate'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.comment_outlined,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Get Financial Advice',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize:
-                          MediaQuery.of(context).size.width < 360 ? 12 : 14,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => _openChatbot(certificate, 'certificate'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                ],
-              ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.comment_outlined,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Get Financial Advice',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 360 ? 12 : 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -2324,6 +2679,599 @@ class InvestScreenState extends State<InvestScreen> {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildComparisonModal() {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        color: Colors.black54,
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            width: double.infinity, // Full width
+            height:
+                MediaQuery.of(context).size.height *
+                0.9, // 90% of screen height
+            constraints: const BoxConstraints(maxWidth: 900),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        FontAwesomeIcons.balanceScale,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text(
+                          'Compare Certificates',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: _closeCompareModal,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Comparison table
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: IntrinsicWidth(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Header row
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Empty cell for the property column header
+                                  Container(
+                                    width:
+                                        160, // Fixed width for property column
+                                    padding: const EdgeInsets.all(12),
+                                  ),
+
+                                  // Certificate headers
+                                  ...selectedCertificates.map((item) {
+                                    final certificate = item['certificate'];
+
+                                    return Container(
+                                      width:
+                                          200, // Fixed width for each certificate column
+                                      padding: const EdgeInsets.all(8),
+                                      child: Column(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                              size: 22,
+                                            ),
+                                            onPressed:
+                                                () =>
+                                                    _removeCertificateFromComparison(
+                                                      item,
+                                                    ),
+                                            tooltip: 'Remove from comparison',
+                                            constraints: const BoxConstraints(
+                                              minHeight: 36,
+                                            ),
+                                          ),
+                                          Text(
+                                            certificate['type'],
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              ),
+
+                              const SizedBox(height: 10),
+                              Divider(thickness: 2, color: Colors.grey[300]),
+
+                              // Bank row
+                              _buildCompareFixedRow(
+                                'Bank',
+                                (item) => item['bank']['name'],
+                              ),
+
+                              // Duration row
+                              _buildCompareFixedRow(
+                                'Duration (Years)',
+                                (item) =>
+                                    item['certificate']['duration'].toString(),
+                                valueLabelKey: 'duration',
+                              ),
+
+                              // Min Investment row
+                              _buildCompareFixedRow(
+                                'Min Investment',
+                                (item) =>
+                                    'E£${NumberFormat('#,##0').format(item['certificate']['minInvestment'])}',
+                                valueLabelKey: 'minInvestment',
+                              ),
+
+                              // Allowed Multiples row
+                              _buildCompareFixedRow(
+                                'Allowed Multiples',
+                                (item) =>
+                                    'E£${NumberFormat('#,##0').format(item['certificate']['multiples'])}',
+                                valueLabelKey: 'multiples',
+                              ),
+
+                              // Interest rates rows
+                              _buildCompareFixedRow(
+                                'Daily Interest',
+                                (item) =>
+                                    item['certificate']['dailyInterestRate'] ??
+                                    '-',
+                                interestRateKey: 'dailyInterestRate',
+                                valueLabelKey: 'dailyInterest',
+                              ),
+
+                              _buildCompareFixedRow(
+                                'Monthly Interest',
+                                (item) =>
+                                    item['certificate']['monthlyInterestRate'] ??
+                                    '-',
+                                interestRateKey: 'monthlyInterestRate',
+                                valueLabelKey: 'monthlyInterest',
+                              ),
+
+                              _buildCompareFixedRow(
+                                'Quarterly Interest',
+                                (item) =>
+                                    item['certificate']['quarterlyInterestRate'] ??
+                                    '-',
+                                interestRateKey: 'quarterlyInterestRate',
+                                valueLabelKey: 'quarterlyInterest',
+                              ),
+
+                              _buildCompareFixedRow(
+                                'Semi-Annual Interest',
+                                (item) =>
+                                    item['certificate']['semiAnnuallyInterestRate'] ??
+                                    '-',
+                                interestRateKey: 'semiAnnuallyInterestRate',
+                                valueLabelKey: 'semiAnnualInterest',
+                              ),
+
+                              _buildCompareFixedRow(
+                                'Annual Interest',
+                                (item) =>
+                                    item['certificate']['annuallyInterestRate'] ??
+                                    '-',
+                                interestRateKey: 'annuallyInterestRate',
+                                valueLabelKey: 'annualInterest',
+                              ),
+
+                              _buildCompareFixedRow(
+                                'At Maturity Interest',
+                                (item) =>
+                                    item['certificate']['atMaturityInterestRate'] ??
+                                    '-',
+                                interestRateKey: 'atMaturityInterestRate',
+                                valueLabelKey: 'atMaturityInterest',
+                              ),
+
+                              // Investment and returns rows (if applicable)
+                              if (goal['target_amount'] != null) ...[
+                                _buildCompareFixedRow(
+                                  'Your Investment',
+                                  (item) {
+                                    final targetAmount =
+                                        double.tryParse(
+                                          goal['target_amount'] ?? '0',
+                                        ) ??
+                                        0.0;
+                                    final roundedAmount =
+                                        roundToNearestMultiple(
+                                          targetAmount,
+                                          item['certificate']['multiples']
+                                              .toDouble(),
+                                        );
+                                    final belowMin =
+                                        targetAmount <
+                                        item['certificate']['minInvestment'];
+
+                                    return 'E£${NumberFormat('#,##0').format(roundedAmount)}' +
+                                        (belowMin ? '\n(Below Min)' : '');
+                                  },
+                                  valueLabelKey: 'yourInvestment',
+                                  showBelowMinWarning: true,
+                                ),
+
+                                // Daily Return
+                                _buildCompareFixedRow('Daily Return', (item) {
+                                  final targetAmount =
+                                      double.tryParse(
+                                        goal['target_amount'] ?? '0',
+                                      ) ??
+                                      0.0;
+                                  final roundedAmount = roundToNearestMultiple(
+                                    targetAmount,
+                                    item['certificate']['multiples'].toDouble(),
+                                  );
+                                  final dailyRate =
+                                      _getInterestRateForReturnType(
+                                        item['certificate'],
+                                        'daily',
+                                      );
+                                  if (dailyRate == null) return '-';
+
+                                  final dailyReturn =
+                                      calculateReturns(
+                                        roundedAmount,
+                                        dailyRate,
+                                        item['certificate']['duration']
+                                            .toDouble(),
+                                      )['daily'];
+
+                                  return 'E£${NumberFormat('#,##0.00').format(dailyReturn)}';
+                                }, valueLabelKey: 'dailyReturn'),
+
+                                // Monthly Return
+                                _buildCompareFixedRow('Monthly Return', (item) {
+                                  final targetAmount =
+                                      double.tryParse(
+                                        goal['target_amount'] ?? '0',
+                                      ) ??
+                                      0.0;
+                                  final roundedAmount = roundToNearestMultiple(
+                                    targetAmount,
+                                    item['certificate']['multiples'].toDouble(),
+                                  );
+                                  final monthlyRate =
+                                      _getInterestRateForReturnType(
+                                        item['certificate'],
+                                        'monthly',
+                                      );
+                                  if (monthlyRate == null) return '-';
+
+                                  final monthlyReturn =
+                                      calculateReturns(
+                                        roundedAmount,
+                                        monthlyRate,
+                                        item['certificate']['duration']
+                                            .toDouble(),
+                                      )['monthly'];
+
+                                  return 'E£${NumberFormat('#,##0.00').format(monthlyReturn)}';
+                                }, valueLabelKey: 'monthlyReturn'),
+
+                                // Quarterly Return
+                                _buildCompareFixedRow(
+                                  'Quarterly Return',
+                                  (item) {
+                                    final targetAmount =
+                                        double.tryParse(
+                                          goal['target_amount'] ?? '0',
+                                        ) ??
+                                        0.0;
+                                    final roundedAmount =
+                                        roundToNearestMultiple(
+                                          targetAmount,
+                                          item['certificate']['multiples']
+                                              .toDouble(),
+                                        );
+                                    final quarterlyRate =
+                                        _getInterestRateForReturnType(
+                                          item['certificate'],
+                                          'quarterly',
+                                        );
+                                    if (quarterlyRate == null) return '-';
+
+                                    final quarterlyReturn =
+                                        calculateReturns(
+                                          roundedAmount,
+                                          quarterlyRate,
+                                          item['certificate']['duration']
+                                              .toDouble(),
+                                        )['quarterly'];
+
+                                    return 'E£${NumberFormat('#,##0.00').format(quarterlyReturn)}';
+                                  },
+                                  valueLabelKey: 'quarterlyReturn',
+                                ),
+
+                                // Semi-Annual Return
+                                _buildCompareFixedRow(
+                                  'Semi-Annual Return',
+                                  (item) {
+                                    final targetAmount =
+                                        double.tryParse(
+                                          goal['target_amount'] ?? '0',
+                                        ) ??
+                                        0.0;
+                                    final roundedAmount =
+                                        roundToNearestMultiple(
+                                          targetAmount,
+                                          item['certificate']['multiples']
+                                              .toDouble(),
+                                        );
+                                    final semiAnnualRate =
+                                        _getInterestRateForReturnType(
+                                          item['certificate'],
+                                          'semiAnnual',
+                                        );
+                                    if (semiAnnualRate == null) return '-';
+
+                                    final semiAnnualReturn =
+                                        calculateReturns(
+                                          roundedAmount,
+                                          semiAnnualRate,
+                                          item['certificate']['duration']
+                                              .toDouble(),
+                                        )['semiAnnual'];
+
+                                    return 'E£${NumberFormat('#,##0.00').format(semiAnnualReturn)}';
+                                  },
+                                  valueLabelKey: 'semiAnnualReturn',
+                                ),
+
+                                // Annual Return
+                                _buildCompareFixedRow('Annual Return', (item) {
+                                  final targetAmount =
+                                      double.tryParse(
+                                        goal['target_amount'] ?? '0',
+                                      ) ??
+                                      0.0;
+                                  final roundedAmount = roundToNearestMultiple(
+                                    targetAmount,
+                                    item['certificate']['multiples'].toDouble(),
+                                  );
+                                  final annualRate =
+                                      _getInterestRateForReturnType(
+                                        item['certificate'],
+                                        'annual',
+                                      );
+                                  if (annualRate == null) return '-';
+
+                                  final annualReturn =
+                                      calculateReturns(
+                                        roundedAmount,
+                                        annualRate,
+                                        item['certificate']['duration']
+                                            .toDouble(),
+                                      )['annual'];
+
+                                  return 'E£${NumberFormat('#,##0.00').format(annualReturn)}';
+                                }, valueLabelKey: 'annualReturn'),
+
+                                // At Maturity Return
+                                _buildCompareFixedRow(
+                                  'At Maturity Return',
+                                  (item) {
+                                    final targetAmount =
+                                        double.tryParse(
+                                          goal['target_amount'] ?? '0',
+                                        ) ??
+                                        0.0;
+                                    final roundedAmount =
+                                        roundToNearestMultiple(
+                                          targetAmount,
+                                          item['certificate']['multiples']
+                                              .toDouble(),
+                                        );
+                                    final atMaturityRate =
+                                        _getInterestRateForReturnType(
+                                          item['certificate'],
+                                          'atMaturity',
+                                        );
+                                    if (atMaturityRate == null) return '-';
+
+                                    final atMaturityReturn =
+                                        calculateReturns(
+                                          roundedAmount,
+                                          atMaturityRate,
+                                          item['certificate']['duration']
+                                              .toDouble(),
+                                        )['atMaturity'];
+
+                                    return 'E£${NumberFormat('#,##0.00').format(atMaturityReturn)}';
+                                  },
+                                  valueLabelKey: 'atMaturityReturn',
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Footer
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border(top: BorderSide(color: Colors.grey[300]!)),
+                  ),
+                  child: Center(
+                    child: ElevatedButton(
+                      onPressed: _closeCompareModal,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        foregroundColor: Colors.black87,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Close',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper method for building comparison rows
+  Widget _buildCompareFixedRow(
+    String label,
+    String Function(Map<String, dynamic>) valueGetter, {
+    String? interestRateKey,
+    String? valueLabelKey,
+    bool showBelowMinWarning = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Property label (fixed width)
+          Container(
+            width: 160,
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border(right: BorderSide(color: Colors.grey[200]!)),
+              color: Colors.grey[100],
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: Colors.grey[800],
+              ),
+            ),
+          ),
+
+          // Certificate values
+          ...selectedCertificates.map((item) {
+            final certificate = item['certificate'];
+            final valueText = valueGetter(item);
+            bool isWinner = false;
+
+            // Calculate winner for each return type
+            if (valueLabelKey != null) {
+              if (valueLabelKey.contains('Return') &&
+                  winningValues[valueLabelKey] != null) {
+                // For return values, extract numeric part for comparison
+                if (valueText != '-') {
+                  final numericValue =
+                      double.tryParse(
+                        valueText.replaceAll('E£', '').replaceAll(',', ''),
+                      ) ??
+                      0.0;
+                  isWinner =
+                      (numericValue - winningValues[valueLabelKey]).abs() <
+                      0.01; // Allow small floating point differences
+                }
+              } else if (interestRateKey != null &&
+                  certificate[interestRateKey] != null) {
+                // For interest rates
+                final avgRate = calculateAverageRate(
+                  certificate[interestRateKey],
+                );
+                isWinner =
+                    winningValues[valueLabelKey] != null &&
+                    (avgRate - winningValues[valueLabelKey]).abs() < 0.01;
+              } else {
+                // For other values
+                dynamic value;
+                if (valueText.startsWith('E£')) {
+                  // Extract numeric value from formatted currency
+                  value =
+                      double.tryParse(
+                        valueText
+                            .replaceAll('E£', '')
+                            .replaceAll(',', '')
+                            .split('\n')[0],
+                      ) ??
+                      0.0;
+                } else if (valueText != '-') {
+                  value =
+                      double.tryParse(valueText.split('\n')[0]) ?? valueText;
+                }
+
+                if (value != null && winningValues[valueLabelKey] != null) {
+                  if (value is num && winningValues[valueLabelKey] is num) {
+                    isWinner =
+                        (value - winningValues[valueLabelKey]).abs() < 0.01;
+                  } else {
+                    isWinner = value == winningValues[valueLabelKey];
+                  }
+                }
+              }
+            }
+
+            bool hasWarning =
+                showBelowMinWarning && valueText.contains('(Below Min)');
+
+            return Container(
+              width: 200, // Fixed width for each value cell
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+              decoration: BoxDecoration(
+                border: Border(left: BorderSide(color: Colors.grey[200]!)),
+              ),
+              child: Text(
+                valueText,
+                style: TextStyle(
+                  color:
+                      hasWarning
+                          ? Colors.red
+                          : (isWinner ? Colors.green : Colors.black87),
+                  fontWeight: isWinner ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
