@@ -2741,7 +2741,7 @@ class InvestScreenState extends State<InvestScreen> {
                   ),
                 ),
 
-                // Comparison table
+                // Comparison table with horizontal scroll
                 Expanded(
                   child: SingleChildScrollView(
                     child: SingleChildScrollView(
@@ -2752,7 +2752,7 @@ class InvestScreenState extends State<InvestScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Header row
+                              // Header row with certificate names
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -2763,7 +2763,7 @@ class InvestScreenState extends State<InvestScreen> {
                                     padding: const EdgeInsets.all(12),
                                   ),
 
-                                  // Certificate headers
+                                  // Certificate headers with delete buttons
                                   ...selectedCertificates.map((item) {
                                     final certificate = item['certificate'];
 
@@ -2809,13 +2809,13 @@ class InvestScreenState extends State<InvestScreen> {
                               const SizedBox(height: 10),
                               Divider(thickness: 2, color: Colors.grey[300]),
 
-                              // Bank row
+                              // Bank row - always shown
                               _buildCompareFixedRow(
                                 'Bank',
                                 (item) => item['bank']['name'],
                               ),
 
-                              // Duration row
+                              // Duration row - always shown
                               _buildCompareFixedRow(
                                 'Duration (Years)',
                                 (item) =>
@@ -2823,7 +2823,7 @@ class InvestScreenState extends State<InvestScreen> {
                                 valueLabelKey: 'duration',
                               ),
 
-                              // Min Investment row
+                              // Min Investment row - always shown
                               _buildCompareFixedRow(
                                 'Min Investment',
                                 (item) =>
@@ -2831,7 +2831,7 @@ class InvestScreenState extends State<InvestScreen> {
                                 valueLabelKey: 'minInvestment',
                               ),
 
-                              // Allowed Multiples row
+                              // Allowed Multiples row - always shown
                               _buildCompareFixedRow(
                                 'Allowed Multiples',
                                 (item) =>
@@ -2839,62 +2839,92 @@ class InvestScreenState extends State<InvestScreen> {
                                 valueLabelKey: 'multiples',
                               ),
 
-                              // Interest rates rows
-                              _buildCompareFixedRow(
+                              // Interest rates - check if any certificates have this attribute
+                              _buildCompareFixedRowIfAnyExists(
                                 'Daily Interest',
+                                selectedCertificates,
                                 (item) =>
                                     item['certificate']['dailyInterestRate'] ??
                                     '-',
+                                valueCheck:
+                                    (item) =>
+                                        item['certificate']['dailyInterestRate'] !=
+                                        null,
                                 interestRateKey: 'dailyInterestRate',
                                 valueLabelKey: 'dailyInterest',
                               ),
 
-                              _buildCompareFixedRow(
+                              _buildCompareFixedRowIfAnyExists(
                                 'Monthly Interest',
+                                selectedCertificates,
                                 (item) =>
                                     item['certificate']['monthlyInterestRate'] ??
                                     '-',
+                                valueCheck:
+                                    (item) =>
+                                        item['certificate']['monthlyInterestRate'] !=
+                                        null,
                                 interestRateKey: 'monthlyInterestRate',
                                 valueLabelKey: 'monthlyInterest',
                               ),
 
-                              _buildCompareFixedRow(
+                              _buildCompareFixedRowIfAnyExists(
                                 'Quarterly Interest',
+                                selectedCertificates,
                                 (item) =>
                                     item['certificate']['quarterlyInterestRate'] ??
                                     '-',
+                                valueCheck:
+                                    (item) =>
+                                        item['certificate']['quarterlyInterestRate'] !=
+                                        null,
                                 interestRateKey: 'quarterlyInterestRate',
                                 valueLabelKey: 'quarterlyInterest',
                               ),
 
-                              _buildCompareFixedRow(
+                              _buildCompareFixedRowIfAnyExists(
                                 'Semi-Annual Interest',
+                                selectedCertificates,
                                 (item) =>
                                     item['certificate']['semiAnnuallyInterestRate'] ??
                                     '-',
+                                valueCheck:
+                                    (item) =>
+                                        item['certificate']['semiAnnuallyInterestRate'] !=
+                                        null,
                                 interestRateKey: 'semiAnnuallyInterestRate',
                                 valueLabelKey: 'semiAnnualInterest',
                               ),
 
-                              _buildCompareFixedRow(
+                              _buildCompareFixedRowIfAnyExists(
                                 'Annual Interest',
+                                selectedCertificates,
                                 (item) =>
                                     item['certificate']['annuallyInterestRate'] ??
                                     '-',
+                                valueCheck:
+                                    (item) =>
+                                        item['certificate']['annuallyInterestRate'] !=
+                                        null,
                                 interestRateKey: 'annuallyInterestRate',
                                 valueLabelKey: 'annualInterest',
                               ),
 
-                              _buildCompareFixedRow(
+                              _buildCompareFixedRowIfAnyExists(
                                 'At Maturity Interest',
+                                selectedCertificates,
                                 (item) =>
                                     item['certificate']['atMaturityInterestRate'] ??
                                     '-',
+                                valueCheck:
+                                    (item) =>
+                                        item['certificate']['atMaturityInterestRate'] !=
+                                        null,
                                 interestRateKey: 'atMaturityInterestRate',
                                 valueLabelKey: 'atMaturityInterest',
                               ),
 
-                              // Investment and returns rows (if applicable)
+                              // Investment and returns only if target_amount is set
                               if (goal['target_amount'] != null) ...[
                                 _buildCompareFixedRow(
                                   'Your Investment',
@@ -2920,67 +2950,88 @@ class InvestScreenState extends State<InvestScreen> {
                                   showBelowMinWarning: true,
                                 ),
 
-                                // Daily Return
-                                _buildCompareFixedRow('Daily Return', (item) {
-                                  final targetAmount =
-                                      double.tryParse(
-                                        goal['target_amount'] ?? '0',
-                                      ) ??
-                                      0.0;
-                                  final roundedAmount = roundToNearestMultiple(
-                                    targetAmount,
-                                    item['certificate']['multiples'].toDouble(),
-                                  );
-                                  final dailyRate =
-                                      _getInterestRateForReturnType(
-                                        item['certificate'],
-                                        'daily',
-                                      );
-                                  if (dailyRate == null) return '-';
+                                // Returns rows - only show if any certificate has this return type
+                                _buildCompareFixedRowIfAnyExists(
+                                  'Daily Return',
+                                  selectedCertificates,
+                                  (item) {
+                                    final targetAmount =
+                                        double.tryParse(
+                                          goal['target_amount'] ?? '0',
+                                        ) ??
+                                        0.0;
+                                    final roundedAmount =
+                                        roundToNearestMultiple(
+                                          targetAmount,
+                                          item['certificate']['multiples']
+                                              .toDouble(),
+                                        );
+                                    final dailyRate =
+                                        _getInterestRateForReturnType(
+                                          item['certificate'],
+                                          'daily',
+                                        );
+                                    if (dailyRate == null) return '-';
 
-                                  final dailyReturn =
-                                      calculateReturns(
-                                        roundedAmount,
-                                        dailyRate,
-                                        item['certificate']['duration']
-                                            .toDouble(),
-                                      )['daily'];
+                                    final dailyReturn =
+                                        calculateReturns(
+                                          roundedAmount,
+                                          dailyRate,
+                                          item['certificate']['duration']
+                                              .toDouble(),
+                                        )['daily'];
 
-                                  return 'E£${NumberFormat('#,##0.00').format(dailyReturn)}';
-                                }, valueLabelKey: 'dailyReturn'),
+                                    return 'E£${NumberFormat('#,##0.00').format(dailyReturn)}';
+                                  },
+                                  valueCheck:
+                                      (item) =>
+                                          item['certificate']['dailyInterestRate'] !=
+                                          null,
+                                  valueLabelKey: 'dailyReturn',
+                                ),
 
-                                // Monthly Return
-                                _buildCompareFixedRow('Monthly Return', (item) {
-                                  final targetAmount =
-                                      double.tryParse(
-                                        goal['target_amount'] ?? '0',
-                                      ) ??
-                                      0.0;
-                                  final roundedAmount = roundToNearestMultiple(
-                                    targetAmount,
-                                    item['certificate']['multiples'].toDouble(),
-                                  );
-                                  final monthlyRate =
-                                      _getInterestRateForReturnType(
-                                        item['certificate'],
-                                        'monthly',
-                                      );
-                                  if (monthlyRate == null) return '-';
+                                _buildCompareFixedRowIfAnyExists(
+                                  'Monthly Return',
+                                  selectedCertificates,
+                                  (item) {
+                                    final targetAmount =
+                                        double.tryParse(
+                                          goal['target_amount'] ?? '0',
+                                        ) ??
+                                        0.0;
+                                    final roundedAmount =
+                                        roundToNearestMultiple(
+                                          targetAmount,
+                                          item['certificate']['multiples']
+                                              .toDouble(),
+                                        );
+                                    final monthlyRate =
+                                        _getInterestRateForReturnType(
+                                          item['certificate'],
+                                          'monthly',
+                                        );
+                                    if (monthlyRate == null) return '-';
 
-                                  final monthlyReturn =
-                                      calculateReturns(
-                                        roundedAmount,
-                                        monthlyRate,
-                                        item['certificate']['duration']
-                                            .toDouble(),
-                                      )['monthly'];
+                                    final monthlyReturn =
+                                        calculateReturns(
+                                          roundedAmount,
+                                          monthlyRate,
+                                          item['certificate']['duration']
+                                              .toDouble(),
+                                        )['monthly'];
 
-                                  return 'E£${NumberFormat('#,##0.00').format(monthlyReturn)}';
-                                }, valueLabelKey: 'monthlyReturn'),
+                                    return 'E£${NumberFormat('#,##0.00').format(monthlyReturn)}';
+                                  },
+                                  valueCheck:
+                                      (item) =>
+                                          item['certificate']['monthlyInterestRate'] !=
+                                          null,
+                                  valueLabelKey: 'monthlyReturn',
+                                ),
 
-                                // Quarterly Return
-                                _buildCompareFixedRow(
+                                _buildCompareFixedRowIfAnyExists(
                                   'Quarterly Return',
+                                  selectedCertificates,
                                   (item) {
                                     final targetAmount =
                                         double.tryParse(
@@ -3010,12 +3061,16 @@ class InvestScreenState extends State<InvestScreen> {
 
                                     return 'E£${NumberFormat('#,##0.00').format(quarterlyReturn)}';
                                   },
+                                  valueCheck:
+                                      (item) =>
+                                          item['certificate']['quarterlyInterestRate'] !=
+                                          null,
                                   valueLabelKey: 'quarterlyReturn',
                                 ),
 
-                                // Semi-Annual Return
-                                _buildCompareFixedRow(
+                                _buildCompareFixedRowIfAnyExists(
                                   'Semi-Annual Return',
+                                  selectedCertificates,
                                   (item) {
                                     final targetAmount =
                                         double.tryParse(
@@ -3045,41 +3100,55 @@ class InvestScreenState extends State<InvestScreen> {
 
                                     return 'E£${NumberFormat('#,##0.00').format(semiAnnualReturn)}';
                                   },
+                                  valueCheck:
+                                      (item) =>
+                                          item['certificate']['semiAnnuallyInterestRate'] !=
+                                          null,
                                   valueLabelKey: 'semiAnnualReturn',
                                 ),
 
-                                // Annual Return
-                                _buildCompareFixedRow('Annual Return', (item) {
-                                  final targetAmount =
-                                      double.tryParse(
-                                        goal['target_amount'] ?? '0',
-                                      ) ??
-                                      0.0;
-                                  final roundedAmount = roundToNearestMultiple(
-                                    targetAmount,
-                                    item['certificate']['multiples'].toDouble(),
-                                  );
-                                  final annualRate =
-                                      _getInterestRateForReturnType(
-                                        item['certificate'],
-                                        'annual',
-                                      );
-                                  if (annualRate == null) return '-';
+                                _buildCompareFixedRowIfAnyExists(
+                                  'Annual Return',
+                                  selectedCertificates,
+                                  (item) {
+                                    final targetAmount =
+                                        double.tryParse(
+                                          goal['target_amount'] ?? '0',
+                                        ) ??
+                                        0.0;
+                                    final roundedAmount =
+                                        roundToNearestMultiple(
+                                          targetAmount,
+                                          item['certificate']['multiples']
+                                              .toDouble(),
+                                        );
+                                    final annualRate =
+                                        _getInterestRateForReturnType(
+                                          item['certificate'],
+                                          'annual',
+                                        );
+                                    if (annualRate == null) return '-';
 
-                                  final annualReturn =
-                                      calculateReturns(
-                                        roundedAmount,
-                                        annualRate,
-                                        item['certificate']['duration']
-                                            .toDouble(),
-                                      )['annual'];
+                                    final annualReturn =
+                                        calculateReturns(
+                                          roundedAmount,
+                                          annualRate,
+                                          item['certificate']['duration']
+                                              .toDouble(),
+                                        )['annual'];
 
-                                  return 'E£${NumberFormat('#,##0.00').format(annualReturn)}';
-                                }, valueLabelKey: 'annualReturn'),
+                                    return 'E£${NumberFormat('#,##0.00').format(annualReturn)}';
+                                  },
+                                  valueCheck:
+                                      (item) =>
+                                          item['certificate']['annuallyInterestRate'] !=
+                                          null,
+                                  valueLabelKey: 'annualReturn',
+                                ),
 
-                                // At Maturity Return
-                                _buildCompareFixedRow(
+                                _buildCompareFixedRowIfAnyExists(
                                   'At Maturity Return',
+                                  selectedCertificates,
                                   (item) {
                                     final targetAmount =
                                         double.tryParse(
@@ -3109,6 +3178,10 @@ class InvestScreenState extends State<InvestScreen> {
 
                                     return 'E£${NumberFormat('#,##0.00').format(atMaturityReturn)}';
                                   },
+                                  valueCheck:
+                                      (item) =>
+                                          item['certificate']['atMaturityInterestRate'] !=
+                                          null,
                                   valueLabelKey: 'atMaturityReturn',
                                 ),
                               ],
@@ -3120,7 +3193,7 @@ class InvestScreenState extends State<InvestScreen> {
                   ),
                 ),
 
-                // Footer
+                // Footer with centered button
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -3152,7 +3225,7 @@ class InvestScreenState extends State<InvestScreen> {
     );
   }
 
-  // Helper method for building comparison rows
+  // Helper method for building comparison rows with fixed widths
   Widget _buildCompareFixedRow(
     String label,
     String Function(Map<String, dynamic>) valueGetter, {
@@ -3170,7 +3243,7 @@ class InvestScreenState extends State<InvestScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Property label
+          // Property label (fixed width)
           Container(
             width: 160,
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
@@ -3194,20 +3267,18 @@ class InvestScreenState extends State<InvestScreen> {
             final valueText = valueGetter(item);
             bool isWinner = false;
 
-            // Calculate winner for each return type
-            if (valueLabelKey != null) {
-              if (valueLabelKey.contains('Return') &&
-                  winningValues[valueLabelKey] != null) {
-                // For return values, extract numeric part for comparison
-                if (valueText != '-') {
-                  final numericValue =
-                      double.tryParse(
-                        valueText.replaceAll('E£', '').replaceAll(',', ''),
-                      ) ??
-                      0.0;
-                  isWinner =
-                      (numericValue - winningValues[valueLabelKey]).abs() <
-                      0.01; // Allow small floating point differences
+            if (valueLabelKey != null &&
+                winningValues.containsKey(valueLabelKey)) {
+              if (valueLabelKey.contains('Return') && valueText != '-') {
+                final numericValue = double.tryParse(
+                  valueText.replaceAll('E£', '').replaceAll(',', ''),
+                );
+
+                if (numericValue != null &&
+                    winningValues[valueLabelKey] != null &&
+                    (numericValue - winningValues[valueLabelKey]).abs() <
+                        0.01) {
+                  isWinner = true;
                 }
               } else if (interestRateKey != null &&
                   certificate[interestRateKey] != null) {
@@ -3216,27 +3287,24 @@ class InvestScreenState extends State<InvestScreen> {
                   certificate[interestRateKey],
                 );
                 isWinner =
-                    winningValues[valueLabelKey] != null &&
                     (avgRate - winningValues[valueLabelKey]).abs() < 0.01;
-              } else {
-                // For other values
+              } else if (valueText != '-') {
+                // For other numeric values
                 dynamic value;
                 if (valueText.startsWith('E£')) {
-                  // Extract numeric value from formatted currency
-                  value =
-                      double.tryParse(
-                        valueText
-                            .replaceAll('E£', '')
-                            .replaceAll(',', '')
-                            .split('\n')[0],
-                      ) ??
-                      0.0;
-                } else if (valueText != '-') {
+                  // Extract numeric value from currency
+                  value = double.tryParse(
+                    valueText
+                        .replaceAll('E£', '')
+                        .replaceAll(',', '')
+                        .split('\n')[0],
+                  );
+                } else {
                   value =
                       double.tryParse(valueText.split('\n')[0]) ?? valueText;
                 }
 
-                if (value != null && winningValues[valueLabelKey] != null) {
+                if (value != null) {
                   if (value is num && winningValues[valueLabelKey] is num) {
                     isWinner =
                         (value - winningValues[valueLabelKey]).abs() < 0.01;
@@ -3272,6 +3340,34 @@ class InvestScreenState extends State<InvestScreen> {
           }),
         ],
       ),
+    );
+  }
+
+  // Helper method to build a comparison row only if any certificate has a value for this attribute
+  Widget _buildCompareFixedRowIfAnyExists(
+    String label,
+    List<Map<String, dynamic>> certificates,
+    String Function(Map<String, dynamic>) valueGetter, {
+    required bool Function(Map<String, dynamic>) valueCheck,
+    String? interestRateKey,
+    String? valueLabelKey,
+    bool showBelowMinWarning = false,
+  }) {
+    // Check if at least one certificate has a valid value for this attribute
+    bool anyExists = certificates.any((item) => valueCheck(item));
+
+    // If none have this attribute, don't show the row
+    if (!anyExists) {
+      return const SizedBox.shrink();
+    }
+
+    // Otherwise, build the row normally
+    return _buildCompareFixedRow(
+      label,
+      valueGetter,
+      interestRateKey: interestRateKey,
+      valueLabelKey: valueLabelKey,
+      showBelowMinWarning: showBelowMinWarning,
     );
   }
 
