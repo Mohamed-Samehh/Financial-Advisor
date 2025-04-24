@@ -1458,7 +1458,7 @@ class InvestScreenState extends State<InvestScreen> {
                         selectedCertificates.length < 2
                             ? null
                             : _openCompareModal,
-                    icon: const Icon(FontAwesomeIcons.balanceScale, size: 16),
+                    icon: const Icon(FontAwesomeIcons.scaleBalanced, size: 16),
                     label: Text(
                       'Compare Selected (${selectedCertificates.length})',
                     ),
@@ -2718,7 +2718,7 @@ class InvestScreenState extends State<InvestScreen> {
                   child: Row(
                     children: [
                       const Icon(
-                        FontAwesomeIcons.balanceScale,
+                        FontAwesomeIcons.scaleBalanced,
                         color: Colors.white,
                         size: 18,
                       ),
@@ -2802,7 +2802,7 @@ class InvestScreenState extends State<InvestScreen> {
                                         ],
                                       ),
                                     );
-                                  }).toList(),
+                                  }),
                                 ],
                               ),
 
@@ -2914,8 +2914,7 @@ class InvestScreenState extends State<InvestScreen> {
                                         targetAmount <
                                         item['certificate']['minInvestment'];
 
-                                    return 'E£${NumberFormat('#,##0').format(roundedAmount)}' +
-                                        (belowMin ? '\n(Below Min)' : '');
+                                    return 'E£${NumberFormat('#,##0').format(roundedAmount)}${belowMin ? '\n(Below Min)' : ''}';
                                   },
                                   valueLabelKey: 'yourInvestment',
                                   showBelowMinWarning: true,
@@ -3270,7 +3269,7 @@ class InvestScreenState extends State<InvestScreen> {
                 textAlign: TextAlign.center,
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
