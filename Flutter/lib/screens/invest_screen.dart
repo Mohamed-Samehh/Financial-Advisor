@@ -37,6 +37,7 @@ class InvestScreenState extends State<InvestScreen> {
   List<Map<String, dynamic>> filteredStocks = [];
   Map<String, dynamic>? selectedStock;
   String searchQuery = '';
+  TextEditingController searchController = TextEditingController();
   String stocksError = '';
   DateTime currentDate = DateTime.now();
 
@@ -381,6 +382,13 @@ class InvestScreenState extends State<InvestScreen> {
     super.initState();
     _loadGoal();
     selectedBankName = banks.isNotEmpty ? banks[0]['name'] : null;
+    searchController.text = searchQuery;
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   void _loadGoal() async {
@@ -1839,6 +1847,7 @@ class InvestScreenState extends State<InvestScreen> {
                           ),
                           const SizedBox(height: 12),
                           TextField(
+                            controller: searchController,
                             onChanged: (value) {
                               setState(() {
                                 searchQuery = value;
