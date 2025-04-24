@@ -470,7 +470,10 @@
                   <th>Annual Interest</th>
                   <th>At Maturity Interest</th>
                   <th *ngIf="goal.target_amount">Your Investment</th>
+                  <th *ngIf="goal.target_amount">Daily Return</th>
                   <th *ngIf="goal.target_amount">Monthly Return</th>
+                  <th *ngIf="goal.target_amount">Quarterly Return</th>
+                  <th *ngIf="goal.target_amount">Semi-Annual Return</th>
                   <th *ngIf="goal.target_amount">Annual Return</th>
                   <th *ngIf="goal.target_amount">At Maturity Return</th>
                 </tr>
@@ -515,11 +518,38 @@
                     {{ roundToNearestMultiple(goal.target_amount, item.certificate.multiples) | currency:'E£':'symbol':'1.0-0' }}
                     <span *ngIf="goal.target_amount < item.certificate.minInvestment" class="text-danger small">(Below Min)</span>
                   </td>
+                  <!-- Daily Return -->
+                  <td *ngIf="goal.target_amount">
+                    <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'daily') as rate; else noReturn">
+                      <span [ngClass]="{'winner-cell': isWinningValue(calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).daily, 'dailyReturn')}">
+                        {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).daily | currency:'E£':'symbol':'1.0-2' }}
+                      </span>
+                    </ng-container>
+                    <ng-template #noReturn>-</ng-template>
+                  </td>
                   <!-- Monthly Return -->
                   <td *ngIf="goal.target_amount">
                     <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'monthly') as rate; else noReturn">
                       <span [ngClass]="{'winner-cell': isWinningValue(calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).monthly, 'monthlyReturn')}">
                         {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).monthly | currency:'E£':'symbol':'1.0-2' }}
+                      </span>
+                    </ng-container>
+                    <ng-template #noReturn>-</ng-template>
+                  </td>
+                  <!-- Quarterly Return -->
+                  <td *ngIf="goal.target_amount">
+                    <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'quarterly') as rate; else noReturn">
+                      <span [ngClass]="{'winner-cell': isWinningValue(calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).quarterly, 'quarterlyReturn')}">
+                        {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).quarterly | currency:'E£':'symbol':'1.0-2' }}
+                      </span>
+                    </ng-container>
+                    <ng-template #noReturn>-</ng-template>
+                  </td>
+                  <!-- Semi-Annual Return -->
+                  <td *ngIf="goal.target_amount">
+                    <ng-container *ngIf="getInterestRateForReturnType(item.certificate, 'semiAnnual') as rate; else noReturn">
+                      <span [ngClass]="{'winner-cell': isWinningValue(calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).semiAnnual, 'semiAnnualReturn')}">
+                        {{ calculateReturns(roundToNearestMultiple(goal.target_amount, item.certificate.multiples), rate, item.certificate.duration).semiAnnual | currency:'E£':'symbol':'1.0-2' }}
                       </span>
                     </ng-container>
                     <ng-template #noReturn>-</ng-template>

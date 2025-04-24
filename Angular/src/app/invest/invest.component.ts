@@ -364,7 +364,10 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     annualInterest?: number;
     atMaturityInterest?: number;
     yourInvestment?: number;
+    dailyReturn?: number;
     monthlyReturn?: number;
+    quarterlyReturn?: number;
+    semiAnnualReturn?: number;
     annualReturn?: number;
     atMaturityReturn?: number;
   } = {};
@@ -770,13 +773,19 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.winningValues = {};
   }
 
-  getInterestRateForReturnType(certificate: Certificate, returnType: 'monthly' | 'annual' | 'atMaturity'): string | null {
-    if (returnType === 'monthly') {
-      return certificate.monthlyInterestRate || null;
+  getInterestRateForReturnType(certificate: Certificate, returnType: 'daily' | 'monthly' | 'quarterly' | 'semiAnnual' | 'annual' | 'atMaturity'): string | null {
+    if (returnType === 'daily') {
+        return certificate.dailyInterestRate || null;
+    } else if (returnType === 'monthly') {
+        return certificate.monthlyInterestRate || null;
+    } else if (returnType === 'quarterly') {
+        return certificate.quarterlyInterestRate || null;
+    } else if (returnType === 'semiAnnual') {
+        return certificate.semiAnnuallyInterestRate || null;
     } else if (returnType === 'annual') {
-      return certificate.annuallyInterestRate || null;
+        return certificate.annuallyInterestRate || null;
     } else if (returnType === 'atMaturity') {
-      return certificate.atMaturityInterestRate || null;
+        return certificate.atMaturityInterestRate || null;
     }
     return null;
   }
@@ -858,12 +867,39 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
         }
       }
 
+      // Daily Return (highest is best)
+      const dailyRate = this.getInterestRateForReturnType(item.certificate, 'daily');
+      if (dailyRate) {
+        const dailyReturn = this.calculateReturns(investmentAmount, dailyRate, item.certificate.duration).daily;
+        if (!this.winningValues.dailyReturn || dailyReturn > this.winningValues.dailyReturn) {
+          this.winningValues.dailyReturn = dailyReturn;
+        }
+      }
+
       // Monthly Return (highest is best)
       const monthlyRate = this.getInterestRateForReturnType(item.certificate, 'monthly');
       if (monthlyRate) {
         const monthlyReturn = this.calculateReturns(investmentAmount, monthlyRate, item.certificate.duration).monthly;
         if (!this.winningValues.monthlyReturn || monthlyReturn > this.winningValues.monthlyReturn) {
           this.winningValues.monthlyReturn = monthlyReturn;
+        }
+      }
+
+      // Quarterly Return (highest is best)
+      const quarterlyRate = this.getInterestRateForReturnType(item.certificate, 'quarterly');
+      if (quarterlyRate) {
+        const quarterlyReturn = this.calculateReturns(investmentAmount, quarterlyRate, item.certificate.duration).quarterly;
+        if (!this.winningValues.quarterlyReturn || quarterlyReturn > this.winningValues.quarterlyReturn) {
+          this.winningValues.quarterlyReturn = quarterlyReturn;
+        }
+      }
+
+      // Semi-Annual Return (highest is best)
+      const semiAnnualRate = this.getInterestRateForReturnType(item.certificate, 'semiAnnual');
+      if (semiAnnualRate) {
+        const semiAnnualReturn = this.calculateReturns(investmentAmount, semiAnnualRate, item.certificate.duration).semiAnnual;
+        if (!this.winningValues.semiAnnualReturn || semiAnnualReturn > this.winningValues.semiAnnualReturn) {
+          this.winningValues.semiAnnualReturn = semiAnnualReturn;
         }
       }
 
