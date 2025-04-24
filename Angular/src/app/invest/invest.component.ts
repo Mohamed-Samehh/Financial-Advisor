@@ -791,6 +791,10 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
     return null;
   }
 
+  isAllDashes(attribute: keyof Certificate): boolean {
+    return this.selectedCertificates.every(item => !item.certificate[attribute]);
+  }
+
   calculateWinningValues(): void {
     this.winningValues = {};
 
