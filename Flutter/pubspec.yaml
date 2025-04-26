@@ -31,20 +31,18 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  http: ^1.2.0          # For API requests
-  provider: ^6.1.2      # State management
-  go_router: ^14.0.1    # Navigation
-  shared_preferences: ^2.2.2  # Local storage for token
-  font_awesome_flutter: ^10.7.0  # Icons similar to FontAwesome
-  fl_chart: ^0.68.0  # For Pie and Line charts
-  intl: ^0.19.0 # For number formatting
-  device_preview: ^1.2.0  # For previewing the app on different devices
-  google_fonts: ^6.1.0  # For using Google Fonts
-  flutter_markdown: ^0.6.18  # For rendering markdown
-  url_launcher: ^6.3.0  # For opening URLs
+  cupertino_icons: ^1.0.8         # For iOS style icons
+  http: ^1.2.0                    # For API requests
+  provider: ^6.1.2                # State management
+  go_router: ^14.0.1              # Navigation
+  shared_preferences: ^2.2.2      # Local storage for token
+  font_awesome_flutter: ^10.7.0   # Icons similar to FontAwesome
+  fl_chart: ^0.68.0               # For Pie and Line charts
+  intl: ^0.19.0                   # For number formatting
+  device_preview: ^1.2.0          # For previewing the app on different devices
+  google_fonts: ^6.1.0            # For using Google Fonts
+  flutter_markdown: ^0.6.18       # For rendering markdown
+  url_launcher: ^6.3.0            # For opening URLs
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1  # For changing the app icon
