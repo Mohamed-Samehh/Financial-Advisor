@@ -967,7 +967,7 @@ class InvestScreenState extends State<InvestScreen> {
     if (type == 'certificate') {
       // Format certificate data for analysis
       initialMessage =
-          '''I'm looking at a ${investment['type']} from ${bank?['name']}. 
+          '''You are a Professional, Experienced Financial Advisor with comprehensive knowledge of Egyptian banks' certificates. I'm looking at a ${investment['type']} from ${bank?['name']}. 
       Duration: ${investment['duration']} year(s)
       Minimum Investment: ${investment['minInvestment']} EGP
       My investment amount: ${goal['target_amount'] != null ? roundToNearestMultiple(double.parse(goal['target_amount']), investment['multiples'].toDouble()) : 'Not set'} EGP
@@ -981,7 +981,7 @@ class InvestScreenState extends State<InvestScreen> {
     } else if (type == 'stock') {
       // Format stock data for analysis
       initialMessage =
-          '''I'm looking at ${investment['name']} (${investment['code']}) stock.
+          '''You are a Professional, Experienced Financial Advisor with comprehensive knowledge of the Egyptian Stocks Market. I'm looking at ${investment['name']} (${investment['code']}) stock.
       Exchange: ${investment['exchange']}
       Currency: ${investment['currency'] ?? 'EGP'}
       ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? 'Current Price: ${investment['historicalData'][investment['historicalData'].length - 1]['close']}' : ''}
