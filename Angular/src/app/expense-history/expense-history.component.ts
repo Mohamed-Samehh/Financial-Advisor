@@ -195,13 +195,13 @@ export class ExpenseHistoryComponent implements OnInit {
       return;
     }
 
-    let csvContent = 'Category,Amount,Date\n';
+    let csvContent = 'Category,Amount,Date,Description\n';
 
     expenses.forEach(expense => {
       const safeCategory = expense.category.includes(',') ? 
         `"${expense.category}"` : expense.category;
       
-      csvContent += `${safeCategory},${expense.amount},${expense.date}\n`;
+      csvContent += `${safeCategory},${expense.amount},${expense.date},${expense.description}\n`;
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
