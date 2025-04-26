@@ -489,6 +489,7 @@ class ExpenseHistoryScreenState extends State<ExpenseHistoryScreen> {
                                           'Total: E£${_formatNumber(totalExpenses)}',
                                           style: TextStyle(
                                             fontSize: 14,
+                                            fontWeight: FontWeight.bold,
                                             color:
                                                 _expenseSummary(monthYear) ==
                                                         'goal_met'
