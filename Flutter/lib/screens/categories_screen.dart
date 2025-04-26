@@ -525,17 +525,19 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 3),
+                                padding: const EdgeInsets.only(top: 3),
                                 child: FaIcon(
                                   FontAwesomeIcons.arrowLeft,
                                   size: 16,
+                                  color:
+                                      !isLabelView ? Colors.white : Colors.blue,
                                 ),
                               ),
-                              SizedBox(width: 8),
-                              Text('Suggestions'),
+                              const SizedBox(width: 8),
+                              const Text('Suggestions'),
                             ],
                           ),
                         ),
@@ -552,15 +554,17 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             children: [
-                              Text('Importance'),
-                              SizedBox(width: 8),
+                              const Text('Importance'),
+                              const SizedBox(width: 8),
                               Padding(
-                                padding: EdgeInsets.only(top: 3),
+                                padding: const EdgeInsets.only(top: 3),
                                 child: FaIcon(
                                   FontAwesomeIcons.arrowRight,
                                   size: 16,
+                                  color:
+                                      isLabelView ? Colors.white : Colors.blue,
                                 ),
                               ),
                             ],

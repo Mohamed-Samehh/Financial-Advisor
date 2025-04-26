@@ -1538,7 +1538,14 @@ class InvestScreenState extends State<InvestScreen> {
                         selectedCertificates.length < 2
                             ? null
                             : _openCompareModal,
-                    icon: const Icon(FontAwesomeIcons.scaleBalanced, size: 16),
+                    icon: Icon(
+                      FontAwesomeIcons.scaleBalanced,
+                      size: 16,
+                      color:
+                          selectedCertificates.length < 2
+                              ? Colors.grey[600]
+                              : Colors.white,
+                    ),
                     label: Text(
                       'Compare Selected (${selectedCertificates.length})',
                     ),
