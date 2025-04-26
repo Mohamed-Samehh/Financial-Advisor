@@ -9,7 +9,7 @@
 
   <!-- Content is shown only after loading is finished -->
   <div *ngIf="!isLoading">
-    <div *ngIf="message" class="alert alert-danger" role="alert">
+    <div *ngIf="message" class="alert alert-{{message.type}}" role="alert">
       {{ message.text }}
     </div>
 
@@ -53,20 +53,28 @@
           <div [id]="'collapse' + i" class="collapse">
             <div class="card-body">
               <ng-container *ngIf="!isCurrentMonth(monthYear) && filterByMonth(expensesByYear[getCurrentPageYear()], monthYear).length > 0; else noData">
-                <div class="mb-3">
-                  <div *ngIf="budgetByMonth[monthYear]; else noBudgetMessage">
-                    <p><strong>Budget:</strong> E£{{ formatNumber(budgetByMonth[monthYear].monthly_budget) }}</p>
-                  </div>
-                  <ng-template #noBudgetMessage>
-                    <p><strong>Budget:</strong> No budget was set for this month.</p>
-                  </ng-template>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <div *ngIf="budgetByMonth[monthYear]; else noBudgetMessage">
+                      <p class="mb-1"><strong>Budget:</strong> E£{{ formatNumber(budgetByMonth[monthYear].monthly_budget) }}</p>
+                    </div>
+                    <ng-template #noBudgetMessage>
+                      <p class="mb-1"><strong>Budget:</strong> No budget was set for this month.</p>
+                    </ng-template>
 
-                  <div *ngIf="goalByMonth[monthYear]; else noGoalMessage">
-                    <p><strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ formatNumber(goalByMonth[monthYear].target_amount) }}</p>
+                    <div *ngIf="goalByMonth[monthYear]; else noGoalMessage">
+                      <p class="mb-0"><strong>Goal:</strong> {{ goalByMonth[monthYear].name }} - E£{{ formatNumber(goalByMonth[monthYear].target_amount) }}</p>
+                    </div>
+                    <ng-template #noGoalMessage>
+                      <p class="mb-0"><strong>Goal:</strong> No goal was set for this month.</p>
+                    </ng-template>
                   </div>
-                  <ng-template #noGoalMessage>
-                    <p><strong>Goal:</strong> No goal was set for this month.</p>
-                  </ng-template>
+                  
+                  <button class="btn btn-outline-primary" 
+                          (click)="exportToCSV(monthYear)"
+                          title="Export expenses to CSV">
+                          <i class="fa fa-download me-1"></i><span class="d-none d-sm-inline">Export to CSV</span><span class="d-inline d-sm-none">Export</span>
+                  </button>
                 </div>
 
                 <div *ngIf="goalByMonth[monthYear] && Expense_summary(monthYear) === 'goal_met'" class="alert alert-success" role="alert">

@@ -17,7 +17,7 @@ export class ExpenseHistoryComponent implements OnInit {
   budgetByMonth: { [key: string]: any } = {};
   goalByMonth: { [key: string]: any } = {};
   sortedYears: string[] = [];
-  message: { text: string } | null = null;
+  message: { text: string, type: string } | null = null;
   isLoading = true;
   currentPage = 1;
   totalPages = 1;
@@ -52,7 +52,7 @@ export class ExpenseHistoryComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching data:', err);
-        this.message = { text: 'Failed to load data. Please try again.' };
+        this.message = { text: 'Failed to load data. Please try again.', type: 'danger' };
         this.isLoading = false;
       }
     });
@@ -184,5 +184,37 @@ export class ExpenseHistoryComponent implements OnInit {
 
   hasExpenseHistory(): boolean {
     return Object.values(this.expensesByYear).some(expenses => expenses.length > 0);
+  }
+
+  exportToCSV(monthYear: string): void {
+    const expenses = this.filterByMonth(this.expensesByYear[this.getCurrentPageYear()], monthYear);
+    
+    if (!expenses || expenses.length === 0) {
+      this.message = { text: 'No expenses to export for this month.', type: 'danger' };
+      setTimeout(() => this.message = null, 3000);
+      return;
+    }
+
+    let csvContent = 'Category,Amount,Date\n';
+
+    expenses.forEach(expense => {
+      const safeCategory = expense.category.includes(',') ? 
+        `"${expense.category}"` : expense.category;
+      
+      csvContent += `${safeCategory},${expense.amount},${expense.date}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', `expenses-${monthYear}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    this.message = { text: `Expenses for ${monthYear} successfully exported to CSV.`, type: 'success' };
+    setTimeout(() => this.message = null, 5000);
   }
 }
