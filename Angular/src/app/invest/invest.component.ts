@@ -678,17 +678,24 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       
       // Format certificate data for the analysis
-      initialMessage = `You are a Professional, Experienced Financial Advisor with comprehensive knowledge of Egyptian banks' certificates. I'm looking at a ${investment.type} from ${bank?.name}. 
-      Duration: ${investment.duration} year(s)
-      Minimum Investment: ${investment.minInvestment} EGP
-      My investment amount: ${this.goal.target_amount ? this.roundToNearestMultiple(this.goal.target_amount, investment.multiples) : 'Not set'} EGP
-      ${investment.dailyInterestRate ? 'Daily Interest Rate: ' + investment.dailyInterestRate : ''}
-      ${investment.monthlyInterestRate ? 'Monthly Interest Rate: ' + investment.monthlyInterestRate : ''}
-      ${investment.quarterlyInterestRate ? 'Quarterly Interest Rate: ' + investment.quarterlyInterestRate : ''}
-      ${investment.semiAnnuallyInterestRate ? 'Semi-Annual Interest Rate: ' + investment.semiAnnuallyInterestRate : ''}
-      ${investment.annuallyInterestRate ? 'Annual Interest Rate: ' + investment.annuallyInterestRate : ''}
-      ${investment.atMaturityInterestRate ? 'At Maturity Interest Rate: ' + investment.atMaturityInterestRate : ''}
-      Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with? Make sure to use my spending data in your analysis.`;
+      initialMessage = `You are a Professional Financial Advisor with comprehensive expertise in Egyptian banks' certificates, including interest rate structures, bank reliability, and Egypt's economic environment. I'm considering a ${investment.type} from ${bank?.name || 'unspecified bank'} with the following details:
+
+      - Duration: ${investment.duration} year(s)
+      - Minimum Investment: ${investment.minInvestment} EGP
+      - My Investment Amount: ${this.goal.target_amount ? this.roundToNearestMultiple(this.goal.target_amount, investment.multiples) : 'Not set'} EGP
+      - Interest Rates:
+        ${investment.dailyInterestRate ? `Daily: ${investment.dailyInterestRate}` : ''}
+        ${investment.monthlyInterestRate ? `Monthly: ${investment.monthlyInterestRate}` : ''}
+        ${investment.quarterlyInterestRate ? `Quarterly: ${investment.quarterlyInterestRate}` : ''}
+        ${investment.semiAnnuallyInterestRate ? `Semi-Annual: ${investment.semiAnnuallyInterestRate}` : ''}
+        ${investment.annuallyInterestRate ? `Annual: ${investment.annuallyInterestRate}` : ''}
+        ${investment.atMaturityInterestRate ? `At Maturity: ${investment.atMaturityInterestRate}` : ''}
+
+      Please provide a detailed analysis of whether this certificate is a good investment, considering my investment amount and Egypt's financial landscape. Include:
+      1. Pros and cons of this certificate compared to other Egyptian bank offerings.
+      2. Key risks (e.g., bank stability, inflation, early withdrawal penalties).
+      3. A recommendation on the optimal interest rate payout option (e.g., monthly, at maturity) based on my financial goals and Egypt's economic conditions (e.g., inflation trends, EGP stability).
+      Ensure the analysis uses my spending data and reflects current Egyptian banking regulations and market conditions.`;
     } else if (type === 'stock') {
       // Add welcome message first
       this.chatResponses.push({ 
@@ -697,21 +704,23 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       
       // Format stock data for the analysis
-      initialMessage = `You are a Professional, Experienced Financial Advisor with comprehensive knowledge of the Egyptian Stocks Market. I'm looking at ${investment.name} (${investment.code}) stock.
-      Exchange: ${investment.exchange}
-      Currency: ${investment.currency || 'EGP'}
-      ${investment.historicalData && investment.historicalData.length > 0 ? 
-        `Current Price: ${investment.historicalData[investment.historicalData.length-1].close}` : ''}
-      ${investment.historicalData && investment.historicalData.length > 0 ? 
-        `Current Volume: ${investment.historicalData[investment.historicalData.length-1].volume}` : ''}
-      My investment amount: ${this.goal.target_amount ? this.goal.target_amount : 'Not set'} EGP
-      ${investment.historicalData && this.goal.target_amount ? 
-        `Estimated Shares I can buy: ${Math.floor(this.goal.target_amount / (investment.historicalData[investment.historicalData.length-1]?.close || 1))}` : ''}
-      ${investment.historicalData && investment.historicalData.length > 0 ? 
-        `\nHistorical Prices:\n${investment.historicalData.slice().reverse().slice(0, 10).map((data: any) => 
-          `${data.date}: Open=${data.open}, Close=${data.close}, High=${data.high}, Low=${data.low}, Volume=${data.volume}`
-        ).join('\n')}` : ''}
-      Can you tell me if this is a good investment? What are the pros and cons? Make sure to use my spending data in your analysis.`;
+      initialMessage = `You are a Professional Financial Advisor with extensive expertise in the Egyptian Stocks Market, including deep knowledge of market trends, sectoral performance, and economic factors impacting Egypt. I'm evaluating ${investment.name} (${investment.code}) stock listed on ${investment.exchange}, with prices in ${investment.currency || 'EGP'}. Below are the details:
+
+      - Current Price: ${investment.historicalData && investment.historicalData.length > 0 ? investment.historicalData[investment.historicalData.length-1].close : 'Not available'}
+      - Current Volume: ${investment.historicalData && investment.historicalData.length > 0 ? investment.historicalData[investment.historicalData.length-1].volume : 'Not available'}
+      - My Investment Amount: ${this.goal.target_amount ? this.goal.target_amount : 'Not set'} EGP
+      - Estimated Shares: ${investment.historicalData && this.goal.target_amount ? Math.floor(this.goal.target_amount / (investment.historicalData[investment.historicalData.length-1]?.close || 1)) : 'Not calculated'}
+      - Historical Data (last 10 days, if available):
+        ${investment.historicalData && investment.historicalData.length > 0 ? 
+          investment.historicalData.slice().reverse().slice(0, 10).map((data: any) => 
+            `${data.date}: Close=${data.close}, High=${data.high}, Low=${data.low}, Volume=${data.volume}`
+          ).join('\n') : 'No historical data provided'}
+
+      Please provide a detailed analysis of whether this is a sound investment, considering my investment amount, current Egyptian market conditions, and the stock's performance. Include:
+      1. Pros and cons of investing in this stock.
+      2. Key risks (e.g., volatility, sector-specific issues, macroeconomic factors in Egypt).
+      3. A recommendation on whether to invest now or wait, with justification.
+      Ensure the analysis incorporates my spending data and aligns with Egypt's economic context (e.g., inflation, currency stability).`;
     }
     
     // Send message to API but don't display it in the chat

@@ -966,30 +966,44 @@ class InvestScreenState extends State<InvestScreen> {
 
     if (type == 'certificate') {
       // Format certificate data for analysis
-      initialMessage =
-          '''You are a Professional, Experienced Financial Advisor with comprehensive knowledge of Egyptian banks' certificates. I'm looking at a ${investment['type']} from ${bank?['name']}. 
-      Duration: ${investment['duration']} year(s)
-      Minimum Investment: ${investment['minInvestment']} EGP
-      My investment amount: ${goal['target_amount'] != null ? roundToNearestMultiple(double.parse(goal['target_amount']), investment['multiples'].toDouble()) : 'Not set'} EGP
-      ${investment['dailyInterestRate'] != null ? 'Daily Interest Rate: ${investment['dailyInterestRate']}' : ''}
-      ${investment['monthlyInterestRate'] != null ? 'Monthly Interest Rate: ${investment['monthlyInterestRate']}' : ''}
-      ${investment['quarterlyInterestRate'] != null ? 'Quarterly Interest Rate: ${investment['quarterlyInterestRate']}' : ''}
-      ${investment['semiAnnuallyInterestRate'] != null ? 'Semi-Annual Interest Rate: ${investment['semiAnnuallyInterestRate']}' : ''}
-      ${investment['annuallyInterestRate'] != null ? 'Annual Interest Rate: ${investment['annuallyInterestRate']}' : ''}
-      ${investment['atMaturityInterestRate'] != null ? 'At Maturity Interest Rate: ${investment['atMaturityInterestRate']}' : ''}
-      Can you tell me if this is a good investment? What are the pros and cons? Which interest rate should I go with? Make sure to use my spending data in your analysis.''';
+      initialMessage = '''
+        You are a Professional Financial Advisor with comprehensive expertise in Egyptian banks' certificates, including interest rate structures, bank reliability, and Egypt's economic environment. I'm considering a ${investment['type']} from ${bank?['name'] ?? 'unspecified bank'} with the following details:
+
+        - Duration: ${investment['duration']} year(s)
+        - Minimum Investment: ${investment['minInvestment']} EGP
+        - My Investment Amount: ${goal['target_amount'] != null ? roundToNearestMultiple(double.parse(goal['target_amount']), investment['multiples'].toDouble()) : 'Not set'} EGP
+        - Interest Rates:
+          ${investment['dailyInterestRate'] != null ? 'Daily: ${investment['dailyInterestRate']}' : ''}
+          ${investment['monthlyInterestRate'] != null ? 'Monthly: ${investment['monthlyInterestRate']}' : ''}
+          ${investment['quarterlyInterestRate'] != null ? 'Quarterly: ${investment['quarterlyInterestRate']}' : ''}
+          ${investment['semiAnnuallyInterestRate'] != null ? 'Semi-Annual: ${investment['semiAnnuallyInterestRate']}' : ''}
+          ${investment['annuallyInterestRate'] != null ? 'Annual: ${investment['annuallyInterestRate']}' : ''}
+          ${investment['atMaturityInterestRate'] != null ? 'At Maturity: ${investment['atMaturityInterestRate']}' : ''}
+
+        Please provide a detailed analysis of whether this certificate is a good investment, considering my investment amount and Egypt's financial landscape. Include:
+        1. Pros and cons of this certificate compared to other Egyptian bank offerings.
+        2. Key risks (e.g., bank stability, inflation, early withdrawal penalties).
+        3. A recommendation on the optimal interest rate payout option (e.g., monthly, at maturity) based on my financial goals and Egypt's economic conditions (e.g., inflation trends, EGP stability).
+        Ensure the analysis uses my spending data and reflects current Egyptian banking regulations and market conditions.
+      ''';
     } else if (type == 'stock') {
       // Format stock data for analysis
-      initialMessage =
-          '''You are a Professional, Experienced Financial Advisor with comprehensive knowledge of the Egyptian Stocks Market. I'm looking at ${investment['name']} (${investment['code']}) stock.
-      Exchange: ${investment['exchange']}
-      Currency: ${investment['currency'] ?? 'EGP'}
-      ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? 'Current Price: ${investment['historicalData'][investment['historicalData'].length - 1]['close']}' : ''}
-      ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? 'Current Volume: ${investment['historicalData'][investment['historicalData'].length - 1]['volume']}' : ''}
-      My investment amount: ${goal['target_amount']?.toString() ?? 'Not set'} EGP
-      ${investment['historicalData'] != null && goal['target_amount'] != null ? 'Estimated Shares I can buy: ${(double.parse(goal['target_amount']) / (investment['historicalData'][investment['historicalData'].length - 1]['close'] ?? 1)).floor()}' : ''}
-      ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? '\nHistorical Prices:\n${List.from(investment['historicalData']).reversed.take(10).map((data) => '${data['date']}: Open=${data['open']}, Close=${data['close']}, High=${data['high']}, Low=${data['low']}, Volume=${data['volume']}').join('\n')}' : ''}
-      Can you tell me if this is a good investment? What are the pros and cons? Make sure to use my spending data in your analysis.''';
+      initialMessage = '''
+        You are a Professional Financial Advisor with extensive expertise in the Egyptian Stocks Market, including deep knowledge of market trends, sectoral performance, and economic factors impacting Egypt. I'm evaluating ${investment['name']} (${investment['code']}) stock listed on ${investment['exchange']}, with prices in ${investment['currency'] ?? 'EGP'}. Below are the details:
+
+        - Current Price: ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? investment['historicalData'][investment['historicalData'].length - 1]['close'] : 'Not available'}
+        - Current Volume: ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? investment['historicalData'][investment['historicalData'].length - 1]['volume'] : 'Not available'}
+        - My Investment Amount: ${goal['target_amount']?.toString() ?? 'Not set'} EGP
+        - Estimated Shares: ${investment['historicalData'] != null && goal['target_amount'] != null ? (double.parse(goal['target_amount']) / (investment['historicalData'][investment['historicalData'].length - 1]['close'] ?? 1)).floor() : 'Not calculated'}
+        - Historical Data (last 10 days, if available):
+          ${investment['historicalData'] != null && investment['historicalData'].isNotEmpty ? List.from(investment['historicalData']).reversed.take(10).map((data) => '${data['date']}: Close=${data['close']}, High=${data['high']}, Low=${data['low']}, Volume=${data['volume']}').join('\n') : 'No historical data provided'}
+
+        Please provide a detailed analysis of whether this is a sound investment, considering my investment amount, current Egyptian market conditions, and the stock's performance. Include:
+        1. Pros and cons of Sponsors for this stock.
+        2. Key risks (e.g., volatility, sector-specific issues, macroeconomic factors in Egypt).
+        3. A recommendation on whether to invest now or wait, with justification.
+        Ensure the analysis incorporates my spending data and aligns with Egypt's economic context (e.g., inflation, currency stability).
+      ''';
     }
 
     // Send message to API
