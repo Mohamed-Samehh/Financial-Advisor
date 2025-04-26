@@ -678,7 +678,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       
       // Format certificate data for the analysis
-      initialMessage = `I'm looking at a ${investment.type} from ${bank?.name}. 
+      initialMessage = `You are a Professional, Experienced Financial Advisor with comprehensive knowledge of Egyptian banks' certificates. I'm looking at a ${investment.type} from ${bank?.name}. 
       Duration: ${investment.duration} year(s)
       Minimum Investment: ${investment.minInvestment} EGP
       My investment amount: ${this.goal.target_amount ? this.roundToNearestMultiple(this.goal.target_amount, investment.multiples) : 'Not set'} EGP
@@ -697,7 +697,7 @@ export class InvestComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       
       // Format stock data for the analysis
-      initialMessage = `I'm looking at ${investment.name} (${investment.code}) stock.
+      initialMessage = `You are a Professional, Experienced Financial Advisor with comprehensive knowledge of the Egyptian Stocks Market. I'm looking at ${investment.name} (${investment.code}) stock.
       Exchange: ${investment.exchange}
       Currency: ${investment.currency || 'EGP'}
       ${investment.historicalData && investment.historicalData.length > 0 ? 
