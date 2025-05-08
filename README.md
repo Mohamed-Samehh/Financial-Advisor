@@ -1,0 +1,1 @@
+An intelligent financial advisor platform that provides personalized financial recommendations using artificial intelligence and machine learning algorithms. The application analyzes user financial data to offer insights on investments, savings, and financial planning.
