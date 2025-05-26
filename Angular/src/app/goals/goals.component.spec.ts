@@ -9,6 +9,7 @@ describe('GoalsComponent', () => {
   let component: GoalsComponent;
   let fixture: ComponentFixture<GoalsComponent>;
   let apiServiceMock: jest.Mocked<ApiService>;
+  let consoleErrorSpy: jest.SpyInstance;
 
   const mockBudgetResponse = {
     budget: {
@@ -51,6 +52,9 @@ describe('GoalsComponent', () => {
   });
 
   beforeEach(() => {
+    // Mock console.error to prevent error output during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     // Set up the default return values
     apiServiceMock.getBudget.mockReturnValue(of(mockBudgetResponse));
     apiServiceMock.getGoal.mockReturnValue(of(mockGoalResponse));
@@ -61,6 +65,11 @@ describe('GoalsComponent', () => {
     fixture = TestBed.createComponent(GoalsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    // Restore console.error after each test
+    consoleErrorSpy.mockRestore();
   });
 
   it('should create', () => {
@@ -91,7 +100,7 @@ describe('GoalsComponent', () => {
     component.onSubmit(mockForm);
     
     expect(apiServiceMock.addGoal).toHaveBeenCalledWith({ id: null, name: 'New Car', target_amount: 2000 });
-    expect(component.message?.type).toBe('success');
+    expect((component.message as any)?.type).toBe('success');
     expect(component.isLoading).toBe(false);
   });
 
@@ -103,7 +112,7 @@ describe('GoalsComponent', () => {
     component.onSubmit(mockForm);
     
     expect(apiServiceMock.updateGoal).toHaveBeenCalledWith({ id: '1', name: 'Updated Vacation', target_amount: 1500 }, '1');
-    expect(component.message?.type).toBe('success');
+    expect((component.message as any)?.type).toBe('success');
     expect(component.goal.id).toBe('1');
     expect(component.isLoading).toBe(false);
   });
@@ -117,7 +126,7 @@ describe('GoalsComponent', () => {
     
     expect(apiServiceMock.addGoal).not.toHaveBeenCalled();
     expect(apiServiceMock.updateGoal).not.toHaveBeenCalled();
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
   });
 
   it('should not submit form when goal amount is greater than or equal to budget', () => {
@@ -130,7 +139,7 @@ describe('GoalsComponent', () => {
     
     expect(apiServiceMock.addGoal).not.toHaveBeenCalled();
     expect(apiServiceMock.updateGoal).not.toHaveBeenCalled();
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
   });
 
   it('should not submit form when form is invalid', () => {
@@ -140,7 +149,7 @@ describe('GoalsComponent', () => {
     
     expect(apiServiceMock.addGoal).not.toHaveBeenCalled();
     expect(apiServiceMock.updateGoal).not.toHaveBeenCalled();
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
   });
 
   it('should delete a goal', () => {
@@ -149,7 +158,7 @@ describe('GoalsComponent', () => {
     component.deleteGoal(goalId);
     
     expect(apiServiceMock.deleteGoal).toHaveBeenCalledWith(goalId);
-    expect(component.message?.type).toBe('success');
+    expect((component.message as any)?.type).toBe('success');
     expect(component.goal).toEqual({ id: null, name: '', target_amount: null });
     expect(component.isLoading).toBe(false);
   });
@@ -160,6 +169,7 @@ describe('GoalsComponent', () => {
     component.ngOnInit();
     
     expect(component.isLoading).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when loading goal', () => {
@@ -168,6 +178,7 @@ describe('GoalsComponent', () => {
     component.loadGoal();
     
     expect(component.isLoading).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when adding a goal', () => {
@@ -178,8 +189,9 @@ describe('GoalsComponent', () => {
     
     component.onSubmit(mockForm);
     
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
     expect(component.isLoading).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when updating a goal', () => {
@@ -190,8 +202,9 @@ describe('GoalsComponent', () => {
     
     component.onSubmit(mockForm);
     
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
     expect(component.isLoading).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when deleting a goal', () => {
@@ -199,7 +212,8 @@ describe('GoalsComponent', () => {
     
     component.deleteGoal('1');
     
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
     expect(component.isLoading).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });
