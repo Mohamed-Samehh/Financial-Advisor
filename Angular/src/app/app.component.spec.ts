@@ -1,16 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CommonModule } from '@angular/common';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { of, throwError } from 'rxjs';
+
+// Create a dummy component for routing tests
+@Component({
+  template: '<div>Test Component</div>'
+})
+class TestComponent { }
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  let httpMock: HttpTestingController;
-  let routerMock: jest.Mocked<Router>;
+  let httpClientSpy: jest.SpyInstance;
+  let routerMock: Router;
 
   beforeEach(async () => {
     // Create localStorage mock
@@ -21,39 +27,41 @@ describe('AppComponent', () => {
     };
     Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-    // Create router mock
-    const router = {
-      navigate: jest.fn()
-    };
-    
     await TestBed.configureTestingModule({
       imports: [
-        CommonModule,
-        RouterTestingModule,
-        HttpClientModule,
+        RouterTestingModule.withRoutes([
+          { path: 'login', component: TestComponent },
+          { path: 'dashboard', component: TestComponent },
+          { path: '', redirectTo: '/login', pathMatch: 'full' }
+        ]),
         HttpClientTestingModule,
         AppComponent
       ],
-      providers: [
-        { provide: Router, useValue: router }
-      ]
+      declarations: [TestComponent]
     }).compileComponents();
 
-    httpMock = TestBed.inject(HttpTestingController);
-    routerMock = TestBed.inject(Router) as jest.Mocked<Router>;
+    routerMock = TestBed.inject(Router);
+    
+    // Spy on router navigate method
+    jest.spyOn(routerMock, 'navigate').mockResolvedValue(true);
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
+    
+    // Create spy for HttpClient.post method
+    httpClientSpy = jest.spyOn(component['http'], 'post');
   });
 
   afterEach(() => {
-    httpMock.verify();
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should create the app', () => {
+    // Mock no token to avoid HTTP call
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
@@ -63,27 +71,28 @@ describe('AppComponent', () => {
 
   it('should check token expiry on initialization if token exists', () => {
     // Mock the token
-    localStorage.getItem = jest.fn().mockReturnValue('valid-token');
-    component.ngOnInit();
+    (localStorage.getItem as jest.Mock).mockReturnValue('valid-token');
     
-    const req = httpMock.expectOne('http://localhost:8000/api/check-token-expiry');
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ token: 'valid-token' });
-    req.flush({ expired: false });
+    // Mock successful HTTP response
+    httpClientSpy.mockReturnValue(of({ expired: false }));
     
+    fixture.detectChanges(); // This triggers ngOnInit
+    
+    expect(httpClientSpy).toHaveBeenCalledWith('http://localhost:8000/api/check-token-expiry', { token: 'valid-token' });
     expect(component.isLoggedIn).toBe(true);
     expect(routerMock.navigate).not.toHaveBeenCalled();
   });
 
   it('should clear token and redirect if token is expired', () => {
     // Mock expired token
-    localStorage.getItem = jest.fn().mockReturnValue('expired-token');
-    component.ngOnInit();
+    (localStorage.getItem as jest.Mock).mockReturnValue('expired-token');
     
-    const req = httpMock.expectOne('http://localhost:8000/api/check-token-expiry');
-    expect(req.request.method).toBe('POST');
-    req.flush({ expired: true });
+    // Mock HTTP response indicating expired token
+    httpClientSpy.mockReturnValue(of({ expired: true }));
     
+    fixture.detectChanges(); // This triggers ngOnInit
+    
+    expect(httpClientSpy).toHaveBeenCalledWith('http://localhost:8000/api/check-token-expiry', { token: 'expired-token' });
     expect(localStorage.removeItem).toHaveBeenCalledWith('token');
     expect(component.isLoggedIn).toBe(false);
     expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
@@ -91,13 +100,14 @@ describe('AppComponent', () => {
 
   it('should clear token and redirect on token check error', () => {
     // Mock token
-    localStorage.getItem = jest.fn().mockReturnValue('token');
-    component.ngOnInit();
+    (localStorage.getItem as jest.Mock).mockReturnValue('token');
     
-    const req = httpMock.expectOne('http://localhost:8000/api/check-token-expiry');
-    expect(req.request.method).toBe('POST');
-    req.error(new ErrorEvent('Network error'));
+    // Mock HTTP error
+    httpClientSpy.mockReturnValue(throwError(() => new Error('Network error')));
     
+    fixture.detectChanges(); // This triggers ngOnInit
+    
+    expect(httpClientSpy).toHaveBeenCalledWith('http://localhost:8000/api/check-token-expiry', { token: 'token' });
     expect(localStorage.removeItem).toHaveBeenCalledWith('token');
     expect(component.isLoggedIn).toBe(false);
     expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
@@ -105,17 +115,20 @@ describe('AppComponent', () => {
 
   it('should not check token expiry if no token exists', () => {
     // Mock no token
-    localStorage.getItem = jest.fn().mockReturnValue(null);
-    component.ngOnInit();
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    
+    fixture.detectChanges(); // This triggers ngOnInit
     
     // No HTTP request should be made
-    httpMock.expectNone('http://localhost:8000/api/check-token-expiry');
-    
+    expect(httpClientSpy).not.toHaveBeenCalled();
     expect(localStorage.removeItem).toHaveBeenCalledWith('token');
     expect(component.isLoggedIn).toBe(false);
   });
 
   it('should toggle navbar visibility', () => {
+    // Mock no token to avoid HTTP call
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    
     // Initial state
     expect(component.isNavbarVisible).toBe(false);
     
@@ -129,6 +142,9 @@ describe('AppComponent', () => {
   });
 
   it('should close navbar', () => {
+    // Mock no token to avoid HTTP call
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    
     // Set navbar to visible
     component.isNavbarVisible = true;
     
@@ -138,6 +154,9 @@ describe('AppComponent', () => {
   });
 
   it('should logout user', () => {
+    // Mock no token to avoid HTTP call
+    (localStorage.getItem as jest.Mock).mockReturnValue(null);
+    
     // Mock logged-in state
     component.isLoggedIn = true;
     
@@ -152,7 +171,7 @@ describe('AppComponent', () => {
   it('should get token from localStorage', () => {
     // Mock token
     const token = 'test-token';
-    localStorage.getItem = jest.fn().mockReturnValue(token);
+    (localStorage.getItem as jest.Mock).mockReturnValue(token);
     
     const result = component.getToken();
     
