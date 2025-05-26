@@ -9,6 +9,7 @@ describe('BudgetComponent', () => {
   let component: BudgetComponent;
   let fixture: ComponentFixture<BudgetComponent>;
   let apiServiceMock: jest.Mocked<ApiService>;
+  let consoleErrorSpy: jest.SpyInstance;
 
   const mockBudgetResponse = {
     budget: {
@@ -52,6 +53,9 @@ describe('BudgetComponent', () => {
   });
 
   beforeEach(() => {
+    // Suppress console.error during tests to avoid cluttering test output
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     // Set up the return values for the API calls
     apiServiceMock.getBudget.mockReturnValue(of(mockBudgetResponse));
     apiServiceMock.getGoal.mockReturnValue(of(mockGoalResponse));
@@ -63,6 +67,11 @@ describe('BudgetComponent', () => {
     fixture = TestBed.createComponent(BudgetComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    // Restore console.error after each test
+    consoleErrorSpy.mockRestore();
   });
 
   it('should create', () => {
@@ -89,12 +98,16 @@ describe('BudgetComponent', () => {
     apiServiceMock.getBudget.mockReturnValue(throwError(() => new Error('Error loading budget')));
     component.ngOnInit();
     expect(component.isLoading).toBe(false);
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when loading goal', () => {
     apiServiceMock.getGoal.mockReturnValue(throwError(() => new Error('Error loading goal')));
     component.loadGoal();
     expect(component.isLoading).toBe(false);
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should update budget when form is valid', () => {
@@ -109,12 +122,18 @@ describe('BudgetComponent', () => {
 
   it('should add new budget when form is valid and no budget id exists', () => {
     const mockForm = { valid: true } as NgForm;
-    component.budget = { id: null, monthly_budget: 6000 };
+    const budgetToSubmit = { id: null, monthly_budget: 6000 };
+    component.budget = budgetToSubmit;
+    
     component.onSubmit(mockForm);
     
-    expect(apiServiceMock.addBudget).toHaveBeenCalledWith(component.budget);
+    // Check that the API was called with the budget object (before it gets updated)
+    expect(apiServiceMock.addBudget).toHaveBeenCalledWith(budgetToSubmit);
     expect(component.message?.type).toBe('success');
     expect(component.message?.text).toContain('Budget set successfully');
+    // After the API call, the component should have the returned budget with the new id
+    expect(component.budget.id).toBe('2');
+    expect(component.budget.monthly_budget).toBe(6000);
   });
 
   it('should show error message when form is invalid', () => {
@@ -140,6 +159,8 @@ describe('BudgetComponent', () => {
     component.deleteBudget('1');
     
     expect(component.message?.type).toBe('error');
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should delete a goal without changing the budget', () => {
@@ -150,7 +171,8 @@ describe('BudgetComponent', () => {
   it('should handle errors when deleting goal', () => {
     apiServiceMock.deleteGoal.mockReturnValue(throwError(() => new Error('Error deleting goal')));
     component.deleteGoal('1');
-    // No expectation needed, just checking it doesn't crash
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should delete goal when setting budget below goal amount', () => {
