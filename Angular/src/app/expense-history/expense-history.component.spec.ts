@@ -157,66 +157,117 @@ describe('ExpenseHistoryComponent', () => {
   });
 
   it('should handle error when loading expense history', () => {
+    // Mock console.error to prevent error output during tests
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    
+    // Reset the component state
+    component.isLoading = true;
+    component.message = null;
+    
+    // Mock the error response
     apiServiceMock.getAllExpenses.mockReturnValue(throwError(() => new Error('Error loading expenses')));
     
     component.loadExpenseHistory();
     
     expect(component.message).not.toBeNull();
-    expect(component.message?.type).toBe('danger');
+    expect((component.message as any)?.type).toBe('danger');
     expect(component.isLoading).toBe(false);
+    
+    // Verify console.error was called - following the pattern from budget component
+    expect(consoleSpy).toHaveBeenCalled();
+    
+    // Restore console.error
+    consoleSpy.mockRestore();
   });
 
   it('should export expenses to CSV', () => {
-    // Mock methods needed for CSV export
-    global.URL.createObjectURL = jest.fn();
-    const createElementMock = document.createElement;
-    const appendChildMock = document.body.appendChild;
-    const removeChildMock = document.body.removeChild;
+    // Mock URL.createObjectURL
+    const mockUrl = 'blob:mock-url';
+    global.URL.createObjectURL = jest.fn().mockReturnValue(mockUrl);
+    global.URL.revokeObjectURL = jest.fn();
     
-    document.createElement = jest.fn().mockImplementation((tag) => {
-      const element = createElementMock.call(document, tag);
-      if (tag === 'a') {
-        element.click = jest.fn();
-      }
-      return element;
-    });
+    // Mock document methods
+    const mockLink = {
+      setAttribute: jest.fn(),
+      click: jest.fn(),
+      href: '',
+      download: ''
+    };
     
-    document.body.appendChild = jest.fn();
-    document.body.removeChild = jest.fn();
+    const createElementSpy = jest.spyOn(document, 'createElement').mockReturnValue(mockLink as any);
+    const appendChildSpy = jest.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any);
+    const removeChildSpy = jest.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any);
     
     const year = component.sortedYears[0] || component.currentYear.toString();
-    const monthYear = `${year}-05`;
+    const monthYear = `${year}-04`; // Use a past month, not current month
     
     // Setup mock expenses for the test
     component.expensesByYear[year] = [
-      { id: '1', category: 'Food', amount: 300, date: '2025-05-01', description: 'Groceries' }
+      { id: '1', category: 'Food', amount: 300, date: '2025-04-01', description: 'Groceries' }
     ];
     
     component.exportToCSV(monthYear);
     
-    // Verify link creation and click
-    expect(document.createElement).toHaveBeenCalledWith('a');
-    expect(document.body.appendChild).toHaveBeenCalled();
-    expect(document.body.removeChild).toHaveBeenCalled();
+    // Verify the process
+    expect(createElementSpy).toHaveBeenCalledWith('a');
+    expect(mockLink.setAttribute).toHaveBeenCalledWith('href', mockUrl);
+    expect(mockLink.setAttribute).toHaveBeenCalledWith('download', `expenses-${monthYear}.csv`);
+    expect(appendChildSpy).toHaveBeenCalledWith(mockLink);
+    expect(mockLink.click).toHaveBeenCalled();
+    expect(removeChildSpy).toHaveBeenCalledWith(mockLink);
     
-    // Restore original methods
-    document.createElement = createElementMock;
-    document.body.appendChild = appendChildMock;
-    document.body.removeChild = removeChildMock;
+    // Verify success message
+    expect(component.message).not.toBeNull();
+    expect((component.message as any)?.type).toBe('success');
+    expect((component.message as any)?.text).toContain('successfully exported');
+    
+    // Restore mocks
+    createElementSpy.mockRestore();
+    appendChildSpy.mockRestore();
+    removeChildSpy.mockRestore();
     jest.restoreAllMocks();
   });
 
   it('should handle CSV export with no expenses', () => {
     const year = component.sortedYears[0] || component.currentYear.toString();
-    const monthYear = `${year}-05`;
+    const monthYear = `${year}-04`; // Use a past month, not current month
     
     // Setup empty expenses for the test
     component.expensesByYear[year] = [];
     
     component.exportToCSV(monthYear);
     
-    // Verify message is shown
+    // Verify error message is shown
     expect(component.message).not.toBeNull();
-    expect(component.message?.type).toBe('danger');
+    expect((component.message as any)?.type).toBe('danger');
+    expect((component.message as any)?.text).toBe('No expenses to export for this month.');
+  });
+
+  it('should return empty array for current month filtering', () => {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+    const currentMonthStr = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+    
+    // Setup mock expenses
+    const expenses = [
+      { id: '1', category: 'Food', amount: 300, date: `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`, description: 'Groceries' }
+    ];
+    
+    const filtered = component.filterByMonth(expenses, currentMonthStr);
+    expect(filtered).toEqual([]);
+  });
+
+  it('should handle hasExpenseHistory correctly', () => {
+    // Test with no expenses
+    component.expensesByYear = {};
+    expect(component.hasExpenseHistory()).toBe(false);
+    
+    // Test with empty expenses array
+    component.expensesByYear = { '2025': [] };
+    expect(component.hasExpenseHistory()).toBe(false);
+    
+    // Test with actual expenses
+    component.expensesByYear = { '2025': [{ id: '1', category: 'Food', amount: 300, date: '2025-04-01', description: 'Groceries' }] };
+    expect(component.hasExpenseHistory()).toBe(true);
   });
 });
