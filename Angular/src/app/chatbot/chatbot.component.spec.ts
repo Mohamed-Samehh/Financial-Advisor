@@ -6,15 +6,18 @@ import { CommonModule } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { marked } from 'marked';
 
-// Mock marked library
+// Mock marked library with proper structure
 jest.mock('marked', () => ({
-  parse: jest.fn().mockImplementation((text) => `<p>${text}</p>`)
+  marked: {
+    parse: jest.fn().mockImplementation((text) => `<p>${text}</p>`)
+  }
 }));
 
 describe('ChatbotComponent', () => {
   let component: ChatbotComponent;
   let fixture: ComponentFixture<ChatbotComponent>;
   let apiServiceMock: jest.Mocked<ApiService>;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     // Create mock for ApiService
@@ -33,24 +36,36 @@ describe('ChatbotComponent', () => {
       ]
     }).compileComponents();
 
+    // Mock console.error to prevent error output during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     apiServiceMock = TestBed.inject(ApiService) as jest.Mocked<ApiService>;
     apiServiceMock.sendChatMessage.mockReturnValue(of({ message: 'This is a response from the chatbot' }));
 
     fixture = TestBed.createComponent(ChatbotComponent);
     component = fixture.componentInstance;
-    
-    // Create mock textarea for adjustHeight test
-    const mockTextarea = document.createElement('textarea');
-    document.body.appendChild(mockTextarea);
-    
     fixture.detectChanges();
   });
 
   afterEach(() => {
-    const textarea = document.querySelector('textarea');
-    if (textarea) {
-      document.body.removeChild(textarea);
-    }
+    // Restore console.error after each test
+    consoleErrorSpy.mockRestore();
+    
+    // Clean up any textarea elements that might exist
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+      if (textarea.parentNode) {
+        textarea.parentNode.removeChild(textarea);
+      }
+    });
+    
+    // Clean up any chat elements
+    const chatElements = document.querySelectorAll('.chat');
+    chatElements.forEach(chat => {
+      if (chat.parentNode) {
+        chat.parentNode.removeChild(chat);
+      }
+    });
     
     // Reset the timers
     jest.useRealTimers();
@@ -67,9 +82,14 @@ describe('ChatbotComponent', () => {
     expect(component.messages.length).toBe(0);
   });
 
-  it('should send user message and display bot response', () => {
+  it('should send user message and display bot response', async () => {
     component.userMessage = 'Hello bot';
+    
+    // Call sendMessage and wait for async operations
     component.sendMessage();
+    
+    // Wait for the observable to complete
+    await new Promise(resolve => setTimeout(resolve, 0));
     
     expect(apiServiceMock.sendChatMessage).toHaveBeenCalledWith('Hello bot');
     expect(component.messages.length).toBe(2);
@@ -82,7 +102,7 @@ describe('ChatbotComponent', () => {
     expect(component.userMessage).toBe('');
   });
 
-  it('should handle error when sending message', () => {
+  it('should handle error when sending message', async () => {
     apiServiceMock.sendChatMessage.mockReturnValue(
       throwError(() => new Error('Error sending message'))
     );
@@ -90,17 +110,26 @@ describe('ChatbotComponent', () => {
     component.userMessage = 'Hello bot';
     component.sendMessage();
     
+    // Wait for the observable to complete
+    await new Promise(resolve => setTimeout(resolve, 0));
+    
     expect(apiServiceMock.sendChatMessage).toHaveBeenCalledWith('Hello bot');
     expect(component.messages.length).toBe(1); // Only user message remains
     expect(component.loading).toBe(false);
-    expect(component.errorMessage).toBe('Failed to get a response. Please try again.');
+    expect((component as any).errorMessage).toBe('Failed to get a response. Please try again.');
+    
+    // Verify console.error was called
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
-  it('should handle empty response from API', () => {
+  it('should handle empty response from API', async () => {
     apiServiceMock.sendChatMessage.mockReturnValue(of({}));
     
     component.userMessage = 'Hello bot';
     component.sendMessage();
+    
+    // Wait for the observable to complete
+    await new Promise(resolve => setTimeout(resolve, 0));
     
     expect(apiServiceMock.sendChatMessage).toHaveBeenCalledWith('Hello bot');
     expect(component.messages.length).toBe(2);
@@ -119,7 +148,10 @@ describe('ChatbotComponent', () => {
   });
 
   it('should adjust textarea height when content changes', () => {
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    // Create a real textarea element for this test
+    const textarea = document.createElement('textarea');
+    document.body.appendChild(textarea);
+    
     const event = { target: textarea };
     
     // Test with empty content
@@ -129,9 +161,15 @@ describe('ChatbotComponent', () => {
     
     // Test with non-empty content
     textarea.value = 'Hello World';
-    Object.defineProperty(textarea, 'scrollHeight', { value: 100 });
+    Object.defineProperty(textarea, 'scrollHeight', { 
+      value: 100,
+      configurable: true 
+    });
     component.adjustHeight(event);
     expect(textarea.style.height).toBe('100px');
+    
+    // Clean up
+    document.body.removeChild(textarea);
   });
 
   it('should send message on Ctrl+Enter', () => {
@@ -149,6 +187,9 @@ describe('ChatbotComponent', () => {
     });
     component.onKeyDown(ctrlEnterEvent);
     expect(sendMessageSpy).toHaveBeenCalled();
+    
+    // Restore the spy
+    sendMessageSpy.mockRestore();
   });
 
   it('should scroll to bottom when messages are added', () => {
@@ -160,17 +201,41 @@ describe('ChatbotComponent', () => {
     chatMock.classList.add('chat');
     document.body.appendChild(chatMock);
     
-    // Set up the spy on scrollTop
-    Object.defineProperty(chatMock, 'scrollHeight', { value: 1000 });
+    // Mock scrollTop as writable property
+    let scrollTopValue = 0;
+    Object.defineProperty(chatMock, 'scrollTop', { 
+      get: () => scrollTopValue,
+      set: (value) => { scrollTopValue = value; },
+      configurable: true
+    });
     
+    Object.defineProperty(chatMock, 'scrollHeight', { 
+      value: 1000,
+      configurable: true 
+    });
+    
+    // Mock document.querySelector to return our mock element
+    const originalQuerySelector = document.querySelector;
+    document.querySelector = jest.fn().mockImplementation((selector) => {
+      if (selector === '.chat') {
+        return chatMock;
+      }
+      return originalQuerySelector.call(document, selector);
+    });
+    
+    // Call scrollToBottom
     component.scrollToBottom();
     
-    // Use setTimeout to allow the setTimeout in the component to execute
-    jest.runAllTimers();
+    // Advance timers to trigger the setTimeout callback
+    jest.advanceTimersByTime(1);
     
-    expect(chatMock.scrollTop).toBe(1000);
+    expect(scrollTopValue).toBe(1000);
+    
+    // Restore original querySelector
+    document.querySelector = originalQuerySelector;
     
     // Clean up
     document.body.removeChild(chatMock);
+    jest.useRealTimers();
   });
 });
