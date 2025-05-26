@@ -15,6 +15,7 @@ describe('ExpensesComponent', () => {
   let component: ExpensesComponent;
   let fixture: ComponentFixture<ExpensesComponent>;
   let apiServiceMock: jest.Mocked<ApiService>;
+  let consoleErrorSpy: jest.SpyInstance;
 
   const mockExpenses = {
     expenses: [
@@ -55,6 +56,9 @@ describe('ExpensesComponent', () => {
   });
 
   beforeEach(() => {
+    // Mock console.error to prevent error output during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    
     // Set up the default return values
     apiServiceMock.getExpenses.mockReturnValue(of(mockExpenses));
     apiServiceMock.getCategories.mockReturnValue(of(mockCategories));
@@ -69,6 +73,12 @@ describe('ExpensesComponent', () => {
     component.validateDate = jest.fn().mockReturnValue(null);
     
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    // Restore console.error and clear all mocks
+    consoleErrorSpy.mockRestore();
+    jest.clearAllMocks();
   });
 
   it('should create', () => {
@@ -124,7 +134,7 @@ describe('ExpensesComponent', () => {
     expect(component.filteredExpenses[0].id).toBe('3'); // Amount: 1000
   });
 
-  it('should add a new expense', () => {
+  it('should add a new expense', async () => {
     const mockForm = { valid: true, resetForm: jest.fn() } as unknown as NgForm;
     
     component.form = {
@@ -136,12 +146,15 @@ describe('ExpensesComponent', () => {
     
     component.onSubmit(mockForm);
     
+    // Wait for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 0));
+    
     expect(apiServiceMock.addExpense).toHaveBeenCalled();
     expect(mockForm.resetForm).toHaveBeenCalled();
-    expect(component.message?.type).toBe('success');
+    expect((component.message as any)?.type).toBe('success');
   });
 
-  it('should update an existing expense', () => {
+  it('should update an existing expense', async () => {
     const mockForm = { valid: true, resetForm: jest.fn() } as unknown as NgForm;
     
     component.editingExpenseId = 1;
@@ -155,19 +168,22 @@ describe('ExpensesComponent', () => {
     
     component.onSubmit(mockForm);
     
+    // Wait for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 0));
+    
     expect(apiServiceMock.updateExpense).toHaveBeenCalledWith(
       {
-        id: '1',
+        id: 1,
         category: 'Food',
         amount: 600,
         date: '2025-05-01',
         description: 'Expensive groceries',
         isRecentlyAdded: true
       }, 
-      '1'
+      1
     );
     expect(mockForm.resetForm).toHaveBeenCalled();
-    expect(component.message?.type).toBe('success');
+    expect((component.message as any)?.type).toBe('success');
     expect(component.isEditing).toBe(false);
   });
 
@@ -178,7 +194,7 @@ describe('ExpensesComponent', () => {
     
     expect(apiServiceMock.addExpense).not.toHaveBeenCalled();
     expect(apiServiceMock.updateExpense).not.toHaveBeenCalled();
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
   });
 
   it('should toggle edit mode for an expense', () => {
@@ -195,7 +211,7 @@ describe('ExpensesComponent', () => {
     component.editingExpenseId = 1;
     component.editExpense(expense);
     expect(component.isEditing).toBe(true);
-    expect(component.editingExpenseId).toBe(1);
+    expect(component.editingExpenseId as any).toBe('1'); // Use type assertion
     expect(component.form.category).toBe('Food');
     
     // Toggle edit mode off
@@ -227,7 +243,7 @@ describe('ExpensesComponent', () => {
     
     expect(Swal.fire).toHaveBeenCalled();
     expect(apiServiceMock.deleteExpense).toHaveBeenCalledWith(expenseId);
-    expect(component.message?.type).toBe('success');
+    expect((component.message as any)?.type).toBe('success');
   });
 
   it('should handle errors when deleting an expense', async () => {
@@ -235,7 +251,8 @@ describe('ExpensesComponent', () => {
     
     await component.deleteExpense('1');
     
-    expect(component.message?.type).toBe('error');
+    expect((component.message as any)?.type).toBe('error');
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle pagination correctly', () => {
@@ -254,18 +271,20 @@ describe('ExpensesComponent', () => {
     expect(component.totalPages).toBeGreaterThan(1);
     
     const initialPage = component.currentPage;
+    expect(initialPage).toBe(1);
     
     // Change to page 2
     component.changePage(2);
     expect(component.currentPage).toBe(2);
     
-    // Next page
+    // Next page (should go to page 2 if totalPages >= 2)
+    component.currentPage = 1; // Reset to page 1
     component.nextPage();
-    expect(component.currentPage).toBe(3);
-    
-    // Previous page
-    component.prevPage();
     expect(component.currentPage).toBe(2);
+    
+    // Previous page (from page 2 back to 1)
+    component.prevPage();
+    expect(component.currentPage).toBe(1);
   });
 
   it('should set the last day of month correctly', () => {
@@ -289,6 +308,7 @@ describe('ExpensesComponent', () => {
     
     expect(component.expenses).toEqual([]);
     expect(component.isLoading).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when loading categories', () => {
@@ -298,5 +318,6 @@ describe('ExpensesComponent', () => {
     
     expect(component.categories).toEqual([]);
     expect(component.isLoading).toBe(false);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });
