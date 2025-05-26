@@ -26,6 +26,7 @@ describe('InvestComponent', () => {
   let component: InvestComponent;
   let fixture: ComponentFixture<InvestComponent>;
   let apiServiceMock: jest.Mocked<ApiService>;
+  let consoleErrorSpy: jest.SpyInstance;
 
   const mockGoalResponse = {
     goal: {
@@ -101,6 +102,9 @@ describe('InvestComponent', () => {
   });
 
   beforeEach(() => {
+    // Suppress console.error during tests to avoid cluttering test output
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     // Set up the default return values
     apiServiceMock.getGoal.mockReturnValue(of(mockGoalResponse));
     apiServiceMock.getEgyptStocks.mockReturnValue(of(mockEgyptStocks));
@@ -123,6 +127,8 @@ describe('InvestComponent', () => {
     if (component.chartInstance) {
       component.chartInstance.destroy();
     }
+    // Restore console.error after each test
+    consoleErrorSpy.mockRestore();
   });
 
   it('should create', () => {
@@ -380,12 +386,9 @@ describe('InvestComponent', () => {
   });
 
   it('should handle response from chatbot API', () => {
-    // Set up initial chatbot state with one message already present
+    // Reset chatResponses to start fresh
+    component.chatResponses = [];
     component.showChatModal = true;
-    component.chatResponses = [{
-      message: `I'm analyzing your certificate from test bank now. Just a moment while I prepare insights.`,
-      isBot: true
-    }];
     component.isChatLoading = true;
     
     // Create mock for formatResponse method
@@ -403,22 +406,10 @@ describe('InvestComponent', () => {
   });
 
   it('should handle error from chatbot API', () => {
-    // Set up initial chatbot state with one message already present
+    // Reset chatResponses to start fresh
+    component.chatResponses = [];
     component.showChatModal = true;
-    component.chatResponses = [{
-      message: `I'm analyzing your certificate from test bank now. Just a moment while I prepare insights.`,
-      isBot: true
-    }];
     component.isChatLoading = true;
-    
-    // Reset chatResponses to ensure we have control over the array length
-    jest.spyOn(component.chatResponses, 'push').mockImplementation(function(this: any[], item) {
-      // Only add one error message to make the test pass
-      if (component.chatResponses.length === 1) {
-        Array.prototype.push.call(this, item);
-      }
-      return this.length;
-    });
     
     // Make API return an error
     apiServiceMock.sendChatMessage.mockReturnValueOnce(throwError(() => new Error('API error')));
@@ -430,6 +421,8 @@ describe('InvestComponent', () => {
     expect(component.isChatLoading).toBe(false);
     expect(component.chatResponses.length).toBe(2); // Initial message + error message
     expect(component.chatResponses[1].message).toContain("I'm having trouble");
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should calculate interest returns correctly', () => {
@@ -453,6 +446,8 @@ describe('InvestComponent', () => {
     
     expect(component.isLoading).toBe(false);
     expect(component.showInvestmentModeMessage).toBe(true);
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when loading Egypt stocks', () => {
@@ -462,6 +457,8 @@ describe('InvestComponent', () => {
     
     expect(component.isLoadingStocks).toBe(false);
     expect(component.stocksError).toBeTruthy();
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should handle errors when loading stock details', () => {
@@ -477,6 +474,8 @@ describe('InvestComponent', () => {
     
     expect(component.isLoadingStocks).toBe(false);
     expect(component.stocksError).toBeTruthy();
+    // Verify that console.error was called (error handling is working)
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
   it('should round to nearest multiple correctly', () => {
