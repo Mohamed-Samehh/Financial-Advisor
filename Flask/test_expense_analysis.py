@@ -6,7 +6,6 @@ import json
 import os
 import sys
 
-# Import the modules to test
 from business_logic import (
     assign_limits, 
     predictive_insights, 
@@ -27,7 +26,7 @@ from ml_models import (
 class TestBusinessLogic(unittest.TestCase):
     
     def setUp(self):
-        """Set up test data for business logic tests"""
+        """Set up test data"""
         self.categories = pd.DataFrame({
             'name': ['Food', 'Transport', 'Entertainment', 'Bills'],
             'priority': [1, 2, 3, 1]
@@ -41,20 +40,26 @@ class TestBusinessLogic(unittest.TestCase):
             'amount': [100, 50, 200, 75, 120, 80],
             'category': ['Food', 'Transport', 'Entertainment', 'Food', 'Bills', 'Food']
         })
+        
+        self.historical_expenses = pd.DataFrame({
+            'date': pd.to_datetime([
+                '2024-01-01', '2024-01-02', '2024-01-03', 
+                '2024-01-04', '2024-01-05', '2024-01-06'
+            ]),
+            'amount': [90, 60, 180, 85, 110, 70],
+            'category': ['Food', 'Transport', 'Entertainment', 'Food', 'Bills', 'Food']
+        })
     
     def test_assign_limits(self):
         """Test category limit assignment based on priority"""
         allowed_spending = 1000
         result = assign_limits(self.categories, allowed_spending)
         
-        # Check if result has correct columns
         self.assertIn('name', result.columns)
         self.assertIn('limit', result.columns)
-        
-        # Check if limits sum to allowed spending
         self.assertAlmostEqual(result['limit'].sum(), allowed_spending, places=2)
         
-        # Check if higher priority (lower number) gets more allocation
+        # Higher priority (lower number) should get more allocation
         food_limit = result[result['name'] == 'Food']['limit'].iloc[0]
         entertainment_limit = result[result['name'] == 'Entertainment']['limit'].iloc[0]
         self.assertGreater(food_limit, entertainment_limit)
@@ -63,11 +68,10 @@ class TestBusinessLogic(unittest.TestCase):
         """Test predictive spending calculation"""
         result = predictive_insights(self.expenses)
         
-        # Should return a float value
         self.assertIsInstance(result, float)
         self.assertGreater(result, 0)
         
-        # Test with insufficient data - create properly structured empty DataFrame
+        # Test with empty data
         empty_expenses = pd.DataFrame(columns=['date', 'amount'])
         empty_expenses['date'] = pd.to_datetime(empty_expenses['date'])
         result_empty = predictive_insights(empty_expenses)
@@ -78,10 +82,16 @@ class TestBusinessLogic(unittest.TestCase):
         smart_insights = []
         analyze_spending_variability(self.expenses, smart_insights)
         
-        # Should add insights when there's variability
-        # Note: The function may not always add insights depending on data variability
         self.assertIsInstance(smart_insights, list)
-        # Check if insights were added (may be 0 for some test data)
+        if len(smart_insights) > 0:
+            self.assertIsInstance(smart_insights[0], str)
+    
+    def test_analyze_spending_deviations(self):
+        """Test spending deviations analysis"""
+        smart_insights = []
+        analyze_spending_deviations(self.expenses, self.historical_expenses, smart_insights)
+        
+        self.assertIsInstance(smart_insights, list)
         if len(smart_insights) > 0:
             self.assertIsInstance(smart_insights[0], str)
     
@@ -90,7 +100,6 @@ class TestBusinessLogic(unittest.TestCase):
         smart_insights = []
         day_of_week_analysis(self.expenses, smart_insights)
         
-        # Should add insights about spending patterns
         self.assertGreater(len(smart_insights), 0)
         self.assertIn('highest', smart_insights[0].lower())
 
@@ -98,7 +107,7 @@ class TestBusinessLogic(unittest.TestCase):
 class TestMLModels(unittest.TestCase):
     
     def setUp(self):
-        """Set up test data for ML model tests"""
+        """Set up test data for ML models"""
         # Create sample historical expenses
         dates = pd.date_range(start='2024-01-01', end='2024-12-31', freq='D')
         np.random.seed(42)
@@ -121,7 +130,6 @@ class TestMLModels(unittest.TestCase):
         predictions = []
         linear_regression(self.historical_expenses, predictions, month_num=3)
         
-        # Check if predictions were generated
         if len(predictions) > 0:
             self.assertIsInstance(predictions, list)
             for pred in predictions:
@@ -137,7 +145,6 @@ class TestMLModels(unittest.TestCase):
         category_predictions = {}
         category_linear_regression(self.historical_expenses, category_predictions, month_num=2)
         
-        # Check structure of predictions
         if len(category_predictions) > 0:
             self.assertIsInstance(category_predictions, dict)
             for category, predictions in category_predictions.items():
@@ -153,7 +160,6 @@ class TestMLModels(unittest.TestCase):
         
         kmeans_clustering(self.current_expenses, smart_insights, expenses_clustering)
         
-        # Check if clustering results are generated
         self.assertGreaterEqual(len(expenses_clustering), 1)
         
         for cluster in expenses_clustering:
@@ -167,7 +173,6 @@ class TestMLModels(unittest.TestCase):
         spending_clustering = []
         spending_kmeans_clustering(self.current_expenses, spending_clustering)
         
-        # Check if spending clustering results are generated
         self.assertGreaterEqual(len(spending_clustering), 1)
         self.assertIn('spending_group', spending_clustering[0])
     
@@ -176,18 +181,16 @@ class TestMLModels(unittest.TestCase):
         frequency_clustering = []
         frequency_kmeans_clustering(self.current_expenses, frequency_clustering)
         
-        # Check if frequency clustering results are generated
         self.assertGreaterEqual(len(frequency_clustering), 1)
         self.assertIn('frequency_group', frequency_clustering[0])
     
     def test_get_association_rules(self):
         """Test association rules generation"""
         association_rules = []
-        # Use lower thresholds for testing with smaller dataset
+        # Use lower thresholds for smaller test dataset
         get_association_rules(self.current_expenses, association_rules, 
                             min_support=0.1, min_confidence=0.3, min_lift=1.0)
         
-        # Check structure if rules are found
         for rule in association_rules:
             self.assertIn('antecedents', rule)
             self.assertIn('consequents', rule)
@@ -200,7 +203,6 @@ class TestMLModels(unittest.TestCase):
         labeled_categories = []
         Rule_Based_labeling(self.historical_expenses, labeled_categories)
         
-        # Check if labeling results are generated
         if len(labeled_categories) > 0:
             self.assertIn('predicted_importance', labeled_categories[0])
             for item in labeled_categories[0]['predicted_importance']:
@@ -211,20 +213,16 @@ class TestMLModels(unittest.TestCase):
 
 
 class TestFlaskEndpoints(unittest.TestCase):
-    """Separate test class for Flask endpoints without tearDown conflicts"""
     
     def setUp(self):
         """Set up Flask app for testing"""
-        # Set environment variable
         os.environ['FLASK_PASSWORD'] = 'test_password'
         
-        # Import and configure the Flask app
         from app import app
         self.app = app
         self.app.config['TESTING'] = True
         self.client = self.app.test_client()
         
-        # Set up test data
         self.test_data = {
             'password': 'test_password',
             'expenses': [
@@ -261,14 +259,13 @@ class TestFlaskEndpoints(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         
-        # Check if required fields are in response
         self.assertIn('predicted_current_month', data)
         self.assertIn('advice', data)
         self.assertIn('category_limits', data)
         self.assertIn('smart_insights', data)
     
     def test_analysis_endpoint_unauthorized(self):
-        """Test unauthorized access to analysis endpoint"""
+        """Test unauthorized access"""
         test_data = self.test_data.copy()
         test_data['password'] = 'wrong_password'
         
@@ -279,7 +276,7 @@ class TestFlaskEndpoints(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
     
     def test_analysis_endpoint_missing_data(self):
-        """Test analysis endpoint with missing data"""
+        """Test missing required data"""
         incomplete_data = {
             'password': 'test_password', 
             'expenses': [],
@@ -294,13 +291,12 @@ class TestFlaskEndpoints(unittest.TestCase):
                                   data=json.dumps(incomplete_data),
                                   content_type='application/json')
         
-        # Should return 400 for missing required data
         self.assertEqual(response.status_code, 400)
     
     def test_analysis_endpoint_invalid_total_spent(self):
-        """Test analysis endpoint with invalid total spent"""
+        """Test invalid total_spent value"""
         test_data = self.test_data.copy()
-        test_data['total_spent'] = 0  # Invalid: should be greater than 0
+        test_data['total_spent'] = 0
         
         response = self.client.post('/analysis',
                                   data=json.dumps(test_data),
@@ -324,15 +320,14 @@ class TestFlaskEndpoints(unittest.TestCase):
         self.assertIn('labaled_categories', data)
     
     def test_environment_setup(self):
-        """Test that environment variable is properly set"""
+        """Test environment variable setup"""
         self.assertEqual(os.environ.get('FLASK_PASSWORD'), 'test_password')
 
 
 class TestChatEndpoint(unittest.TestCase):
-    """Separate test class for chat endpoint with manual mocking"""
     
     def setUp(self):
-        """Set up Flask app for testing"""
+        """Set up Flask app for chat testing"""
         os.environ['FLASK_PASSWORD'] = 'test_password'
         
         from app import app
@@ -341,14 +336,11 @@ class TestChatEndpoint(unittest.TestCase):
         self.client = self.app.test_client()
     
     def test_chat_endpoint_mock(self):
-        """Test chat endpoint with manual mocking"""
-        # Import requests here to avoid import conflicts
+        """Test chat endpoint with mocked external API"""
         import requests
         
-        # Store original function
         original_post = requests.post
         
-        # Create mock response
         class MockResponse:
             def __init__(self):
                 self.status_code = 200
@@ -382,22 +374,19 @@ class TestChatEndpoint(unittest.TestCase):
 
 
 class TestDataValidation(unittest.TestCase):
-    """Test data validation and edge cases"""
+    """Test edge cases and data validation"""
     
     def test_empty_dataframes(self):
         """Test functions with empty DataFrames"""
-        # Create properly structured empty DataFrame with correct dtypes
         empty_df = pd.DataFrame(columns=['date', 'amount', 'category'])
         empty_df['date'] = pd.to_datetime(empty_df['date'])
         empty_df['amount'] = pd.to_numeric(empty_df['amount'])
         
-        # Test business logic functions
         result = predictive_insights(empty_df)
         self.assertIsNone(result)
         
         smart_insights = []
         analyze_spending_variability(empty_df, smart_insights)
-        # Should not crash, insights might be empty
         
     def test_single_category_clustering(self):
         """Test clustering with single category"""
@@ -410,7 +399,6 @@ class TestDataValidation(unittest.TestCase):
         smart_insights = []
         expenses_clustering = []
         
-        # Should not crash with single category
         kmeans_clustering(single_cat_expenses, smart_insights, expenses_clustering)
         self.assertGreaterEqual(len(expenses_clustering), 0)
     
@@ -426,7 +414,6 @@ class TestDataValidation(unittest.TestCase):
         expenses_clustering = []
         
         kmeans_clustering(identical_expenses, smart_insights, expenses_clustering)
-        # Should handle identical values gracefully
         self.assertGreaterEqual(len(expenses_clustering), 0)
 
 
@@ -434,7 +421,6 @@ if __name__ == '__main__':
     # Set up environment for testing
     os.environ['FLASK_PASSWORD'] = 'test_password'
     
-    # Create a test suite combining all test classes
     test_classes = [
         TestBusinessLogic,
         TestMLModels, 
@@ -447,7 +433,6 @@ if __name__ == '__main__':
     suites = [loader.loadTestsFromTestCase(test_class) for test_class in test_classes]
     combined_suite = unittest.TestSuite(suites)
     
-    # Run the tests
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(combined_suite)
     
@@ -455,7 +440,6 @@ if __name__ == '__main__':
     if 'FLASK_PASSWORD' in os.environ:
         del os.environ['FLASK_PASSWORD']
     
-    # Print summary
     print(f"\n{'='*50}")
     print(f"TESTS RUN: {result.testsRun}")
     print(f"FAILURES: {len(result.failures)}")
