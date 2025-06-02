@@ -40,13 +40,13 @@ This is an intelligent financial advisor platform that provides personalized fin
 ### 📱 Multi-Platform Support
 - **Web Application**: Angular-based responsive web interface
 - **Mobile App**: Flutter cross-platform mobile application
-- **Backend API**: Laravel RESTful API with MongoDB integration
+- **Backend API**: Laravel RESTful API with MySQL integration
 - **ML Engine**: Python Flask service for machine learning operations
 
 ## Installation
 
 ### Prerequisites
-- **Backend**: PHP 8.2+, Laravel 11+, MongoDB, Python 3.12+
+- **Backend**: PHP 8.2+, Laravel 11+, MySQL, Python 3.12+
 - **Frontend**: Node.js 18+, Angular 18+
 - **Mobile**: Flutter 3.7+, Dart SDK
 - **AI Services**: Gemini API access
@@ -72,7 +72,7 @@ php artisan serve
 #### 3. Flask ML Service Setup
 ```bash
 cd Flask
-pip install -r requirements.txt
+cp .env.example .env
 python app.py
 ```
 
@@ -92,6 +92,8 @@ flutter run
 
 #### 6. Environment Configuration
 Update the `.env` files in each directory with:
+- Database credentials (MySQL)
+- API endpoints
 - Flask service password (for connecting Flask with Laravel)
 - OpenRouter API key (for Gemini AI)
 - EODHD API key (for stocks data)
@@ -142,7 +144,7 @@ Financial-Advisor/
 
 #### Backend Stack
 - **Laravel 11**: PHP framework for API development
-- **MongoDB**: NoSQL database for flexible data storage
+- **MySQL**: Relational database for data storage
 - **Laravel Sanctum**: API authentication
 - **Laravel Telescope**: Development debugging
 
