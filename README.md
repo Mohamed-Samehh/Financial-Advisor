@@ -92,7 +92,7 @@ flutter run
 
 #### 6. Environment Configuration
 Update the `.env` files in each directory with:
-- Flask service password
+- Flask service password (for connecting Flask with Laravel)
 - OpenRouter API key (for Gemini AI)
 - EODHD API key (for stocks data)
 - Brevo SMTP data (for mails)
