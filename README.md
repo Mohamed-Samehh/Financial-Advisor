@@ -93,7 +93,6 @@ flutter run
 #### 6. Environment Configuration
 Update the `.env` files in each directory with:
 - Database credentials (MySQL)
-- API endpoints
 - Flask service password (for connecting Flask with Laravel)
 - OpenRouter API key (for AI model access)
 - EODHD API key (for stocks data)
@@ -178,13 +177,3 @@ The project includes comprehensive testing:
 - **Laravel Tests**: Both Unit and Feature tests for API endpoints, controllers, and models
 - **Angular Tests**: Jest-based component testing with coverage reporting
 
-## API Endpoints
-
-### Core Endpoints
-- `POST /analysis` - AI expense analysis
-- `GET /stocks/egypt` - Egyptian stock data
-- `POST /chatbot` - AI financial consultation
-- `GET /categories/label` - Category importance labeling
-
-### Authentication
-All endpoints require API token authentication via Laravel Sanctum.
