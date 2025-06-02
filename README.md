@@ -172,9 +172,9 @@ Financial-Advisor/
 
 ### Testing
 The project includes comprehensive testing:
-- **Unit Tests**: Flask ML models with 95%+ coverage
-- **Integration Tests**: Laravel API endpoints
-- **E2E Tests**: Angular component testing
+- **Unit Tests**: Flask ML models with expense analysis testing
+- **Laravel Tests**: Both Unit and Feature tests for API endpoints, controllers, and models
+- **Angular Tests**: Jest-based component testing with coverage reporting
 
 ## API Endpoints
 
