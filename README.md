@@ -186,10 +186,3 @@ The project includes comprehensive testing:
 
 ### Authentication
 All endpoints require API token authentication via Laravel Sanctum.
-
-## Acknowledgments
-
-- Egyptian Exchange (EGX) for stock market data
-- Major Egyptian banks for certificate information
-- Google Gemini AI for advanced financial consultation
-- Open source community for the excellent libraries used
