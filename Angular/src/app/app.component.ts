@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -17,7 +17,11 @@ export class AppComponent implements OnInit {
   isNavbarVisible: boolean = false;
   private apiUrl = 'http://localhost:8000/api/check-token-expiry';
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router, 
+    private http: HttpClient,
+    private renderer: Renderer2
+  ) {}
 
   ngOnInit(): void {
     const token = this.getToken();
@@ -31,10 +35,17 @@ export class AppComponent implements OnInit {
 
   toggleNavbar() {
     this.isNavbarVisible = !this.isNavbarVisible;
+    
+    if (this.isNavbarVisible) {
+      this.renderer.addClass(document.body, 'menu-open');
+    } else {
+      this.renderer.removeClass(document.body, 'menu-open');
+    }
   }
 
   closeNavbar() {
     this.isNavbarVisible = false;
+    this.renderer.removeClass(document.body, 'menu-open');
   }
 
   logout() {
