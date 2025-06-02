@@ -23,7 +23,7 @@ This is an intelligent financial advisor platform that provides personalized fin
 - **Stock Market Integration**: Real-time Egyptian Exchange (EGX) stock data
 - **Investment Calculator**: Calculate returns for certificates with various interest rates
 - **Comparison Tools**: Side-by-side analysis of multiple investment options
-- **AI Investment Advisor**: Personalized investment recommendations using Gemini AI
+- **AI Investment Advisor**: Personalized investment recommendations using OpenRouter API
 
 ### 🎯 Goal Setting & Budget Management
 - **Smart Goal Tracking**: Set and monitor financial goals with progress visualization
@@ -32,7 +32,7 @@ This is an intelligent financial advisor platform that provides personalized fin
 - **Overspending Alerts**: Real-time notifications when approaching budget limits
 
 ### 🤖 AI Chatbot Integration
-- **Gemini Flash 2.0**: Advanced AI-powered financial consultation
+- **OpenRouter API**: Advanced AI-powered financial consultation via multiple LLM providers
 - **Investment Analysis**: Detailed analysis of certificates and stocks
 - **Personalized Advice**: Context-aware recommendations based on spending patterns
 - **Egyptian Market Expertise**: Specialized knowledge of Egyptian financial markets
@@ -49,7 +49,7 @@ This is an intelligent financial advisor platform that provides personalized fin
 - **Backend**: PHP 8.2+, Laravel 11+, MySQL, Python 3.12+
 - **Frontend**: Node.js 18+, Angular 18+
 - **Mobile**: Flutter 3.7+, Dart SDK
-- **AI Services**: Gemini API access
+- **AI Services**: OpenRouter API access
 
 ### Setup Instructions
 
@@ -95,7 +95,7 @@ Update the `.env` files in each directory with:
 - Database credentials (MySQL)
 - API endpoints
 - Flask service password (for connecting Flask with Laravel)
-- OpenRouter API key (for Gemini AI)
+- OpenRouter API key (for AI model access)
 - EODHD API key (for stocks data)
 - Brevo SMTP data (for mails)
 
@@ -153,7 +153,7 @@ Financial-Advisor/
 - **Scikit-learn**: Machine learning algorithms (Linear Regression, K-Means)
 - **Pandas & NumPy**: Data processing and analysis
 - **MLxtend**: Association rules mining
-- **Gemini Flash 2.0**: Advanced AI for financial consultation
+- **OpenRouter API**: Multi-provider LLM access for advanced AI consultation
 
 #### Frontend Stack
 - **Angular 18**: Modern web framework with TypeScript
@@ -170,7 +170,7 @@ Financial-Advisor/
 #### External Integrations
 - **Egyptian Exchange (EGX)**: Real-time stock data
 - **Major Egyptian Banks**: Certificate data from NBE, CIB, QNB, etc.
-- **Google Gemini AI**: Advanced financial consultation
+- **OpenRouter API**: Access to multiple AI models for advanced financial consultation
 
 ### Testing
 The project includes comprehensive testing:
