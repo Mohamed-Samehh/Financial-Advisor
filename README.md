@@ -92,10 +92,10 @@ flutter run
 
 #### 6. Environment Configuration
 Update the `.env` files in each directory with:
-- Database credentials (MongoDB)
-- API endpoints
-- Gemini AI API key
 - Flask service password
+- OpenRouter API key (for Gemini AI)
+- EODHD API key (for stocks data)
+- Brevo SMTP data (for mails)
 
 ## Usage
 
