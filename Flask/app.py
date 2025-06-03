@@ -255,7 +255,6 @@ def chat():
         f"- Never split responses into multiple messages. Always provide a complete answer in a single response.\n"
         f"- When discussing investment options, prioritize Egyptian stock market opportunities alongside bank certificates.\n"
         f"- If the user asks a question unrelated to finance, respond with: 'I am a financial assistant and can only answer finance-related questions.'"
-        f"- When providing any financial advice or investment recommendations, always include this disclaimer at the end of your response: 'Disclaimer: This is for informational purposes only. Investments carry risk, and past performance is not indicative of future results. Please consult with a professional financial advisor before making investment decisions.'"
     )
 
     headers = {
