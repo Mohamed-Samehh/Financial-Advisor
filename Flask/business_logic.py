@@ -2,7 +2,8 @@ import pandas as pd
 
 # Assign limits to categories based on priority
 def assign_limits(categories, allowed_spending):
-    categories['weight'] = (categories['priority'].count() + 1) - categories['priority']
+    max_priority = categories['priority'].max()
+    categories['weight'] = (max_priority + 1) - categories['priority']
     categories['limit'] = (categories['weight'] / categories['weight'].sum()) * allowed_spending
     return categories[['name', 'limit']]
 
