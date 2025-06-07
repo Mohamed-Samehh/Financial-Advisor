@@ -184,7 +184,7 @@ class DashboardScreen extends StatelessWidget {
                                 icon: Icons.track_changes,
                                 color: const Color(0xFFEFF6FF),
                                 accentColor: const Color(0xFF1D4ED8),
-                                title: 'Manage Goal',
+                                title: 'Set Goal',
                                 subtitle: 'Define your financial targets',
                                 route: '/goal',
                               ),
