@@ -5,7 +5,7 @@ This is an intelligent financial advisor platform that provides personalized fin
 ## Features
 
 ### 🤖 AI-Powered Expense Analysis
-- **Machine Learning Models**: Linear regression for expense prediction with 50-90% accuracy
+- **Machine Learning Models**: Linear regression for expense prediction
 - **Intelligent Clustering**: K-means clustering for spending pattern analysis
 - **Smart Insights**: Automatic detection of spending trends, deviations, and variability
 - **Association Rules**: Discovery of spending patterns between categories
