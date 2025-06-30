@@ -127,7 +127,7 @@ class AuthController extends Controller
         }
 
         // Send password change mail
-        // Mail::to($user->email)->send(new PasswordChangedMail($user));
+        Mail::to($user->email)->send(new PasswordChangedMail($user));
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
 
@@ -153,9 +153,9 @@ class AuthController extends Controller
         ]);
 
         // Send email change mail
-        // if ($emailChanged) {
-        //     Mail::to($oldEmail)->send(new EmailUpdatedMail($user, $oldEmail));
-        // }
+        if ($emailChanged) {
+            Mail::to($oldEmail)->send(new EmailUpdatedMail($user, $oldEmail));
+        }
 
         return response()->json(['message' => 'Profile updated successfully', 'user' => $user], 200);
     }
@@ -178,7 +178,7 @@ class AuthController extends Controller
 
         try {
             // Send goodbye mail
-            // Mail::to($user->email)->send(new GoodbyeMail($user));
+            Mail::to($user->email)->send(new GoodbyeMail($user));
             
             $user->tokens()->delete();
             $user->delete();
