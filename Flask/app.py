@@ -264,11 +264,11 @@ def chat():
         "X-Title": "Financial Advisor"
     }
 
-    # Option 1 (Mistral Small 3.2 24B): mistralai/mistral-small-3.2-24b-instruct:free
-    # Option 2 (Meta: Llama 3.3 8B Instruct): meta-llama/llama-3.3-8b-instruct:free
+    # Option 1 (Z.AI: GLM 4.5 Air): z-ai/glm-4.5-air:free
+    # Option 2 (Mistral Small 3.2 24B): mistralai/mistral-small-3.2-24b-instruct:free
     data = json.dumps({
-        "model": "mistralai/mistral-small-3.2-24b-instruct:free",
-         "messages": [
+        "model": "z-ai/glm-4.5-air:free",
+        "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
         ]

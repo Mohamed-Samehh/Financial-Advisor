@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         Carbon::setLocale('en');
         date_default_timezone_set('Africa/Cairo');
 
-        // Change date for testing
+        // // Change date for testing
         // if ($this->app->environment('local', 'testing')) {
         //     Carbon::setTestNow(Carbon::now()->subMonth(4));
         //     // subMonth() to test old data
